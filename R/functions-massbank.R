@@ -67,7 +67,7 @@
   sp
 }
 
-.isolate_species <- function(record) {
+.isolate_analchem <- function(record) {
   
   # create empty list
   ac <- list()
