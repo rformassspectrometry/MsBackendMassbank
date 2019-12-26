@@ -1,0 +1,24 @@
+CH$NAME: Testcompound 1
+CH$NAME: Testcompound 2
+CH$COMPOUND_CLASS: Testclass
+CH$FORMULA: C6H12O6
+CH$EXACT_MASS: 180
+CH$SMILES: CCCCCCCC
+CH$IUPAC: InChI
+CH$LINK: CAS 100-100-100
+CH$LINK: CAYMAN Testcayman
+CH$LINK: CHEBI Testchebi
+CH$LINK: CHEMBL Testchembl
+CH$LINK: CHEMPDB Testchempdb
+CH$LINK: CHEMSPIDER Testchemspider
+CH$LINK: COMPTOX Testcomptox
+CH$LINK: HMDB Testhmdb
+CH$LINK: INCHIKEY Testinchi
+CH$LINK: KAPPAVIEW Testkappaview
+CH$LINK: KEGG Testkegg
+CH$LINK: KNAPSACK Testknapsack
+CH$LINK: LIPIDBANK Testlipidbank
+CH$LINK: LIPIDMAPS Testlipidmaps
+CH$LINK: NIKKAJI Testnikkaji
+CH$LINK: PUBCHEM Testpubchem
+CH$LINK: ZINC Testzinc
