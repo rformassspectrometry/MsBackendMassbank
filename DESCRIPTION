@@ -1,14 +1,39 @@
 Package: MsBackendMassbank
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
+Title: Mass Spectrometry Data Backend for MassBank record Files
+Version: 0.1.0
 Authors@R: 
-    person(given = "First",
-           family = "Last",
-           role = c("aut", "cre"),
-           email = "first.last@example.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: What license it uses
+    c(person(given = "Michael", family = "Witting",
+             role = c("aut", "cre"),
+             email = "michael.witting@helmholtz-muenchen.de",
+             comment = c(ORCID = "0000-0002-1462-4426")))
+Description: Mass spectrometry (MS) data backend supporting import and
+	     handling of MS/MS library spectra from MassBank record files.
+Depends:
+    R (>= 3.5.0),
+    Spectra (>= 0.5.0)
+Imports:
+    BiocParallel,
+    S4Vectors,
+    IRanges,
+    methods    
+Suggests:
+    testthat,
+    knitr (>= 1.1.0),
+    roxygen2,
+    BiocStyle (>= 2.5.19),
+    rmarkdown
+Remotes:
+   RforMassSpectrometry/Spectra
+License: Artistic-2.0
+LazyData: yes
 Encoding: UTF-8
-LazyData: true
-RoxygenNote: 7.0.2
+VignetteBuilder: knitr
+BugReports: https://github.com/michaelwitting/MsBackendMassbank/issues
+URL: https://github.com/michaelwitting/MsBackendMassbank/MsBackendMgf
+biocViews: Infrastructure, MassSpectrometry, Metabolomics
+Roxygen: list(markdown=TRUE)
+RoxygenNote: 7.1.0
+Collate: 
+    'hidden_aliases.R'
+    'MsBackendMassbank.R'
+    'functions-massbank.R'
