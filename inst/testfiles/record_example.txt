@@ -1,9 +1,0 @@
-ACCESSION: Testaccession
-DEPRECATED: Testdeprecated
-RECORD_TITLE: Testrecordtitle
-DATE: Testdate
-AUTHORS: Testauthors
-LICENSE: Testlicense
-COPYRIGHT: Testcopyright
-PUBLICATION: Testpublication
-PROJECT: Testproject
