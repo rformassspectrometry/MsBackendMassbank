@@ -27,8 +27,7 @@ setup to import data in parallel. Defaults to \code{BPPARAM = bpparam()}. See \c
 }
 \description{
 The \code{MsBackendMassbank} class supports import of MS/MS spectra data from
-files in Mascot Generic Format
-(\href{http://www.matrixscience.com/help/data_file_help.html}{mgf})
+MS/MS spectrum data from \href{https://github.com/MassBank/MassBank-data}{Massbank}
 files. After initial import, the full MS data is kept in
 memory. \code{MsBackendMassbank} extends the \code{\link[=MsBackendDataFrame]{MsBackendDataFrame()}} backend
 directly and supports thus the \code{\link[=applyProcessing]{applyProcessing()}} function to make
@@ -47,9 +46,9 @@ parameter \code{nonStop}.
 }
 \examples{
 
-## Create an MsBackendHmdbXml backend and import data from test xml files.
+## Create an MsBackendMassbank backend and import data from test xml files.
 fls <- dir(system.file("extdata", package = "MsBackendMassbank"),
-    full.names = TRUE, pattern = "mgf$")
+    full.names = TRUE, pattern = "txt$")
 be <- backendInitialize(MsBackendMassbank(), fls)
 be
 

@@ -73,11 +73,14 @@
   colnames(spectrum) <- c("mz", "intensity", "rel.intensity")
 
   # isolate spectrum metadata from record
-  rtime <- as.numeric(substring(grep("AC$CHROMATOGRAPHY: RETENTION_TIME",
-                                     mb,
-                                     value = TRUE,
-                                     fixed = TRUE),
-                                35))
+  rtime <- substring(grep("AC$CHROMATOGRAPHY: RETENTION_TIME",
+                          mb,
+                          value = TRUE,
+                          fixed = TRUE),
+                     35)
+  rtime <- as.numeric(regmatches(rtime,
+                                 regexpr("[[:digit:]]+\\.[[:digit:]]+",
+                                         rtime)))
 
   precursorMz <- as.numeric(substring(grep("MS$FOCUSED_ION: PRECURSOR_M/Z",
                                            mb,
@@ -101,7 +104,7 @@
   if(!length(precursorIntensity))
     precursorIntensity <- 100
 
-  list(rtime = rtime,
+  list(rtime = rtime * 60,
         scanIndex = as.integer(1),
         precursorMz = precursorMz,
         precursorIntensity = precursorIntensity,
