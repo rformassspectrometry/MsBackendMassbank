@@ -25,11 +25,20 @@
   end <- grep("//", mb)
   n <- length(begin)
   sp <- vector("list", length = n)
+  meta <- vector("list", length = n)
 
-  for (i in seq(along = sp))
+  for (i in seq(along = sp)) {
     sp[[i]] <- .extract_mb_spectrum(mb[begin[i]:end[i]])
+    meta[[i]] <- .extract_mb_metadata(mb[begin[i]:end[i]])
+  }
 
   res <- DataFrame(do.call(rbind, sp))
+  res_meta <- DataFrame(do.call(rbind, meta))
+
+  print(res)
+  print(res_meta)
+
+  res <- cbind.DataFrame(res, res_meta)
 
   for (i in seq_along(res)) {
     if (all(lengths(res[[i]]) == 1))
@@ -105,13 +114,32 @@
     precursorIntensity <- 100
 
   list(rtime = rtime * 60,
-        scanIndex = as.integer(1),
-        precursorMz = precursorMz,
-        precursorIntensity = precursorIntensity,
-        precursorCharge = as.integer(0),
-        mz = spectrum$mz,
-        intensity = spectrum$intensity,
-        title = title)
+       scanIndex = as.integer(1),
+       precursorMz = precursorMz,
+       precursorIntensity = precursorIntensity,
+       precursorCharge = as.integer(0),
+       mz = spectrum$mz,
+       intensity = spectrum$intensity,
+       title = title)
 
 }
+##' @param mb `character()` of lines defining a spectrum in mgf
+##'     format.
+##'
+##' @author Michael Witting
+##'
+##' @noRd
+.extract_mb_metadata <- function(mb) {
+
+  # create empty list
+  ac <- list()
+
+  # analytical chemistry information, MS instrument ----------------------------
+  ac$instrument <- substring(grep("AC$INSTRUMENT:", mb, value = TRUE, fixed = TRUE), 16)
+  ac$instrument_type <- substring(grep("AC$INSTRUMENT_TYPE:", mb, value = TRUE, fixed = TRUE), 21)
+
+  ac
+
+}
+
 
