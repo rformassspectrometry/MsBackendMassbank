@@ -41,8 +41,7 @@
 
 <meta property="og:title" content="MS data backend for mgf files — MsBackendMassbank" />
 <meta property="og:description" content="The MsBackendMassbank class supports import of MS/MS spectra data from
-files in Mascot Generic Format
-(mgf)
+MS/MS spectrum data from Massbank
 files. After initial import, the full MS data is kept in
 memory. MsBackendMassbank extends the MsBackendDataFrame() backend
 directly and supports thus the applyProcessing() function to make
@@ -131,8 +130,7 @@ parameter nonStop." />
 
     <div class="ref-description">
     <p>The <code>MsBackendMassbank</code> class supports import of MS/MS spectra data from
-files in Mascot Generic Format
-(<a href='http://www.matrixscience.com/help/data_file_help.html'>mgf</a>)
+MS/MS spectrum data from <a href='https://github.com/MassBank/MassBank-data'>Massbank</a>
 files. After initial import, the full MS data is kept in
 memory. <code>MsBackendMassbank</code> extends the <code>MsBackendDataFrame()</code> backend
 directly and supports thus the <code>applyProcessing()</code> function to make
@@ -186,11 +184,41 @@ setup to import data in parallel. Defaults to <code>BPPARAM = bpparam()</code>. 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='co'>## Create an MsBackendHmdbXml backend and import data from test xml files.</span>
+<span class='co'>## Create an MsBackendMassbank backend and import data from test xml files.</span>
 <span class='no'>fls</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>dir</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"extdata"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"MsBackendMassbank"</span>),
-    <span class='kw'>full.names</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>pattern</span> <span class='kw'>=</span> <span class='st'>"mgf$"</span>)
-<span class='no'>be</span> <span class='kw'>&lt;-</span> <span class='fu'>backendInitialize</span>(<span class='fu'>MsBackendMassbank</span>(), <span class='no'>fls</span>)</div><div class='output co'>#&gt; <span class='error'>Error in .local(object, ...): Parameter 'files' is mandatory for MsBackendMassbank</span></div><div class='input'><span class='no'>be</span></div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): object 'be' not found</span></div><div class='input'>
-<span class='no'>be</span>$<span class='no'>msLevel</span></div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): object 'be' not found</span></div><div class='input'><span class='no'>be</span>$<span class='no'>intensity</span></div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): object 'be' not found</span></div><div class='input'><span class='no'>be</span>$<span class='no'>mz</span></div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): object 'be' not found</span></div></pre>
+    <span class='kw'>full.names</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>pattern</span> <span class='kw'>=</span> <span class='st'>"txt$"</span>)
+<span class='no'>be</span> <span class='kw'>&lt;-</span> <span class='fu'>backendInitialize</span>(<span class='fu'>MsBackendMassbank</span>(), <span class='no'>fls</span>)</div><div class='output co'>#&gt; <span class='message'>Start data import from 7 files ... </span></div><div class='output co'>#&gt; <span class='message'>done</span></div><div class='input'><span class='no'>be</span></div><div class='output co'>#&gt; MsBackendMassbank with 9 spectra
+#&gt;     msLevel     rtime scanIndex
+#&gt;   &lt;integer&gt; &lt;numeric&gt; &lt;integer&gt;
+#&gt; 1         2    142.14         1
+#&gt; 2         2    142.14         1
+#&gt; 3         2    142.14         1
+#&gt; 4         2    142.14         1
+#&gt; 5         2    142.14         1
+#&gt; 6         2    142.14         1
+#&gt; 7         2    143.94         1
+#&gt; 8         2    143.94         1
+#&gt; 9         2    143.94         1
+#&gt;  ... 17 more variables/columns.</div><div class='input'>
+<span class='no'>be</span>$<span class='no'>msLevel</span></div><div class='output co'>#&gt; [1] 2 2 2 2 2 2 2 2 2</div><div class='input'><span class='no'>be</span>$<span class='no'>intensity</span></div><div class='output co'>#&gt; NumericList of length 9
+#&gt; [[""]] 646 980 2114 20052 1248 7628 2036 494048 75708
+#&gt; [[""]] 10186 142 142 750 138 490 126 ... 14266 1478 1600 16504 1446 109762
+#&gt; [[""]] 324 184 138 3770 500 800 7214 3238 ... 2802 206 898 162 166 814 250 1840
+#&gt; [["intensity"]] 646 980 2114 20052 1248 7628 2036 494048 75708
+#&gt; [["intensity"]] 10186 142 142 750 138 490 ... 14266 1478 1600 16504 1446 109762
+#&gt; [["intensity"]] 324 184 138 3770 500 800 7214 ... 206 898 162 166 814 250 1840
+#&gt; [["intensity"]] 150 200 32 232 80 12162
+#&gt; [["intensity"]] 460 3630 658 74 28 190 44 142 50 52 634
+#&gt; [["intensity"]] 282 424</div><div class='input'><span class='no'>be</span>$<span class='no'>mz</span></div><div class='output co'>#&gt; NumericList of length 9
+#&gt; [[""]] 74.0233 132.0807 144.0805 146.0598 ... 170.0597 188.0699 205.0965
+#&gt; [[""]] 74.0232 77.0381 86.0027 91.0539 ... 160.0947 170.0596 171.0625 188.07
+#&gt; [[""]] 53.0019 53.0383 63.0225 65.0381 ... 158.0817 159.0921 160.0755 170.06
+#&gt; [["mz"]] 74.0233 132.0807 144.0805 146.0598 ... 170.0597 188.0699 205.0965
+#&gt; [["mz"]] 74.0232 77.0381 86.0027 91.0539 ... 160.0947 170.0596 171.0625 188.07
+#&gt; [["mz"]] 53.0019 53.0383 63.0225 65.0381 ... 158.0817 159.0921 160.0755 170.06
+#&gt; [["mz"]] 72.0095 116.0517 117.0554 159.0935 186.0558 203.0826
+#&gt; [["mz"]] 72.0094 74.0253 116.0511 117.0539 ... 162.0307 186.0548 203.0818
+#&gt; [["mz"]] 74.0253 116.0508</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
