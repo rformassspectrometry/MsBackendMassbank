@@ -9,8 +9,7 @@ NULL
 #' @description
 #'
 #' The `MsBackendMassbank` class supports import of MS/MS spectra data from
-#' files in Mascot Generic Format
-#' ([mgf](http://www.matrixscience.com/help/data_file_help.html))
+#' MS/MS spectrum data from [Massbank](https://github.com/MassBank/MassBank-data)
 #' files. After initial import, the full MS data is kept in
 #' memory. `MsBackendMassbank` extends the [MsBackendDataFrame()] backend
 #' directly and supports thus the [applyProcessing()] function to make
@@ -53,9 +52,9 @@ NULL
 #'
 #' @examples
 #'
-#' ## Create an MsBackendHmdbXml backend and import data from test xml files.
+#' ## Create an MsBackendMassbank backend and import data from test xml files.
 #' fls <- dir(system.file("extdata", package = "MsBackendMassbank"),
-#'     full.names = TRUE, pattern = "mgf$")
+#'     full.names = TRUE, pattern = "txt$")
 #' be <- backendInitialize(MsBackendMassbank(), fls)
 #' be
 #'
