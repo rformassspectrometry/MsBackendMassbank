@@ -6,7 +6,14 @@
 \alias{backendInitialize,MsBackendMassbank-method}
 \title{MS data backend for mgf files}
 \usage{
-\S4method{backendInitialize}{MsBackendMassbank}(object, files, nonStop = FALSE, ..., BPPARAM = bpparam())
+\S4method{backendInitialize}{MsBackendMassbank}(
+  object,
+  files,
+  metaBlocks = metaDataBlocks(),
+  nonStop = FALSE,
+  ...,
+  BPPARAM = bpparam()
+)
 
 MsBackendMassbank()
 }
@@ -15,6 +22,9 @@ MsBackendMassbank()
 
 \item{files}{\code{character} with the (full) file name(s) of the mgf file(s)
 from which MS/MS data should be imported.}
+
+\item{metaBlocks}{\code{data.frame} data frame indicating which metadata shall
+be read Default is \code{\link[=metaDataBlocks]{metaDataBlocks()}}.}
 
 \item{nonStop}{\code{logical(1)} whether import should be stopped if an
 xml file does not contain all required fields. Defaults to

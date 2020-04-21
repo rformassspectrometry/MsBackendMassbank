@@ -1,0 +1,126 @@
+---
+title: "Description and usage of MsBackendMassbank"
+output:
+    BiocStyle::html_document:
+        toc_float: true
+vignette: >
+    %\VignetteIndexEntry{Description and usage of Description and usage of MsBackendMassbank}
+    %\VignetteEngine{knitr::rmarkdown}
+    %\VignetteEncoding{UTF-8}
+    %\VignettePackage{Spectra}
+    %\VignetteDepends{Spectra,BiocStyle}
+---
+
+```{r style, echo = FALSE, results = 'asis', message=FALSE}
+BiocStyle::markdown()
+```
+
+**Package**: `r Biocpkg("MsBackendMassbank")`<br />
+**Authors**: `r packageDescription("MsBackendMassbank")[["Author"]] `<br />
+**Last modified:** `r file.info("MsBackendMassbank.Rmd")$mtime`<br />
+**Compiled**: `r date()`
+
+```{r, echo = FALSE, message = FALSE}
+library(Spectra)
+library(BiocStyle)
+```
+
+# Introduction
+
+The `Spectra` package provides a central infrastructure for the
+handling of Mass Spectrometry (MS) data. The package supports
+interchangeable use of different *backends* to import MS data from a
+variety of sources (such as mzML files). The `MsBackendMassbank` package
+allows the import of handle MS/MS spectrum 
+data from [Massbank](https://github.com/MassBank/MassBank-data) files. 
+This vignette illustrates the usage of the `MsBackendMassbank`
+package.
+
+# Importing MS/MS data from MassBank files
+
+MassBAnk files store normally one library spectrum per file, typically
+centroided and of MS level 2. In our short example below, we load data from a 
+file containing multiple library spectra per file or from files with each a 
+single spectrum provided with this package. Below we first load all required packages
+and define the paths to the Massbank files.
+
+```{r load-libs}
+library(Spectra)
+library(MsBackendMassbank)
+fls <- dir(system.file("extdata", package = "MsBackendMassbank"),
+           full.names = TRUE, pattern = "txt$")
+fls
+```
+
+MS data can be accessed and analyzed through `Spectra` objects. Below
+we create a `Spectra` with the data from these mgf files. To this end
+we provide the file names and specify to use a `MsBackendMassbank()`
+backend as *source* to enable data import. First we import from a single file
+with multiple library spectra.
+
+```{r import}
+sps <- Spectra(fls[1], source = MsBackendMassbank())
+```
+
+With that we have now full access to all imported spectra variables
+that we list below.
+
+```{r spectravars}
+spectraVariables(sps)
+```
+
+The same is possible with multiple files, containing each one individual library
+spectrum.
+
+```{r import2}
+sps <- Spectra(fls[-1], source = MsBackendMassbank())
+spectraVariables(sps)
+```
+
+By default the complete metadata is read together with the spectra. This can
+increase loading time. The different metadata blocks can blocked from reading.
+This requires to define an additional data frame indicating what shall be read.
+
+```{r metadata}
+# create data frame to indicate with metadata blocks shall be read.
+metaDataBlocks <- data.frame(metadata = c("ac", "ch", "sp", "ms", "record", "pk", "comment"),
+                             read = rep(FALSE, 7),
+                             stringsAsFactors = FALSE)
+
+sps <- Spectra(fls[-1], source = MsBackendMassbank(), metaBlock = metaDataBlocks)
+
+# variables only contain core variables
+spectraVariables(sps)
+```
+
+
+Besides default spectra variables, such as `msLevel`, `rtime`,
+`precursorMz`, we also have additional spectra variables such as the
+`title` of each spectrum in the mgf file.
+
+```{r instrument}
+sps$rtime
+sps$title
+```
+
+In addition we can also access the m/z and intensity values of each
+spectrum.
+
+```{r mz}
+mz(sps)
+intensity(sps)
+```
+
+When importing a large number of mgf files, setting `nonStop = TRUE`
+prevents the call to stop whenever problematic mgf files are
+encountered. 
+
+```{r all-import, eval = FALSE}
+sps <- Spectra(fls, source = MsBackendMgf(), nonStop = TRUE)
+```
+
+# Session information
+
+```{r}
+sessionInfo()
+```
