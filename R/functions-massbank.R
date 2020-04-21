@@ -27,7 +27,7 @@
               quiet = TRUE)
 
   begin <- grep("ACCESSION:", mb) + 1L
-  end <- grep("//", mb)
+  end <- grep("^//$", mb)
 
   n <- length(begin)
   spec <- vector("list", length = n)
