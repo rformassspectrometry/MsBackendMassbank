@@ -43,7 +43,7 @@ test_that("backendInitialize,MsBackendMgf works", {
 
   res_single <- backendInitialize(be, fls)
 
-  expect_identical(res_single$rtime, c(rtime = 0))
+  expect_identical(res_single$rtime, c(rtime = NA_real_))
 
   ## TODO: Import with failing file.
   ## TODO: Import with failing file and nonStop = TRUE
