@@ -150,6 +150,9 @@
                                  regexpr("[[:digit:]]+\\.[[:digit:]]+",
                                          rtime)))
 
+  # back up if no RT is supplied
+  if(!length(rtime)) rtime <- NA_real_
+
   precursorMz <- as.numeric(substring(grep("MS$FOCUSED_ION: PRECURSOR_M/Z",
                                            mb,
                                            value = TRUE,
