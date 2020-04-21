@@ -32,6 +32,9 @@ NULL
 #' @param files `character` with the (full) file name(s) of the mgf file(s)
 #'     from which MS/MS data should be imported.
 #'
+#' @param metaBlocks `data.frame` data frame indicating which metadata shall
+#'     be read Default is [metaDataBlocks()].
+#'
 #' @param nonStop `logical(1)` whether import should be stopped if an
 #'     xml file does not contain all required fields. Defaults to
 #'     `nonStop = FALSE`.
@@ -81,7 +84,8 @@ setClass("MsBackendMassbank",
 #'
 #' @rdname MsBackendMassbank
 setMethod("backendInitialize", signature = "MsBackendMassbank",
-          function(object, files, nonStop = FALSE, ..., BPPARAM = bpparam()) {
+          function(object, files, metaBlocks = metaDataBlocks(),
+                   nonStop = FALSE, ..., BPPARAM = bpparam()) {
             if (missing(files) || !length(files))
               stop("Parameter 'files' is mandatory for ", class(object))
             if (!is.character(files))
@@ -96,7 +100,7 @@ setMethod("backendInitialize", signature = "MsBackendMassbank",
             ## Import data and rbind.
             message("Start data import from ", length(files), " files ... ",
                     appendLF = FALSE)
-            res <- bplapply(files, FUN = .read_massbank,
+            res <- bplapply(files, FUN = .read_massbank, metaBlocks = metaBlocks,
                             nonStop = nonStop, BPPARAM = BPPARAM)
             message("done")
             res <- do.call(rbind, res)
