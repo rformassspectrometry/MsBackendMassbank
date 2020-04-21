@@ -100,6 +100,9 @@ parameter nonStop." />
   </a>
 </li>
 <li>
+  <a href="../articles/MsBackendMassbank.html">Get started</a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
       </ul>
@@ -148,7 +151,14 @@ parameter <code>nonStop</code>.</p>
     </div>
 
     <pre class="usage"><span class='co'># S4 method for MsBackendMassbank</span>
-<span class='fu'>backendInitialize</span>(<span class='no'>object</span>, <span class='no'>files</span>, <span class='kw'>nonStop</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>, <span class='kw'>BPPARAM</span> <span class='kw'>=</span> <span class='fu'>bpparam</span>())
+<span class='fu'>backendInitialize</span>(
+  <span class='no'>object</span>,
+  <span class='no'>files</span>,
+  <span class='kw'>metaBlocks</span> <span class='kw'>=</span> <span class='fu'><a href='metaDataBlocks.html'>metaDataBlocks</a></span>(),
+  <span class='kw'>nonStop</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='no'>...</span>,
+  <span class='kw'>BPPARAM</span> <span class='kw'>=</span> <span class='fu'>bpparam</span>()
+)
 
 <span class='fu'>MsBackendMassbank</span>()</pre>
 
@@ -163,6 +173,11 @@ parameter <code>nonStop</code>.</p>
       <th>files</th>
       <td><p><code>character</code> with the (full) file name(s) of the mgf file(s)
 from which MS/MS data should be imported.</p></td>
+    </tr>
+    <tr>
+      <th>metaBlocks</th>
+      <td><p><code>data.frame</code> data frame indicating which metadata shall
+be read Default is <code><a href='metaDataBlocks.html'>metaDataBlocks()</a></code>.</p></td>
     </tr>
     <tr>
       <th>nonStop</th>
@@ -187,108 +202,7 @@ setup to import data in parallel. Defaults to <code>BPPARAM = bpparam()</code>. 
 <span class='co'>## Create an MsBackendMassbank backend and import data from test xml files.</span>
 <span class='no'>fls</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>dir</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"extdata"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"MsBackendMassbank"</span>),
     <span class='kw'>full.names</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>pattern</span> <span class='kw'>=</span> <span class='st'>"txt$"</span>)
-<span class='no'>be</span> <span class='kw'>&lt;-</span> <span class='fu'>backendInitialize</span>(<span class='fu'>MsBackendMassbank</span>(), <span class='no'>fls</span>)</div><div class='output co'>#&gt; <span class='message'>Start data import from 7 files ... </span></div><div class='output co'>#&gt; <span class='message'>DataFrame with 1 row and 8 columns</span>
-#&gt; <span class='message'>   rtime scanIndex precursorMz precursorIntensity precursorCharge</span>
-#&gt; <span class='message'>  &lt;list&gt;    &lt;list&gt;      &lt;list&gt;             &lt;list&gt;          &lt;list&gt;</span>
-#&gt; <span class='message'>1 143.94         1    203.0826                100               0</span>
-#&gt; <span class='message'>                             mz      intensity</span>
-#&gt; <span class='message'>                         &lt;list&gt;         &lt;list&gt;</span>
-#&gt; <span class='message'>1 72.0095,116.0517,117.0554,... 150,200,32,...</span>
-#&gt; <span class='message'>                                               title</span>
-#&gt; <span class='message'>                                              &lt;list&gt;</span>
-#&gt; <span class='message'>1 L-Tryptophan; LC-ESI-QTOF; MS2; CE: 10; R=; [M-H]-</span>
-#&gt; <span class='message'>DataFrame with 1 row and 2 columns</span>
-#&gt; <span class='message'>                               instrument instrument_type</span>
-#&gt; <span class='message'>                                   &lt;list&gt;          &lt;list&gt;</span>
-#&gt; <span class='message'>1 maXis plus UHR-ToF-MS, Bruker Daltonics     LC-ESI-QTOF</span>
-#&gt; <span class='message'>DataFrame with 1 row and 8 columns</span>
-#&gt; <span class='message'>   rtime scanIndex precursorMz precursorIntensity precursorCharge</span>
-#&gt; <span class='message'>  &lt;list&gt;    &lt;list&gt;      &lt;list&gt;             &lt;list&gt;          &lt;list&gt;</span>
-#&gt; <span class='message'>1 143.94         1    203.0826                100               0</span>
-#&gt; <span class='message'>                            mz        intensity</span>
-#&gt; <span class='message'>                        &lt;list&gt;           &lt;list&gt;</span>
-#&gt; <span class='message'>1 72.0094,74.0253,116.0511,... 460,3630,658,...</span>
-#&gt; <span class='message'>                                               title</span>
-#&gt; <span class='message'>                                              &lt;list&gt;</span>
-#&gt; <span class='message'>1 L-Tryptophan; LC-ESI-QTOF; MS2; CE: 20; R=; [M-H]-</span>
-#&gt; <span class='message'>DataFrame with 1 row and 2 columns</span>
-#&gt; <span class='message'>                               instrument instrument_type</span>
-#&gt; <span class='message'>                                   &lt;list&gt;          &lt;list&gt;</span>
-#&gt; <span class='message'>1 maXis plus UHR-ToF-MS, Bruker Daltonics     LC-ESI-QTOF</span>
-#&gt; <span class='message'>DataFrame with 1 row and 8 columns</span>
-#&gt; <span class='message'>   rtime scanIndex precursorMz precursorIntensity precursorCharge</span>
-#&gt; <span class='message'>  &lt;list&gt;    &lt;list&gt;      &lt;list&gt;             &lt;list&gt;          &lt;list&gt;</span>
-#&gt; <span class='message'>1 143.94         1    203.0826                100               0</span>
-#&gt; <span class='message'>                mz intensity                                              title</span>
-#&gt; <span class='message'>            &lt;list&gt;    &lt;list&gt;                                             &lt;list&gt;</span>
-#&gt; <span class='message'>1 74.0253,116.0508   282,424 L-Tryptophan; LC-ESI-QTOF; MS2; CE: 40; R=; [M-H]-</span>
-#&gt; <span class='message'>DataFrame with 1 row and 2 columns</span>
-#&gt; <span class='message'>                               instrument instrument_type</span>
-#&gt; <span class='message'>                                   &lt;list&gt;          &lt;list&gt;</span>
-#&gt; <span class='message'>1 maXis plus UHR-ToF-MS, Bruker Daltonics     LC-ESI-QTOF</span></div><div class='output co'>#&gt; <span class='message'>DataFrame with 3 rows and 8 columns</span>
-#&gt; <span class='message'>   rtime scanIndex precursorMz precursorIntensity precursorCharge</span>
-#&gt; <span class='message'>  &lt;list&gt;    &lt;list&gt;      &lt;list&gt;             &lt;list&gt;          &lt;list&gt;</span>
-#&gt; <span class='message'>1 142.14         1    205.0972                100               0</span>
-#&gt; <span class='message'>2 142.14         1    205.0972                100               0</span>
-#&gt; <span class='message'>3 142.14         1    205.0972                100               0</span>
-#&gt; <span class='message'>                             mz         intensity</span>
-#&gt; <span class='message'>                         &lt;list&gt;            &lt;list&gt;</span>
-#&gt; <span class='message'>1 74.0233,132.0807,144.0805,...  646,980,2114,...</span>
-#&gt; <span class='message'>2   74.0232,77.0381,86.0027,... 10186,142,142,...</span>
-#&gt; <span class='message'>3   53.0019,53.0383,63.0225,...   324,184,138,...</span>
-#&gt; <span class='message'>                                               title</span>
-#&gt; <span class='message'>                                              &lt;list&gt;</span>
-#&gt; <span class='message'>1 L-Tryptophan; LC-ESI-QTOF; MS2; CE: 10; R=; [M+H]+</span>
-#&gt; <span class='message'>2 L-Tryptophan; LC-ESI-QTOF; MS2; CE: 20; R=; [M+H]+</span>
-#&gt; <span class='message'>3 L-Tryptophan; LC-ESI-QTOF; MS2; CE: 40; R=; [M+H]+</span>
-#&gt; <span class='message'>DataFrame with 3 rows and 2 columns</span>
-#&gt; <span class='message'>                               instrument instrument_type</span>
-#&gt; <span class='message'>                                   &lt;list&gt;          &lt;list&gt;</span>
-#&gt; <span class='message'>1 maXis plus UHR-ToF-MS, Bruker Daltonics     LC-ESI-QTOF</span>
-#&gt; <span class='message'>2 maXis plus UHR-ToF-MS, Bruker Daltonics     LC-ESI-QTOF</span>
-#&gt; <span class='message'>3 maXis plus UHR-ToF-MS, Bruker Daltonics     LC-ESI-QTOF</span>
-#&gt; <span class='message'>DataFrame with 1 row and 8 columns</span>
-#&gt; <span class='message'>   rtime scanIndex precursorMz precursorIntensity precursorCharge</span>
-#&gt; <span class='message'>  &lt;list&gt;    &lt;list&gt;      &lt;list&gt;             &lt;list&gt;          &lt;list&gt;</span>
-#&gt; <span class='message'>1 142.14         1    205.0972                100               0</span>
-#&gt; <span class='message'>                             mz        intensity</span>
-#&gt; <span class='message'>                         &lt;list&gt;           &lt;list&gt;</span>
-#&gt; <span class='message'>1 74.0233,132.0807,144.0805,... 646,980,2114,...</span>
-#&gt; <span class='message'>                                               title</span>
-#&gt; <span class='message'>                                              &lt;list&gt;</span>
-#&gt; <span class='message'>1 L-Tryptophan; LC-ESI-QTOF; MS2; CE: 10; R=; [M+H]+</span>
-#&gt; <span class='message'>DataFrame with 1 row and 2 columns</span>
-#&gt; <span class='message'>                               instrument instrument_type</span>
-#&gt; <span class='message'>                                   &lt;list&gt;          &lt;list&gt;</span>
-#&gt; <span class='message'>1 maXis plus UHR-ToF-MS, Bruker Daltonics     LC-ESI-QTOF</span>
-#&gt; <span class='message'>DataFrame with 1 row and 8 columns</span>
-#&gt; <span class='message'>   rtime scanIndex precursorMz precursorIntensity precursorCharge</span>
-#&gt; <span class='message'>  &lt;list&gt;    &lt;list&gt;      &lt;list&gt;             &lt;list&gt;          &lt;list&gt;</span>
-#&gt; <span class='message'>1 142.14         1    205.0972                100               0</span>
-#&gt; <span class='message'>                           mz         intensity</span>
-#&gt; <span class='message'>                       &lt;list&gt;            &lt;list&gt;</span>
-#&gt; <span class='message'>1 74.0232,77.0381,86.0027,... 10186,142,142,...</span>
-#&gt; <span class='message'>                                               title</span>
-#&gt; <span class='message'>                                              &lt;list&gt;</span>
-#&gt; <span class='message'>1 L-Tryptophan; LC-ESI-QTOF; MS2; CE: 20; R=; [M+H]+</span>
-#&gt; <span class='message'>DataFrame with 1 row and 2 columns</span>
-#&gt; <span class='message'>                               instrument instrument_type</span>
-#&gt; <span class='message'>                                   &lt;list&gt;          &lt;list&gt;</span>
-#&gt; <span class='message'>1 maXis plus UHR-ToF-MS, Bruker Daltonics     LC-ESI-QTOF</span>
-#&gt; <span class='message'>DataFrame with 1 row and 8 columns</span>
-#&gt; <span class='message'>   rtime scanIndex precursorMz precursorIntensity precursorCharge</span>
-#&gt; <span class='message'>  &lt;list&gt;    &lt;list&gt;      &lt;list&gt;             &lt;list&gt;          &lt;list&gt;</span>
-#&gt; <span class='message'>1 142.14         1    205.0972                100               0</span>
-#&gt; <span class='message'>                           mz       intensity</span>
-#&gt; <span class='message'>                       &lt;list&gt;          &lt;list&gt;</span>
-#&gt; <span class='message'>1 53.0019,53.0383,63.0225,... 324,184,138,...</span>
-#&gt; <span class='message'>                                               title</span>
-#&gt; <span class='message'>                                              &lt;list&gt;</span>
-#&gt; <span class='message'>1 L-Tryptophan; LC-ESI-QTOF; MS2; CE: 40; R=; [M+H]+</span>
-#&gt; <span class='message'>DataFrame with 1 row and 2 columns</span>
-#&gt; <span class='message'>                               instrument instrument_type</span>
-#&gt; <span class='message'>                                   &lt;list&gt;          &lt;list&gt;</span>
-#&gt; <span class='message'>1 maXis plus UHR-ToF-MS, Bruker Daltonics     LC-ESI-QTOF</span></div><div class='output co'>#&gt; <span class='message'>done</span></div><div class='input'><span class='no'>be</span></div><div class='output co'>#&gt; MsBackendMassbank with 9 spectra
+<span class='no'>be</span> <span class='kw'>&lt;-</span> <span class='fu'>backendInitialize</span>(<span class='fu'>MsBackendMassbank</span>(), <span class='no'>fls</span>)</div><div class='output co'>#&gt; <span class='message'>Start data import from 7 files ... </span></div><div class='output co'>#&gt; <span class='message'>done</span></div><div class='input'><span class='no'>be</span></div><div class='output co'>#&gt; MsBackendMassbank with 9 spectra
 #&gt;     msLevel     rtime scanIndex
 #&gt;   &lt;integer&gt; &lt;numeric&gt; &lt;integer&gt;
 #&gt; 1         2    142.14         1
@@ -300,7 +214,7 @@ setup to import data in parallel. Defaults to <code>BPPARAM = bpparam()</code>. 
 #&gt; 7         2    143.94         1
 #&gt; 8         2    143.94         1
 #&gt; 9         2    143.94         1
-#&gt;  ... 19 more variables/columns.</div><div class='input'>
+#&gt;  ... 109 more variables/columns.</div><div class='input'>
 <span class='no'>be</span>$<span class='no'>msLevel</span></div><div class='output co'>#&gt; [1] 2 2 2 2 2 2 2 2 2</div><div class='input'><span class='no'>be</span>$<span class='no'>intensity</span></div><div class='output co'>#&gt; NumericList of length 9
 #&gt; [[""]] 646 980 2114 20052 1248 7628 2036 494048 75708
 #&gt; [[""]] 10186 142 142 750 138 490 126 ... 14266 1478 1600 16504 1446 109762
