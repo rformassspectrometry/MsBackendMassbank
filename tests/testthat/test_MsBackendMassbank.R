@@ -10,7 +10,7 @@ test_that("backendInitialize,MsBackendMgf works", {
   expect_identical(res_single$dataStorage, rep("<memory>", 3))
   expect_identical(res_single$dataOrigin, rep(normalizePath(fls[1]), 3))
   expect_identical(res_single$msLevel, rep(2L, 3))
-  expect_identical(ncol(res_single@spectraData), 104L)
+  expect_identical(ncol(res_single@spectraData), 102L)
 
 
   # Import a single file with multiple record, only spectrum
