@@ -5,6 +5,10 @@
 ##' @param metaDataBlocks `data.frame` data frame indicating which metadata shall
 ##'     be read
 ##'
+##' @param nonStop `logical(1)` whether import should be stopped if an
+##'     Massbank file does not contain all required fields. Defaults to
+##'     `nonStop = FALSE`.
+##'
 ##' @param ... Additional parameters, currently ignored.
 ##'
 ##' @importFrom S4Vectors DataFrame cbind.DataFrame
@@ -118,6 +122,8 @@
 ##' @param mb `character()` of lines defining a spectrum in mgf
 ##'     format.
 ##'
+##' @importFrom utils tail type.convert
+##'
 ##' @author Michael Witting
 ##'
 ##' @noRd
@@ -140,47 +146,48 @@
   spectrum[] <- lapply(spectrum, type.convert)
   colnames(spectrum) <- c("mz", "intensity", "rel.intensity")
 
-  # isolate spectrum metadata from record
-  rtime <- substring(grep("AC$CHROMATOGRAPHY: RETENTION_TIME",
-                          mb,
-                          value = TRUE,
-                          fixed = TRUE),
-                     35)
-  rtime <- as.numeric(regmatches(rtime,
-                                 regexpr("[[:digit:]]+\\.[[:digit:]]+",
-                                         rtime)))
+  # isolate Accession, name etc...
+  meta <- list()
 
+  meta$accession <- substring(grep("ACCESSION:", mb, value = TRUE, fixed = TRUE), 12)
+  meta$name <- as.list(substring(grep("CH$NAME:", mb, value = TRUE, fixed = TRUE), 10))
+  meta$smiles <- substring(grep("CH$SMILES:", mb, value = TRUE, fixed = TRUE), 12)
+  meta$exact_mass <- as.numeric(substring(grep("CH$EXACT_MASS:", mb, value = TRUE, fixed = TRUE), 16))
+  meta$formula <- substring(grep("CH$FORMULA:", mb, value = TRUE, fixed = TRUE), 13)
+  meta$iupac <- substring(grep("CH$IUPAC:", mb, value = TRUE, fixed = TRUE), 11)
+  meta$link_cas <- substring(grep("CH$LINK: CAS", mb, value = TRUE, fixed = TRUE), 14)
+  meta$link_pubchem <- substring(grep("CH$LINK: PUBCHEM", mb, value = TRUE, fixed = TRUE), 18)
+  meta$link_inchikey <- substring(grep("CH$LINK: INCHIKEY", mb, value = TRUE, fixed = TRUE), 19)
+  meta$link_chemspider <- substring(grep("CH$LINK: CHEMSPIDER", mb, value = TRUE, fixed = TRUE), 21)
+  meta$ms_col_energy <- substring(grep("AC$MASS_SPECTROMETRY: COLLISION_ENERGY", mb, value = TRUE, fixed = TRUE), 40)
+  meta$ms_frag_mode <- substring(grep("AC$MASS_SPECTROMETRY: FRAGMENTATION_MODE", mb, value = TRUE, fixed = TRUE), 42)
+  meta$chrom_column <- substring(grep("AC$CHROMATOGRAPHY: COLUMN_NAME", mb, value = TRUE, fixed = TRUE), 32)
+  meta$focus_precursor_type <- substring(grep("MS$FOCUSED_ION: PRECURSOR_TYPE", mb, value = TRUE, fixed = TRUE), 32)
+  meta$rtime_string <- substring(grep("AC$CHROMATOGRAPHY: RETENTION_TIME", mb, value = TRUE, fixed = TRUE), 35)
 
+  meta <- .cleanParsing(meta)
 
-  precursorMz <- as.numeric(substring(grep("MS$FOCUSED_ION: PRECURSOR_M/Z",
-                                           mb,
-                                           value = TRUE,
-                                           fixed = TRUE),
-                                      30))
+  # type conversion
+  meta$ms_col_energy <- as.numeric(meta$ms_col_energy)
 
+  if(!is.na(meta$rtime_string)) {
 
+    rtime <- as.numeric(regmatches(meta$rtime_string, regexpr("[[:digit:]]+\\.[[:digit:]]+", meta$rtime_string)))
+    if(grepl("min", meta$rtime_string)) rtime <- rtime * 60
 
-  precursorIntensity <- as.numeric(substring(grep("MS$FOCUSED_ION: PRECURSOR_INT",
-                                                  mb,
-                                                  value = TRUE,
-                                                  fixed = TRUE),
-                                             31))
+  } else {
 
+    rtime <- NA_real_
+
+  }
+
+  precursorMz <- as.numeric(substring(grep("MS$FOCUSED_ION: PRECURSOR_M/Z", mb, value = TRUE, fixed = TRUE), 30))
+  precursorIntensity <- as.numeric(substring(grep("MS$FOCUSED_ION: PRECURSOR_INT", mb, value = TRUE, fixed = TRUE), 31))
 
   # back up if no values are supplied
-  if(!length(rtime)) rtime <- NA_real_
+  #if(!length(rtime)) rtime <- NA_real_
   if(!length(precursorMz)) precursorMz <- NA_real_
   if(!length(precursorIntensity)) precursorIntensity <- 100
-
-  # # check if values are supplied
-  # if (!length(rtime) || !length(precursorMz) || length(precursorIntensity)) {
-  #   msg <- paste0("No precursor mz and intensity and RT values found in file ")
-  #   if (nonStop) {
-  #     warning(msg)
-  #     return(list())
-  #   } else stop(msg)
-  # }
-
 
   title <- substring(grep("RECORD_TITLE:",
                           mb,
@@ -188,13 +195,27 @@
                           fixed = TRUE),
                      15)
 
-  list(rtime = rtime * 60,
+  list(accession = meta$accession,
+       name = meta$name,
+       smiles = meta$smiles,
+       exact_mass = meta$exact_mass,
+       formula = meta$formula,
+       iupac = meta$iupac,
+       link_cas = meta$link_cas,
+       link_pubchem = meta$link_pubchem,
+       link_inchikey = meta$link_inchikey,
+       link_chemspider = meta$link_chemspider,
+       ms_frag_mode = meta$ms_frag_mode,
+       chrom_column = meta$chrom_column,
+       focus_precursor_type = meta$focus_precursor_type,
+       rtime = rtime,
        scanIndex = as.integer(1),
        precursorMz = precursorMz,
        precursorIntensity = precursorIntensity,
        precursorCharge = as.integer(0),
        mz = spectrum$mz,
        intensity = spectrum$intensity,
+       collisionEnergy = meta$ms_col_energy,
        title = title)
 
 }
@@ -218,11 +239,11 @@
   ac$ms_ms_type <- substring(grep("AC$MASS_SPECTROMETRY: MS_TYPE", mb, value = TRUE, fixed = TRUE), 31)
   ac$ms_cap_voltage <- substring(grep("AC$MASS_SPECTROMETRY: CAPILLARY_VOLTAGE", mb, value = TRUE, fixed = TRUE), 41)
   ac$ms_ion_mode <- substring(grep("AC$MASS_SPECTROMETRY: ION_MODE", mb, value = TRUE, fixed = TRUE), 32)
-  ac$ms_col_energy <- substring(grep("AC$MASS_SPECTROMETRY: COLLISION_ENERGY", mb, value = TRUE, fixed = TRUE), 40)
+  #ac$ms_col_energy <- substring(grep("AC$MASS_SPECTROMETRY: COLLISION_ENERGY", mb, value = TRUE, fixed = TRUE), 40)
   ac$ms_col_gas <- substring(grep("AC$MASS_SPECTROMETRY: COLLISION_GAS", mb, value = TRUE, fixed = TRUE), 37)
   ac$ms_desolv_gas_flow <- substring(grep("AC$MASS_SPECTROMETRY: DESOLVATION_GAS_FLOW", mb, value = TRUE, fixed = TRUE), 44)
   ac$ms_desolv_temp <- substring(grep("AC$MASS_SPECTROMETRY: DESOLVATION_TEMPERATURE", mb, value = TRUE, fixed = TRUE), 47)
-  ac$ms_frag_mode <- substring(grep("AC$MASS_SPECTROMETRY: FRAGMENTATION_MODE", mb, value = TRUE, fixed = TRUE), 42)
+  #ac$ms_frag_mode <- substring(grep("AC$MASS_SPECTROMETRY: FRAGMENTATION_MODE", mb, value = TRUE, fixed = TRUE), 42)
   ac$ms_ionization <- substring(grep("AC$MASS_SPECTROMETRY: IONIZATION", mb, value = TRUE, fixed = TRUE), 34)
   ac$ms_ionization_energy <- substring(grep("AC$MASS_SPECTROMETRY: IONIZATION_ENERGY", mb, value = TRUE, fixed = TRUE), 41)
   ac$ms_laser <- substring(grep("AC$MASS_SPECTROMETRY: LASER", mb, value = TRUE, fixed = TRUE), 29)
@@ -236,7 +257,7 @@
 
   # analytical chemistry information, chromatography ---------------------------
   ac$chrom_carrier_gas <- substring(grep("AC$CHROMATOGRAPHY: CARRIER_GAS", mb, value = TRUE, fixed = TRUE), 32)
-  ac$chrom_column <- substring(grep("AC$CHROMATOGRAPHY: COLUMN_NAME", mb, value = TRUE, fixed = TRUE), 32)
+  #ac$chrom_column <- substring(grep("AC$CHROMATOGRAPHY: COLUMN_NAME", mb, value = TRUE, fixed = TRUE), 32)
   ac$chrom_column_temp <- substring(grep("AC$CHROMATOGRAPHY: COLUMN_TEMPERATURE", mb, value = TRUE, fixed = TRUE), 39)
   ac$chrom_column_temp_gradient <- substring(grep("AC$CHROMATOGRAPHY: COLUMN_TEMPERATURE_GRADIENT", mb, value = TRUE, fixed = TRUE), 48)
   ac$chrom_flow_gradient <- substring(grep("AC$CHROMATOGRAPHY: FLOW_GRADIENT", mb, value = TRUE, fixed = TRUE), 34)
@@ -281,13 +302,13 @@
   ch <- list()
 
   # isolate chemical information
-  ch$name <- as.list(substring(grep("CH$NAME:", mb, value = TRUE, fixed = TRUE), 10))
+  #ch$name <- as.list(substring(grep("CH$NAME:", mb, value = TRUE, fixed = TRUE), 10))
   ch$compound_class <- substring(grep("CH$COMPOUND_CLASS:", mb, value = TRUE, fixed = TRUE), 20)
-  ch$formula <- substring(grep("CH$FORMULA:", mb, value = TRUE, fixed = TRUE), 13)
-  ch$exact_mass <- as.numeric(substring(grep("CH$EXACT_MASS:", mb, value = TRUE, fixed = TRUE), 16))
-  ch$smiles <- substring(grep("CH$SMILES:", mb, value = TRUE, fixed = TRUE), 12)
-  ch$iupac <- substring(grep("CH$IUPAC:", mb, value = TRUE, fixed = TRUE), 11)
-  ch$link_cas <- substring(grep("CH$LINK: CAS", mb, value = TRUE, fixed = TRUE), 14)
+  #ch$formula <- substring(grep("CH$FORMULA:", mb, value = TRUE, fixed = TRUE), 13)
+  #ch$exact_mass <- as.numeric(substring(grep("CH$EXACT_MASS:", mb, value = TRUE, fixed = TRUE), 16))
+  #ch$smiles <- substring(grep("CH$SMILES:", mb, value = TRUE, fixed = TRUE), 12)
+  #ch$iupac <- substring(grep("CH$IUPAC:", mb, value = TRUE, fixed = TRUE), 11)
+  #ch$link_cas <- substring(grep("CH$LINK: CAS", mb, value = TRUE, fixed = TRUE), 14)
   ch$link_cayman <- substring(grep("CH$LINK: CAYMAN", mb, value = TRUE, fixed = TRUE), 17)
   ch$link_chebi <- substring(grep("CH$LINK: CHEBI", mb, value = TRUE, fixed = TRUE), 16)
   ch$link_chembl <- substring(grep("CH$LINK: CHEMBL", mb, value = TRUE, fixed = TRUE), 17)
@@ -295,14 +316,14 @@
   ch$link_chemspider <- substring(grep("CH$LINK: CHEMSPIDER", mb, value = TRUE, fixed = TRUE), 21)
   ch$link_comptox <- substring(grep("CH$LINK: COMPTOX", mb, value = TRUE, fixed = TRUE), 18)
   ch$link_hmdb <- substring(grep("CH$LINK: HMDB", mb, value = TRUE, fixed = TRUE), 15)
-  ch$link_inchikey <- substring(grep("CH$LINK: INCHIKEY", mb, value = TRUE, fixed = TRUE), 19)
+  #ch$link_inchikey <- substring(grep("CH$LINK: INCHIKEY", mb, value = TRUE, fixed = TRUE), 19)
   ch$link_kappaview <- substring(grep("CH$LINK: KAPPAVIEW", mb, value = TRUE, fixed = TRUE), 20)
   ch$link_kegg <- substring(grep("CH$LINK: KEGG", mb, value = TRUE, fixed = TRUE), 15)
   ch$link_knapsack <- substring(grep("CH$LINK: KNAPSACK", mb, value = TRUE, fixed = TRUE), 19)
   ch$link_lipidbank <- substring(grep("CH$LINK: LIPIDBANK", mb, value = TRUE, fixed = TRUE), 20)
   ch$link_lipidmaps <- substring(grep("CH$LINK: LIPIDMAPS", mb, value = TRUE, fixed = TRUE), 20)
   ch$link_nikkaji <- substring(grep("CH$LINK: NIKKAJI", mb, value = TRUE, fixed = TRUE), 18)
-  ch$link_pubchem <- substring(grep("CH$LINK: PUBCHEM", mb, value = TRUE, fixed = TRUE), 18)
+  #ch$link_pubchem <- substring(grep("CH$LINK: PUBCHEM", mb, value = TRUE, fixed = TRUE), 18)
   ch$link_zinc <- substring(grep("CH$LINK: ZINC", mb, value = TRUE, fixed = TRUE), 15)
 
   # clean up data
@@ -359,9 +380,9 @@
 
   # MS information, precursor
   ms$focus_ion_type <- substring(grep("MS$FOCUSED_ION: ION_TYPE", mb, value = TRUE, fixed = TRUE), 26)
-  ms$focus_precursor_int <- substring(grep("MS$FOCUSED_ION: PRECURSOR_INT", mb, value = TRUE, fixed = TRUE), 31)
-  ms$focus_precursor_mz <- substring(grep("MS$FOCUSED_ION: PRECURSOR_MZ", mb, value = TRUE, fixed = TRUE), 30)
-  ms$focus_precursor_type <- substring(grep("MS$FOCUSED_ION: PRECURSOR_TYPE", mb, value = TRUE, fixed = TRUE), 32)
+  #ms$focus_precursor_int <- substring(grep("MS$FOCUSED_ION: PRECURSOR_INT", mb, value = TRUE, fixed = TRUE), 31)
+  #ms$focus_precursor_mz <- substring(grep("MS$FOCUSED_ION: PRECURSOR_MZ", mb, value = TRUE, fixed = TRUE), 30)
+  #ms$focus_precursor_type <- substring(grep("MS$FOCUSED_ION: PRECURSOR_TYPE", mb, value = TRUE, fixed = TRUE), 32)
 
   # MS data processing
   ms$data_processing_comment <- substring(grep("MS$DATA_PROCESSING: COMMENT", mb, value = TRUE, fixed = TRUE), 29)
@@ -393,9 +414,9 @@
   recordinfo <- list()
 
   # mb information
-  recordinfo$accession <- substring(grep("ACCESSION:", mb, value = TRUE, fixed = TRUE), 12)
+  #recordinfo$accession <- substring(grep("ACCESSION:", mb, value = TRUE, fixed = TRUE), 12)
   recordinfo$deprecated <- substring(grep("DEPRECATED:", mb, value = TRUE, fixed = TRUE), 13)
-  recordinfo$record_title <- substring(grep("RECORD_TITLE:", mb, value = TRUE, fixed = TRUE), 15)
+  #recordinfo$record_title <- substring(grep("RECORD_TITLE:", mb, value = TRUE, fixed = TRUE), 15)
   recordinfo$date <- substring(grep("DATE:", mb, value = TRUE, fixed = TRUE), 7)
   recordinfo$authors <- substring(grep("AUTHORS:", mb, value = TRUE, fixed = TRUE), 10)
   recordinfo$license <- substring(grep("LICENSE:", mb, value = TRUE, fixed = TRUE), 10)
@@ -426,7 +447,7 @@
 
   # peak data
   pk$splash <- substring(grep("PK$SPLASH:", mb, value = TRUE, fixed = TRUE), 12)
-  pk$num <- substring(grep("PK$NUM_PEAK:", mb, value = TRUE, fixed = TRUE), 14)
+  pk$pknum <- substring(grep("PK$NUM_PEAK:", mb, value = TRUE, fixed = TRUE), 14)
 
   # clean up data
   pk <- .cleanParsing(pk)
@@ -502,4 +523,5 @@ metaDataBlocks <- function() {
   }
 
   x
+
 }

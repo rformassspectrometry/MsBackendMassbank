@@ -10,21 +10,21 @@ test_that("backendInitialize,MsBackendMgf works", {
   expect_identical(res_single$dataStorage, rep("<memory>", 3))
   expect_identical(res_single$dataOrigin, rep(normalizePath(fls[1]), 3))
   expect_identical(res_single$msLevel, rep(2L, 3))
-  expect_identical(ncol(res_single@spectraData), 102L)
+  expect_identical(length(spectraVariables(res_single)), 33L)
 
 
   # Import a single file with multiple record, only spectrum
   metaDataBlocks <- data.frame(metadata = c("ac", "ch", "sp", "ms", "record", "pk", "comment"),
-                               read = rep(FALSE, 7),
+                               read = rep(TRUE, 7),
                                stringsAsFactors = FALSE)
 
-  res_single <- backendInitialize(be, fls[1], metaBlocks = metaDataBlocks)
+  res_single <- backendInitialize(be, fls, metaBlocks = metaDataBlocks)
 
   expect_identical(length(res_single), 3L)
   expect_identical(res_single$dataStorage, rep("<memory>", 3))
   expect_identical(res_single$dataOrigin, rep(normalizePath(fls[1]), 3))
   expect_identical(res_single$msLevel, rep(2L, 3))
-  expect_identical(ncol(res_single@spectraData), 12L)
+  expect_identical(length(spectraVariables(res_single)), 107L)
 
   ## Import multiple files, single entries
   fls <- dir(system.file("extdata", package = "MsBackendMassbank"),
