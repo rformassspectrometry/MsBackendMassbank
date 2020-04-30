@@ -16,5 +16,5 @@ It is possible to
 metaDataBlocks()
 }
 \author{
-Laurent Gatto
+Michael Witting
 }

@@ -1,43 +1,49 @@
 test_that("backendInitialize,MsBackendMgf works", {
 
-  # get test files
-  fls <- dir(system.file("extdata", package = "MsBackendMassbank"),
-             full.names = TRUE, pattern = "txt$")
+  ## Import a single file with multiple record
+  fls <- system.file("extdata/MassBankRecords.txt", package = "MsBackendMassbank")
   be <- MsBackendMassbank()
 
-  ## Import a single file with multiple record
-  res1 <- backendInitialize(be, fls[1])
+  res_single <- backendInitialize(be, fls)
 
-  n1 <- length(res1) ## 3
-  expect_identical(length(res1), n1)
-  expect_identical(res1$dataStorage, rep("<memory>", n1))
-  expect_identical(res1$dataOrigin, rep(normalizePath(fls[1]), n1))
-  expect_identical(res1$msLevel, rep(2L, n1))
+  expect_identical(length(res_single), 3L)
+  expect_identical(res_single$dataStorage, rep("<memory>", 3))
+  expect_identical(res_single$dataOrigin, rep(normalizePath(fls[1]), 3))
+  expect_identical(res_single$msLevel, rep(2L, 3))
+  expect_identical(ncol(res_single@spectraData), 102L)
 
-  ## Import multiple files.
-  res_all <- backendInitialize(be, fls)
-  expect_true(length(res_all) == 9)
-  #expect_identical(res_all[1]$mz, res1[1]$mz)
-  expect_true(all(res_all$msLevel == 2L))
-  expect_identical(res_all$dataOrigin, c(rep(normalizePath(fls)[1], 3),
-                                         normalizePath(fls[-1])))
-  expect_true(is.integer(res_all@spectraData$msLevel))
 
   # Import a single file with multiple record, only spectrum
   metaDataBlocks <- data.frame(metadata = c("ac", "ch", "sp", "ms", "record", "pk", "comment"),
                                read = rep(FALSE, 7),
                                stringsAsFactors = FALSE)
 
+  res_single <- backendInitialize(be, fls[1], metaBlocks = metaDataBlocks)
+
+  expect_identical(length(res_single), 3L)
+  expect_identical(res_single$dataStorage, rep("<memory>", 3))
+  expect_identical(res_single$dataOrigin, rep(normalizePath(fls[1]), 3))
+  expect_identical(res_single$msLevel, rep(2L, 3))
+  expect_identical(ncol(res_single@spectraData), 12L)
+
+  ## Import multiple files, single entries
+  fls <- dir(system.file("extdata", package = "MsBackendMassbank"),
+             full.names = TRUE, pattern = "^RP.*txt$")
+
+  res_multiple <- backendInitialize(be, fls)
+
+  expect_true(length(res_multiple) == 6)
+  expect_true(all(res_multiple$msLevel == 2L))
+  expect_identical(res_multiple$dataOrigin, normalizePath(fls))
+  expect_true(is.integer(res_multiple@spectraData$msLevel))
+
+  ## Import a single file without RT information
+  fls <- system.file("extdata/BSU00001.txt", package = "MsBackendMassbank")
   be <- MsBackendMassbank()
 
-  ## Import a single file with multiple record
-  res1 <- backendInitialize(be, fls[1], metaBlocks = metaDataBlocks)
+  res_single <- backendInitialize(be, fls)
 
-  n1 <- length(res1) ## 3
-  expect_identical(length(res1), n1)
-  expect_identical(res1$dataStorage, rep("<memory>", n1))
-  expect_identical(res1$dataOrigin, rep(normalizePath(fls[1]), n1))
-  expect_identical(res1$msLevel, rep(2L, n1))
+  expect_identical(res_single$rtime, c(rtime = NA_real_))
 
   ## TODO: Import with failing file.
   ## TODO: Import with failing file and nonStop = TRUE

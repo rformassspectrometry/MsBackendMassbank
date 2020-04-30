@@ -8,7 +8,6 @@
 ##' @param ... Additional parameters, currently ignored.
 ##'
 ##' @importFrom S4Vectors DataFrame cbind.DataFrame
-##'
 ##' @importFrom IRanges NumericList
 ##'
 ##' @author Michael Witting
@@ -16,6 +15,7 @@
 ##' @noRd
 .read_massbank <- function(f, msLevel = 2L,
                            metaBlocks = metaDataBlocks(),
+                           nonStop = FALSE,
                            ...) {
 
   if (length(f) != 1L)
@@ -27,7 +27,7 @@
               quiet = TRUE)
 
   begin <- grep("ACCESSION:", mb) + 1L
-  end <- grep("//", mb)
+  end <- grep("^//$", mb)
 
   n <- length(begin)
   spec <- vector("list", length = n)
@@ -37,7 +37,7 @@
   ms <- vector("list", length = n)
   record <- vector("list", length = n)
   pk <- vector("list", length = n)
-  comment <- vector("list", length = n)
+  #comment <- vector("list", length = n)
 
   for (i in seq(along = spec)) {
     spec[[i]] <- .extract_mb_spectrum(mb[begin[i]:end[i]])
@@ -60,8 +60,8 @@
     if(metaBlocks$read[which(metaBlocks$metadata == "pk")])
       pk[[i]] <- .extract_mb_pk(mb[begin[i]:end[i]])
 
-    if(metaBlocks$read[which(metaBlocks$metadata == "comment")])
-      comment[[i]] <- .extract_mb_comment(mb[begin[i]:end[i]])
+    # if(metaBlocks$read[which(metaBlocks$metadata == "comment")])
+    #   comment[[i]] <- .extract_mb_comment(mb[begin[i]:end[i]])
   }
 
   res <- DataFrame(do.call(rbind, spec))
@@ -71,7 +71,7 @@
   res_ms <- DataFrame(do.call(rbind, ms))
   res_record <- DataFrame(do.call(rbind, record))
   res_pk <- DataFrame(do.call(rbind, pk))
-  res_comment <- DataFrame(do.call(rbind, comment))
+  #res_comment <- DataFrame(do.call(rbind, comment))
 
   # only bind if it contains elements
   if(length(res_ac)) {
@@ -98,9 +98,9 @@
     res <- cbind.DataFrame(res, res_pk)
   }
 
-  if(length(res_comment)) {
-    res <- cbind.DataFrame(res, res_comment)
-  }
+  # if(length(res_comment)) {
+  #   res <- cbind.DataFrame(res, res_comment)
+  # }
 
   for (i in seq_along(res)) {
     if (all(lengths(res[[i]]) == 1))
@@ -121,7 +121,7 @@
 ##' @author Michael Witting
 ##'
 ##' @noRd
-.extract_mb_spectrum <- function(mb) {
+.extract_mb_spectrum <- function(mb, nonStop = FALSE) {
 
   #read the spectrum
   spectrum_start <- grep("PK$PEAK:", mb, fixed = TRUE) + 1
@@ -150,11 +150,15 @@
                                  regexpr("[[:digit:]]+\\.[[:digit:]]+",
                                          rtime)))
 
+
+
   precursorMz <- as.numeric(substring(grep("MS$FOCUSED_ION: PRECURSOR_M/Z",
                                            mb,
                                            value = TRUE,
                                            fixed = TRUE),
                                       30))
+
+
 
   precursorIntensity <- as.numeric(substring(grep("MS$FOCUSED_ION: PRECURSOR_INT",
                                                   mb,
@@ -162,15 +166,27 @@
                                                   fixed = TRUE),
                                              31))
 
+
+  # back up if no values are supplied
+  if(!length(rtime)) rtime <- NA_real_
+  if(!length(precursorMz)) precursorMz <- NA_real_
+  if(!length(precursorIntensity)) precursorIntensity <- 100
+
+  # # check if values are supplied
+  # if (!length(rtime) || !length(precursorMz) || length(precursorIntensity)) {
+  #   msg <- paste0("No precursor mz and intensity and RT values found in file ")
+  #   if (nonStop) {
+  #     warning(msg)
+  #     return(list())
+  #   } else stop(msg)
+  # }
+
+
   title <- substring(grep("RECORD_TITLE:",
                           mb,
                           value = TRUE,
                           fixed = TRUE),
                      15)
-
-  # check data
-  if(!length(precursorIntensity))
-    precursorIntensity <- 100
 
   list(rtime = rtime * 60,
        scanIndex = as.integer(1),
@@ -247,6 +263,8 @@
   # analytical chemistry information, general ----------------------------------
   ac$general_conc <- substring(grep("AC$GENERAL: CONCENTRATION", mb, value = TRUE, fixed = TRUE), 27)
 
+  ac <- .cleanParsing(ac)
+
   ac
 
 }
@@ -288,7 +306,7 @@
   ch$link_zinc <- substring(grep("CH$LINK: ZINC", mb, value = TRUE, fixed = TRUE), 15)
 
   # clean up data
-  # TODO replace character(0) with NA_character
+  ch <- .cleanParsing(ch)
 
   # return result list
   ch
@@ -313,7 +331,7 @@
   sp$sample <- substring(grep("SP$SAMPLE:", mb, value = TRUE, fixed = TRUE), 12)
 
   # clean up data
-  # TODO replace character(0) with NA_character
+  sp <- .cleanParsing(sp)
 
   # return result list
   sp
@@ -354,7 +372,7 @@
   ms$data_processing_whole <- substring(grep("MS$DATA_PROCESSING: WHOLE", mb, value = TRUE, fixed = TRUE), 27)
 
   # clean up data
-  # TODO replace character(0) with NA_character_
+  ms <- .cleanParsing(ms)
 
   # TODO type conversion for numeric data
 
@@ -386,7 +404,7 @@
   recordinfo$project <- as.list(substring(grep("PROJECT:", mb, value = TRUE, fixed = TRUE), 10))
 
   # clean up data
-  # TODO replace character(0) with NA_character_
+  recordinfo <- .cleanParsing(recordinfo)
 
   # TODO type conversion for dates
 
@@ -411,7 +429,7 @@
   pk$num <- substring(grep("PK$NUM_PEAK:", mb, value = TRUE, fixed = TRUE), 14)
 
   # clean up data
-  # TODO replace character(0) with NA_character_
+  pk <- .cleanParsing(pk)
 
   # TODO type conversion for numeric data
 
@@ -429,7 +447,10 @@
 .extract_mb_comment <- function(mb) {
 
   # comment section
-  comment <- as.list(substring(grep("COMMENT:", mb, value = TRUE, fixed = TRUE), 10))
+  comment <- substring(grep("COMMENT:", mb, value = TRUE, fixed = TRUE), 10)
+
+  # clean up data
+  comment <- .cleanParsing(comment)
 
   # return result list
   comment
@@ -444,7 +465,7 @@
 ##'
 ##' @return A `data.frame` with metadata blocks.
 ##'
-##' @author Laurent Gatto
+##' @author Michael Witting
 ##'
 ##' @importFrom utils read.csv
 ##'
@@ -459,4 +480,26 @@ metaDataBlocks <- function() {
            header = TRUE,
            stringsAsFactors = FALSE)
 
+}
+
+##' Clean parsing
+##'
+##' @title Cleaning meta data parsing
+##'
+##' @param x `List` with entries
+##'
+##' @return `List` with cleaned entries
+##'
+##' @noRd
+.cleanParsing <- function(x) {
+
+  for(i in 1:length(x)) {
+
+    if(!length(x[[i]])) {
+      x[[i]] <- NA_character_
+    }
+
+  }
+
+  x
 }
