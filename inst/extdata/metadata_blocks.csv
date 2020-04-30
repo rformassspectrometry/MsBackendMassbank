@@ -1,8 +1,8 @@
 metadata,read
-ac,TRUE
-ch,TRUE
-sp,TRUE
-ms,TRUE
-record,TRUE
-pk,TRUE
-comment,TRUE
+ac,FALSE
+ch,FALSE
+sp,FALSE
+ms,FALSE
+record,FALSE
+pk,FALSE
+comment,FALSE
