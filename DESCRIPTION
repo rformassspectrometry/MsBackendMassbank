@@ -1,6 +1,6 @@
 Package: MsBackendMassbank
 Title: Mass Spectrometry Data Backend for MassBank record Files
-Version: 0.1.0
+Version: 0.2.0
 Authors@R: 
     c(person(given = "Michael", family = "Witting",
              role = c("aut", "cre"),
@@ -31,7 +31,7 @@ LazyData: yes
 Encoding: UTF-8
 VignetteBuilder: knitr
 BugReports: https://github.com/michaelwitting/MsBackendMassbank/issues
-URL: https://github.com/michaelwitting/MsBackendMassbank/MsBackendMgf
+URL: https://github.com/michaelwitting/MsBackendMassbank
 biocViews: Infrastructure, MassSpectrometry, Metabolomics
 Roxygen: list(markdown=TRUE)
 RoxygenNote: 7.1.0
