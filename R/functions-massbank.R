@@ -22,15 +22,18 @@
                            nonStop = FALSE,
                            ...) {
 
-  if (length(f) != 1L)
-    stop("Please provide a single mgf file.")
+  if (length(f) != 1L) {
+
+    stop("Please provide a single Massbank file.")
+
+  }
 
   mb <- scan(file = f, what = "",
               sep = "\n", quote = "",
               allowEscapes = FALSE,
               quiet = TRUE)
 
-  begin <- grep("ACCESSION:", mb) + 1L
+  begin <- grep("ACCESSION:", mb)
   end <- grep("^//$", mb)
 
   n <- length(begin)

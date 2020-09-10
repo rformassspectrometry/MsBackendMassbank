@@ -86,32 +86,56 @@ setClass("MsBackendMassbank",
 setMethod("backendInitialize", signature = "MsBackendMassbank",
           function(object, files, metaBlocks = metaDataBlocks(),
                    nonStop = FALSE, ..., BPPARAM = bpparam()) {
-            if (missing(files) || !length(files))
+
+            if (missing(files) || !length(files)) {
+
               stop("Parameter 'files' is mandatory for ", class(object))
-            if (!is.character(files))
+
+            }
+
+            if (!is.character(files)) {
+
               stop("Parameter 'files' is expected to be a character vector",
                    " with the files names from where data should be",
                    " imported")
+
+            }
+
             files <- normalizePath(files)
-            if (any(!file.exists(files)))
+
+            if (any(!file.exists(files))) {
+
               stop("file(s) ",
                    paste(files[!file.exists(files)], collapse = ", "),
                    " not found")
+
+            }
+
             ## Import data and rbind.
             message("Start data import from ", length(files), " files ... ",
                     appendLF = FALSE)
+
             res <- bplapply(files, FUN = .read_massbank, metaBlocks = metaBlocks,
                             nonStop = nonStop, BPPARAM = BPPARAM)
+
             message("done")
+
             res <- do.call(rbind, res)
-            if (nonStop && length(files) > nrow(res))
+
+            if (nonStop && length(files) > nrow(res)) {
+
               warning("Import failed for ", length(files) - nrow(res),
                       " files")
+
+            }
+
             asDataFrame(object) <- res
             object$dataStorage <- "<memory>"
             object$centroided <- TRUE
             validObject(object)
+
             object
+
           })
 
 #' @rdname MsBackendMassbank
