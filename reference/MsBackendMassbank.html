@@ -87,7 +87,7 @@ parameter nonStop." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MsBackendMassbank</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -152,12 +152,12 @@ parameter <code>nonStop</code>.</p>
 
     <pre class="usage"><span class='co'># S4 method for MsBackendMassbank</span>
 <span class='fu'>backendInitialize</span>(
-  <span class='no'>object</span>,
-  <span class='no'>files</span>,
-  <span class='kw'>metaBlocks</span> <span class='kw'>=</span> <span class='fu'><a href='metaDataBlocks.html'>metaDataBlocks</a></span>(),
-  <span class='kw'>nonStop</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='no'>...</span>,
-  <span class='kw'>BPPARAM</span> <span class='kw'>=</span> <span class='fu'>bpparam</span>()
+  <span class='kw'>object</span>,
+  <span class='kw'>files</span>,
+  metaBlocks = <span class='fu'><a href='metaDataBlocks.html'>metaDataBlocks</a></span>(),
+  nonStop = <span class='fl'>FALSE</span>,
+  <span class='kw'>...</span>,
+  BPPARAM = <span class='fu'>bpparam</span>()
 )
 
 <span class='fu'>MsBackendMassbank</span>()</pre>
@@ -196,13 +196,18 @@ setup to import data in parallel. Defaults to <code>BPPARAM = bpparam()</code>. 
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Michael Witting</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='co'>## Create an MsBackendMassbank backend and import data from test xml files.</span>
-<span class='no'>fls</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>dir</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"extdata"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"MsBackendMassbank"</span>),
-    <span class='kw'>full.names</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>pattern</span> <span class='kw'>=</span> <span class='st'>"txt$"</span>)
-<span class='no'>be</span> <span class='kw'>&lt;-</span> <span class='fu'>backendInitialize</span>(<span class='fu'>MsBackendMassbank</span>(), <span class='no'>fls</span>)</div><div class='output co'>#&gt; <span class='message'>Start data import from 8 files ... </span></div><div class='output co'>#&gt; <span class='message'>done</span></div><div class='input'><span class='no'>be</span></div><div class='output co'>#&gt; MsBackendMassbank with 10 spectra
+<span class='kw'>fls</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>dir</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"extdata"</span>, package = <span class='st'>"MsBackendMassbank"</span>),
+    full.names = <span class='fl'>TRUE</span>, pattern = <span class='st'>"txt$"</span>)
+<span class='kw'>be</span> <span class='op'>&lt;-</span> <span class='fu'>backendInitialize</span>(<span class='fu'>MsBackendMassbank</span>(), <span class='kw'>fls</span>)
+</div><div class='output co'>#&gt; <span class='message'>Start data import from 8 files ... </span></div><div class='output co'>#&gt; <span class='message'>done</span></div><div class='input'><span class='kw'>be</span>
+</div><div class='output co'>#&gt; MsBackendMassbank with 10 spectra
 #&gt;      msLevel     rtime scanIndex
 #&gt;    &lt;integer&gt; &lt;numeric&gt; &lt;integer&gt;
 #&gt; 1          2        NA         1
@@ -216,7 +221,9 @@ setup to import data in parallel. Defaults to <code>BPPARAM = bpparam()</code>. 
 #&gt; 9          2    143.94         1
 #&gt; 10         2    143.94         1
 #&gt;  ... 30 more variables/columns.</div><div class='input'>
-<span class='no'>be</span>$<span class='no'>msLevel</span></div><div class='output co'>#&gt;  [1] 2 2 2 2 2 2 2 2 2 2</div><div class='input'><span class='no'>be</span>$<span class='no'>intensity</span></div><div class='output co'>#&gt; NumericList of length 10
+<span class='kw'>be</span><span class='op'>$</span><span class='kw'>msLevel</span>
+</div><div class='output co'>#&gt;  [1] 2 2 2 2 2 2 2 2 2 2</div><div class='input'><span class='kw'>be</span><span class='op'>$</span><span class='kw'>intensity</span>
+</div><div class='output co'>#&gt; NumericList of length 10
 #&gt; [["intensity"]] 12461 2208 2394 40390 2816 3122 ... 6937 2914 6059 1871 9233
 #&gt; [[""]] 646 980 2114 20052 1248 7628 2036 494048 75708
 #&gt; [[""]] 10186 142 142 750 138 490 126 ... 14266 1478 1600 16504 1446 109762
@@ -226,7 +233,8 @@ setup to import data in parallel. Defaults to <code>BPPARAM = bpparam()</code>. 
 #&gt; [["intensity"]] 324 184 138 3770 500 800 7214 ... 206 898 162 166 814 250 1840
 #&gt; [["intensity"]] 150 200 32 232 80 12162
 #&gt; [["intensity"]] 460 3630 658 74 28 190 44 142 50 52 634
-#&gt; [["intensity"]] 282 424</div><div class='input'><span class='no'>be</span>$<span class='no'>mz</span></div><div class='output co'>#&gt; NumericList of length 10
+#&gt; [["intensity"]] 282 424</div><div class='input'><span class='kw'>be</span><span class='op'>$</span><span class='kw'>mz</span>
+</div><div class='output co'>#&gt; NumericList of length 10
 #&gt; [["mz"]] 84.1 105.1 107.1 114.1 115.1 119.1 ... 393.3 396.3 410.3 411.3 414.3
 #&gt; [[""]] 74.0233 132.0807 144.0805 146.0598 ... 170.0597 188.0699 205.0965
 #&gt; [[""]] 74.0232 77.0381 86.0027 91.0539 ... 160.0947 170.0596 171.0625 188.07
@@ -252,7 +260,7 @@ setup to import data in parallel. Defaults to <code>BPPARAM = bpparam()</code>. 
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>
