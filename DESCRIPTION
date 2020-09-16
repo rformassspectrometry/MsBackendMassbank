@@ -15,7 +15,6 @@ Imports:
     BiocParallel,
     S4Vectors,
     IRanges,
-    MsCoreUtils,
     methods   
 Suggests:
     testthat,
@@ -24,7 +23,8 @@ Suggests:
     BiocStyle (>= 2.5.19),
     rmarkdown
 Remotes:
-   RforMassSpectrometry/Spectra
+   RforMassSpectrometry/Spectra,
+   RforMassSpectrometry/MsCoreUtils
 License: Artistic-2.0
 LazyData: yes
 Encoding: UTF-8
