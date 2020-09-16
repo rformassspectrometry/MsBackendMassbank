@@ -59,7 +59,9 @@ backend as *source* to enable data import. First we import from a single file
 with multiple library spectra.
 
 ```{r import}
-sps <- Spectra(fls[1], source = MsBackendMassbank())
+sps <- Spectra(fls[1],
+               source = MsBackendMassbank(),
+               backend = MsBackendDataFrame())
 ```
 
 With that we have now full access to all imported spectra variables
@@ -73,7 +75,9 @@ The same is possible with multiple files, containing each one individual library
 spectrum.
 
 ```{r import2}
-sps <- Spectra(fls[-1], source = MsBackendMassbank())
+sps <- Spectra(fls[-1],
+               source = MsBackendMassbank(),
+               backend = MsBackendDataFrame())
 spectraVariables(sps)
 ```
 
