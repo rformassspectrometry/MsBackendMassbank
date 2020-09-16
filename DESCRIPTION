@@ -15,6 +15,7 @@ Imports:
     BiocParallel,
     S4Vectors,
     IRanges,
+    MsCoreUtils,
     methods   
 Suggests:
     testthat,
