@@ -63,6 +63,8 @@ jobs:
         run: |
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
+          remotes::install_github("RforMassSpectrometry/MsCoreUtils")
+          remotes::install_github("RforMassSpectrometry/Spectra")
         shell: Rscript {0}
 
       - name: Check

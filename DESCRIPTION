@@ -10,13 +10,12 @@ Description: Mass spectrometry (MS) data backend supporting import and
 	     handling of MS/MS library spectra from MassBank record files.
 Depends:
     R (>= 3.5.0),
-    Spectra (>= 0.5.0),
-    MsCoreUtils(>= 0.99.3)
+    Spectra (>= 0.99.1)
 Imports:
     BiocParallel,
     S4Vectors,
     IRanges,
-    methods    
+    methods   
 Suggests:
     testthat,
     knitr (>= 1.1.0),
@@ -24,8 +23,8 @@ Suggests:
     BiocStyle (>= 2.5.19),
     rmarkdown
 Remotes:
-    RforMassSpectrometry/Spectra,
-    RforMassSpectrometry/MsCoreUtils
+   RforMassSpectrometry/Spectra,
+   RforMassSpectrometry/MsCoreUtils
 License: Artistic-2.0
 LazyData: yes
 Encoding: UTF-8
@@ -34,7 +33,7 @@ BugReports: https://github.com/michaelwitting/MsBackendMassbank/issues
 URL: https://github.com/michaelwitting/MsBackendMassbank
 biocViews: Infrastructure, MassSpectrometry, Metabolomics
 Roxygen: list(markdown=TRUE)
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Collate: 
     'hidden_aliases.R'
     'MsBackendMassbank.R'
