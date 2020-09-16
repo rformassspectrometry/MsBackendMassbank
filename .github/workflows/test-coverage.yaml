@@ -36,7 +36,7 @@ jobs:
           install.packages(c("remotes"))
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran("covr")
-                    remotes::install_github("RforMassSpectrometry/MsCoreUtils")
+          remotes::install_github("RforMassSpectrometry/MsCoreUtils")
           remotes::install_github("RforMassSpectrometry/Spectra")
         shell: Rscript {0}
 
