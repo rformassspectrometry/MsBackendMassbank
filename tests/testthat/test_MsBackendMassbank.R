@@ -1,4 +1,4 @@
-test_that("backendInitialize,MsBackendMgf works", {
+test_that("backendInitialize,MsBackendMassbank works", {
 
   ## Import a single file with multiple record
   fls <- system.file("extdata/MassBankRecords.txt", package = "MsBackendMassbank")
@@ -10,7 +10,7 @@ test_that("backendInitialize,MsBackendMgf works", {
   expect_identical(res_single$dataStorage, rep("<memory>", 3))
   expect_identical(res_single$dataOrigin, rep(normalizePath(fls[1]), 3))
   expect_identical(res_single$msLevel, rep(2L, 3))
-  expect_identical(length(spectraVariables(res_single)), 33L)
+  expect_identical(length(spectraVariables(res_single)), 31L)
 
 
   # Import a single file with multiple record, only spectrum
@@ -24,7 +24,7 @@ test_that("backendInitialize,MsBackendMgf works", {
   expect_identical(res_single$dataStorage, rep("<memory>", 3))
   expect_identical(res_single$dataOrigin, rep(normalizePath(fls[1]), 3))
   expect_identical(res_single$msLevel, rep(2L, 3))
-  expect_identical(length(spectraVariables(res_single)), 107L)
+  expect_identical(length(spectraVariables(res_single)), 106L)
 
   ## Import multiple files, single entries
   fls <- dir(system.file("extdata", package = "MsBackendMassbank"),

@@ -47,6 +47,7 @@
   #comment <- vector("list", length = n)
 
   for (i in seq(along = spec)) {
+
     spec[[i]] <- .extract_mb_spectrum(mb[begin[i]:end[i]])
 
     if(metaBlocks$read[which(metaBlocks$metadata == "ac")])
@@ -155,24 +156,24 @@
   meta$accession <- substring(grep("ACCESSION:", mb, value = TRUE, fixed = TRUE), 12)
   meta$name <- as.list(substring(grep("CH$NAME:", mb, value = TRUE, fixed = TRUE), 10))
   meta$smiles <- substring(grep("CH$SMILES:", mb, value = TRUE, fixed = TRUE), 12)
-  meta$exact_mass <- as.numeric(substring(grep("CH$EXACT_MASS:", mb, value = TRUE, fixed = TRUE), 16))
+  meta$exactmass <- as.numeric(substring(grep("CH$EXACT_MASS:", mb, value = TRUE, fixed = TRUE), 16))
   meta$formula <- substring(grep("CH$FORMULA:", mb, value = TRUE, fixed = TRUE), 13)
-  meta$iupac <- substring(grep("CH$IUPAC:", mb, value = TRUE, fixed = TRUE), 11)
-  meta$link_cas <- substring(grep("CH$LINK: CAS", mb, value = TRUE, fixed = TRUE), 14)
-  meta$link_pubchem <- substring(grep("CH$LINK: PUBCHEM", mb, value = TRUE, fixed = TRUE), 18)
-  meta$link_inchikey <- substring(grep("CH$LINK: INCHIKEY", mb, value = TRUE, fixed = TRUE), 19)
-  meta$link_chemspider <- substring(grep("CH$LINK: CHEMSPIDER", mb, value = TRUE, fixed = TRUE), 21)
-  meta$ms_col_energy <- substring(grep("AC$MASS_SPECTROMETRY: COLLISION_ENERGY", mb, value = TRUE, fixed = TRUE), 40)
-  meta$ms_frag_mode <- substring(grep("AC$MASS_SPECTROMETRY: FRAGMENTATION_MODE", mb, value = TRUE, fixed = TRUE), 42)
-  meta$chrom_column <- substring(grep("AC$CHROMATOGRAPHY: COLUMN_NAME", mb, value = TRUE, fixed = TRUE), 32)
-  meta$focus_precursor_type <- substring(grep("MS$FOCUSED_ION: PRECURSOR_TYPE", mb, value = TRUE, fixed = TRUE), 32)
+  meta$inchi <- substring(grep("CH$IUPAC:", mb, value = TRUE, fixed = TRUE), 11)
+  meta$cas <- substring(grep("CH$LINK: CAS", mb, value = TRUE, fixed = TRUE), 14)
+  meta$inchikey <- substring(grep("CH$LINK: INCHIKEY", mb, value = TRUE, fixed = TRUE), 19)
+  meta$collisionEnergy <- substring(grep("AC$MASS_SPECTROMETRY: COLLISION_ENERGY", mb, value = TRUE, fixed = TRUE), 40)
+  meta$adduct <- substring(grep("MS$FOCUSED_ION: PRECURSOR_TYPE", mb, value = TRUE, fixed = TRUE), 32)
   meta$rtime_string <- substring(grep("AC$CHROMATOGRAPHY: RETENTION_TIME", mb, value = TRUE, fixed = TRUE), 35)
+  meta$polarity <- substring(grep("AC$MASS_SPECTROMETRY: ION_MODE", mb, value = TRUE, fixed = TRUE), 32)
+  meta$splash <- substring(grep("PK$SPLASH:", mb, value = TRUE, fixed = TRUE), 12)
 
+  # clean NA values
   meta <- .cleanParsing(meta)
 
   # type conversion
-  meta$ms_col_energy <- as.numeric(meta$ms_col_energy)
+  meta$collisionEnergy <- as.numeric(meta$collisionEnergy)
 
+  # convert rtime
   if(!is.na(meta$rtime_string)) {
 
     rtime <- as.numeric(regmatches(meta$rtime_string, regexpr("[[:digit:]]+\\.[[:digit:]]+", meta$rtime_string)))
@@ -184,13 +185,29 @@
 
   }
 
+  # convert polarity
+
+  if(meta$polarity == "POSITIVE") {
+
+    meta$polarity <- 1L
+
+  } else if(meta$polarity == "NEGATIVE") {
+
+    meta$polarity <- 0L
+
+  } else {
+
+    meta$polarity <- NA_integer_
+
+  }
+
   precursorMz <- as.numeric(substring(grep("MS$FOCUSED_ION: PRECURSOR_M/Z", mb, value = TRUE, fixed = TRUE), 30))
   precursorIntensity <- as.numeric(substring(grep("MS$FOCUSED_ION: PRECURSOR_INT", mb, value = TRUE, fixed = TRUE), 31))
 
   # back up if no values are supplied
   #if(!length(rtime)) rtime <- NA_real_
   if(!length(precursorMz)) precursorMz <- NA_real_
-  if(!length(precursorIntensity)) precursorIntensity <- 100
+  if(!length(precursorIntensity)) precursorIntensity <- NA_real_
 
   title <- substring(grep("RECORD_TITLE:",
                           mb,
@@ -198,27 +215,28 @@
                           fixed = TRUE),
                      15)
 
-  list(accession = meta$accession,
-       name = meta$name,
-       smiles = meta$smiles,
-       exact_mass = meta$exact_mass,
-       formula = meta$formula,
-       iupac = meta$iupac,
-       link_cas = meta$link_cas,
-       link_pubchem = meta$link_pubchem,
-       link_inchikey = meta$link_inchikey,
-       link_chemspider = meta$link_chemspider,
-       ms_frag_mode = meta$ms_frag_mode,
-       chrom_column = meta$chrom_column,
-       focus_precursor_type = meta$focus_precursor_type,
+  # first core variables, then others
+  list(acquistionNum = 1L,
+       centroided = TRUE,
+       collisionEnergy = meta$collisionEnergy,
+       intensity = spectrum$intensity,
+       mz = spectrum$mz,
+       polarity = meta$polarity,
+       precursorCharge = as.integer(0),
+       precursorIntensity = precursorIntensity,
+       precursorMz = precursorMz,
        rtime = rtime,
        scanIndex = as.integer(1),
-       precursorMz = precursorMz,
-       precursorIntensity = precursorIntensity,
-       precursorCharge = as.integer(0),
-       mz = spectrum$mz,
-       intensity = spectrum$intensity,
-       collisionEnergy = meta$ms_col_energy,
+       accession = meta$accession,
+       name = meta$name,
+       smiles = meta$smiles,
+       exactmass = meta$exactmass,
+       formula = meta$formula,
+       inchi = meta$inchi,
+       cas = meta$cas,
+       inchikey = meta$inchikey,
+       adduct = meta$adduct,
+       splash = meta$splash,
        title = title)
 
 }
@@ -241,12 +259,10 @@
   # analytical chemistry information, MS settings ------------------------------
   ac$ms_ms_type <- substring(grep("AC$MASS_SPECTROMETRY: MS_TYPE", mb, value = TRUE, fixed = TRUE), 31)
   ac$ms_cap_voltage <- substring(grep("AC$MASS_SPECTROMETRY: CAPILLARY_VOLTAGE", mb, value = TRUE, fixed = TRUE), 41)
-  ac$ms_ion_mode <- substring(grep("AC$MASS_SPECTROMETRY: ION_MODE", mb, value = TRUE, fixed = TRUE), 32)
-  #ac$ms_col_energy <- substring(grep("AC$MASS_SPECTROMETRY: COLLISION_ENERGY", mb, value = TRUE, fixed = TRUE), 40)
   ac$ms_col_gas <- substring(grep("AC$MASS_SPECTROMETRY: COLLISION_GAS", mb, value = TRUE, fixed = TRUE), 37)
   ac$ms_desolv_gas_flow <- substring(grep("AC$MASS_SPECTROMETRY: DESOLVATION_GAS_FLOW", mb, value = TRUE, fixed = TRUE), 44)
   ac$ms_desolv_temp <- substring(grep("AC$MASS_SPECTROMETRY: DESOLVATION_TEMPERATURE", mb, value = TRUE, fixed = TRUE), 47)
-  #ac$ms_frag_mode <- substring(grep("AC$MASS_SPECTROMETRY: FRAGMENTATION_MODE", mb, value = TRUE, fixed = TRUE), 42)
+  ac$ms_frag_mode <- substring(grep("AC$MASS_SPECTROMETRY: FRAGMENTATION_MODE", mb, value = TRUE, fixed = TRUE), 42)
   ac$ms_ionization <- substring(grep("AC$MASS_SPECTROMETRY: IONIZATION", mb, value = TRUE, fixed = TRUE), 34)
   ac$ms_ionization_energy <- substring(grep("AC$MASS_SPECTROMETRY: IONIZATION_ENERGY", mb, value = TRUE, fixed = TRUE), 41)
   ac$ms_laser <- substring(grep("AC$MASS_SPECTROMETRY: LASER", mb, value = TRUE, fixed = TRUE), 29)
@@ -260,7 +276,7 @@
 
   # analytical chemistry information, chromatography ---------------------------
   ac$chrom_carrier_gas <- substring(grep("AC$CHROMATOGRAPHY: CARRIER_GAS", mb, value = TRUE, fixed = TRUE), 32)
-  #ac$chrom_column <- substring(grep("AC$CHROMATOGRAPHY: COLUMN_NAME", mb, value = TRUE, fixed = TRUE), 32)
+  ac$chrom_column <- substring(grep("AC$CHROMATOGRAPHY: COLUMN_NAME", mb, value = TRUE, fixed = TRUE), 32)
   ac$chrom_column_temp <- substring(grep("AC$CHROMATOGRAPHY: COLUMN_TEMPERATURE", mb, value = TRUE, fixed = TRUE), 39)
   ac$chrom_column_temp_gradient <- substring(grep("AC$CHROMATOGRAPHY: COLUMN_TEMPERATURE_GRADIENT", mb, value = TRUE, fixed = TRUE), 48)
   ac$chrom_flow_gradient <- substring(grep("AC$CHROMATOGRAPHY: FLOW_GRADIENT", mb, value = TRUE, fixed = TRUE), 34)
@@ -305,13 +321,7 @@
   ch <- list()
 
   # isolate chemical information
-  #ch$name <- as.list(substring(grep("CH$NAME:", mb, value = TRUE, fixed = TRUE), 10))
   ch$compound_class <- substring(grep("CH$COMPOUND_CLASS:", mb, value = TRUE, fixed = TRUE), 20)
-  #ch$formula <- substring(grep("CH$FORMULA:", mb, value = TRUE, fixed = TRUE), 13)
-  #ch$exact_mass <- as.numeric(substring(grep("CH$EXACT_MASS:", mb, value = TRUE, fixed = TRUE), 16))
-  #ch$smiles <- substring(grep("CH$SMILES:", mb, value = TRUE, fixed = TRUE), 12)
-  #ch$iupac <- substring(grep("CH$IUPAC:", mb, value = TRUE, fixed = TRUE), 11)
-  #ch$link_cas <- substring(grep("CH$LINK: CAS", mb, value = TRUE, fixed = TRUE), 14)
   ch$link_cayman <- substring(grep("CH$LINK: CAYMAN", mb, value = TRUE, fixed = TRUE), 17)
   ch$link_chebi <- substring(grep("CH$LINK: CHEBI", mb, value = TRUE, fixed = TRUE), 16)
   ch$link_chembl <- substring(grep("CH$LINK: CHEMBL", mb, value = TRUE, fixed = TRUE), 17)
@@ -319,14 +329,13 @@
   ch$link_chemspider <- substring(grep("CH$LINK: CHEMSPIDER", mb, value = TRUE, fixed = TRUE), 21)
   ch$link_comptox <- substring(grep("CH$LINK: COMPTOX", mb, value = TRUE, fixed = TRUE), 18)
   ch$link_hmdb <- substring(grep("CH$LINK: HMDB", mb, value = TRUE, fixed = TRUE), 15)
-  #ch$link_inchikey <- substring(grep("CH$LINK: INCHIKEY", mb, value = TRUE, fixed = TRUE), 19)
   ch$link_kappaview <- substring(grep("CH$LINK: KAPPAVIEW", mb, value = TRUE, fixed = TRUE), 20)
   ch$link_kegg <- substring(grep("CH$LINK: KEGG", mb, value = TRUE, fixed = TRUE), 15)
   ch$link_knapsack <- substring(grep("CH$LINK: KNAPSACK", mb, value = TRUE, fixed = TRUE), 19)
   ch$link_lipidbank <- substring(grep("CH$LINK: LIPIDBANK", mb, value = TRUE, fixed = TRUE), 20)
   ch$link_lipidmaps <- substring(grep("CH$LINK: LIPIDMAPS", mb, value = TRUE, fixed = TRUE), 20)
   ch$link_nikkaji <- substring(grep("CH$LINK: NIKKAJI", mb, value = TRUE, fixed = TRUE), 18)
-  #ch$link_pubchem <- substring(grep("CH$LINK: PUBCHEM", mb, value = TRUE, fixed = TRUE), 18)
+  ch$link_pubchem <- substring(grep("CH$LINK: PUBCHEM", mb, value = TRUE, fixed = TRUE), 18)
   ch$link_zinc <- substring(grep("CH$LINK: ZINC", mb, value = TRUE, fixed = TRUE), 15)
 
   # clean up data
@@ -383,9 +392,6 @@
 
   # MS information, precursor
   ms$focus_ion_type <- substring(grep("MS$FOCUSED_ION: ION_TYPE", mb, value = TRUE, fixed = TRUE), 26)
-  #ms$focus_precursor_int <- substring(grep("MS$FOCUSED_ION: PRECURSOR_INT", mb, value = TRUE, fixed = TRUE), 31)
-  #ms$focus_precursor_mz <- substring(grep("MS$FOCUSED_ION: PRECURSOR_MZ", mb, value = TRUE, fixed = TRUE), 30)
-  #ms$focus_precursor_type <- substring(grep("MS$FOCUSED_ION: PRECURSOR_TYPE", mb, value = TRUE, fixed = TRUE), 32)
 
   # MS data processing
   ms$data_processing_comment <- substring(grep("MS$DATA_PROCESSING: COMMENT", mb, value = TRUE, fixed = TRUE), 29)
@@ -417,9 +423,7 @@
   recordinfo <- list()
 
   # mb information
-  #recordinfo$accession <- substring(grep("ACCESSION:", mb, value = TRUE, fixed = TRUE), 12)
   recordinfo$deprecated <- substring(grep("DEPRECATED:", mb, value = TRUE, fixed = TRUE), 13)
-  #recordinfo$record_title <- substring(grep("RECORD_TITLE:", mb, value = TRUE, fixed = TRUE), 15)
   recordinfo$date <- substring(grep("DATE:", mb, value = TRUE, fixed = TRUE), 7)
   recordinfo$authors <- substring(grep("AUTHORS:", mb, value = TRUE, fixed = TRUE), 10)
   recordinfo$license <- substring(grep("LICENSE:", mb, value = TRUE, fixed = TRUE), 10)
@@ -449,7 +453,6 @@
   pk <- list()
 
   # peak data
-  pk$splash <- substring(grep("PK$SPLASH:", mb, value = TRUE, fixed = TRUE), 12)
   pk$pknum <- substring(grep("PK$NUM_PEAK:", mb, value = TRUE, fixed = TRUE), 14)
 
   # clean up data
@@ -527,4 +530,217 @@ metaDataBlocks <- function() {
 
   x
 
+}
+
+#' @description
+#'
+#' Function to export a `Spectra` object in MassBank format to `con`.
+#'
+#' @param x `Spectra`
+#'
+#' @param con output file.
+#'
+#' @param mapping named `character` vector that maps from `spectraVariables`
+#'    (i.e. `names(mapping)`) to the variable name that should be used in the
+#'    MGF file.
+#'
+#' @author Michael Witting
+#'
+#' @importMethodsFrom Spectra spectraVariables spectraNames spectraData
+#'
+#' @noRd
+#'
+#' @examples
+.export_massbank <- function(x, con = stdout(), mapping = spectraVariableMapping()) {
+
+  if (class(con) == "character" && file.exists(con)) {
+
+    message("Overwriting ", con, "!")
+    unlink(con)
+
+  }
+
+  if (class(con)[1] == "character") {
+    con <- file(description = con, open = "at")
+    on.exit(close(con))
+  }
+
+  # custom cat function for writing of content
+  .cat <- function(..., file = con, sep = " ", append = TRUE) {
+    cat(..., file = file, sep = sep, append = append)
+  }
+
+
+  # iterate over all spectra
+  for(i in 1:length(x)) {
+
+    spv <- spectraVariables(x[i])
+    spd <- spectraData(x[i], spv[!(spv %in% c("dataOrigin", "dataStorage"))])
+    idx <- match(colnames(spd), names(mapping))
+    colnames(spd)[!is.na(idx)] <- mapping[idx[!is.na(idx)]]
+
+    spp <- peaksData(x[i])
+
+
+    # here list with stuff in right order
+    entries <- .getEntries()
+
+    for(entry in entries) {
+
+      #print(entry)
+
+      if(entry %in% colnames(spd)) {
+
+        value <- spd[entry][[1]]
+
+        if(entry == "AC$MASS_SPECTROMETRY: ION_MODE") {
+
+          if(value == 0) {
+
+            value <- "NEGATIVE"
+
+          } else if(value == 1) {
+
+            value <- "POSTIVE"
+
+          }
+
+        } else if(entry == "AC$CHROMATOGRAPHY: RETENTION_TIME") {
+
+          value <- paste0(value / 60, " min")
+
+        }
+
+        if(!is.na(value)) {
+          if(class(value) == "list") {
+
+            .cat(paste0(entry, " ", unlist(value), collapse = "\n"))
+            .cat("\n")
+
+          } else {
+
+            .cat(entry, value, "\n")
+
+          }
+        }
+      }
+
+    }
+
+    .cat("PK$PEAK: m/z int. rel.int.\n")
+
+    .cat(paste0("  ",
+               peaksData(x[i])[[1]][,1],
+               " ",
+               peaksData(x[i])[[1]][,2],
+               " ",
+               as.integer(peaksData(x[i])[[1]][,2] / max(peaksData(x[i])[[1]][,2]) * 999),
+               collapse = "\n"))
+
+    .cat("\n//\n\n")
+
+
+  }
+}
+
+#'
+#'
+#' @noRd
+.getEntries <- function() {
+
+  c(
+    # record specific information
+    "ACCESSION:",
+    "DEPRECATED:",
+    "RECORD_TITLE:",
+    "DATE:",
+    "AUTHORS:",
+    "LICENSE:",
+    "COPYRIGHT:",
+    "PUBLICATION:",
+    "PROJECT:",
+    "COMMENT:",
+    "CH$NAME:",
+    "CH$COMPOUND_CLASS:",
+    "CH$FORMULA:",
+    "CH$EXACT_MASS:",
+    "CH$SMILES:",
+    "CH$IUPAC:",
+    "CH$CDK_DEPICT:",
+    "CH$LINK: CAS",
+    "CH$LINK: CAYMAN",
+    "CH$LINK: CHEBI",
+    "CH$LINK: CHEMBL",
+    "CH$LINK: CHEMPDB",
+    "CH$LINK: CHEMSPIDER",
+    "CH$LINK: COMPTOX",
+    "CH$LINK: HMDB",
+    "CH$LINK: INCHIKEY",
+    "CH$LINK: KAPPAVIEW",
+    "CH$LINK: KEGG",
+    "CH$LINK: KNAPSACK",
+    "CH$LINK: LIPIDBANK",
+    "CH$LINK: LIPIDMAPS",
+    "CH$LINK: NIKKAJI",
+    "CH$LINK: PUBCHEM",
+    "CH$LINK: ZINC",
+    "SP$SCIENTIFIC_NAME:",
+    "SP$LINEAGE:",
+    "SP$LINK:",
+    "SP$SAMPLE:",
+    "AC$INSTRUMENT:",
+    "AC$INSTRUMENT_TYPE:",
+    "AC$MASS_SPECTROMETRY: MS_TYPE",
+    "AC$MASS_SPECTROMETRY: ION_MODE",
+    "AC$MASS_SPECTROMETRY: CAPILLARY_VOLTAGE",
+    "AC$MASS_SPECTROMETRY: COLLISION_ENERGY",
+    "AC$MASS_SPECTROMETRY: COLLISION_GAS",
+    "AC$MASS_SPECTROMETRY: DESOLVATION_GAS_FLOW",
+    "AC$MASS_SPECTROMETRY: DESOLVATION_TEMPERATURE",
+    "AC$MASS_SPECTROMETRY: FRAGMENTATION_MODE",
+    "AC$MASS_SPECTROMETRY: IONIZATION",
+    "AC$MASS_SPECTROMETRY: IONIZATION_ENERGY",
+    "AC$MASS_SPECTROMETRY: LASER",
+    "AC$MASS_SPECTROMETRY: MATRIX",
+    "AC$MASS_SPECTROMETRY: MASS_ACCURACY",
+    "AC$MASS_SPECTROMETRY: MASS_RANGE_MZ",
+    "AC$MASS_SPECTROMETRY: REAGENT_GAS",
+    "AC$MASS_SPECTROMETRY: RESOLUTION",
+    "AC$MASS_SPECTROMETRY: SCANNING_SETTING",
+    "AC$MASS_SPECTROMETRY: SOURCE_TEMPERATURE",
+    "AC$CHROMATOGRAPHY: CARRIER_GAS",
+    "AC$CHROMATOGRAPHY: COLUMN_NAME",
+    "AC$CHROMATOGRAPHY: COLUMN_TEMPERATURE",
+    "AC$CHROMATOGRAPHY: COLUMN_TEMPERATURE_GRADIENT",
+    "AC$CHROMATOGRAPHY: FLOW_GRADIENT",
+    "AC$CHROMATOGRAPHY: FLOW_RATE",
+    "AC$CHROMATOGRAPHY: INJECTION_TEMPERATURE",
+    "AC$CHROMATOGRAPHY: INJECTION_TEMPERATURE_GRADIENT",
+    "AC$CHROMATOGRAPHY: INLET_TYPE",
+    "AC$CHROMATOGRAPHY: KOVATS_RTI",
+    "AC$CHROMATOGRAPHY: LEE_RTI",
+    "AC$CHROMATOGRAPHY: NAPS_RTI",
+    "AC$CHROMATOGRAPHY: UOA_RTI",
+    "AC$CHROMATOGRAPHY: UOA_PREDICTED_RTI",
+    "AC$CHROMATOGRAPHY: RETENTION_TIME",
+    "AC$CHROMATOGRAPHY: UOA_PREDICTED_RETENTION_TIME",
+    "AC$CHROMATOGRAPHY: SOLVENT",
+    "AC$CHROMATOGRAPHY: TRANSFERLINE_TEMPERATURE",
+    "MS$FOCUSED_ION: BASE_PEAK",
+    "MS$FOCUSED_ION: DERIVATIVE_FORM",
+    "MS$FOCUSED_ION: DERIVATIVE_MASS",
+    "MS$FOCUSED_ION: DERIVATIVE_TYPE",
+    "MS$FOCUSED_ION: ION_TYPE",
+    "MS$FOCUSED_ION: PRECURSOR_INT",
+    "MS$FOCUSED_ION: PRECURSOR_M/Z",
+    "MS$FOCUSED_ION: PRECURSOR_TYPE",
+    "MS$DATA_PROCESSING: COMMENT",
+    "MS$DATA_PROCESSING: DEPROFILE",
+    "MS$DATA_PROCESSING: FIND_PEAK",
+    "MS$DATA_PROCESSING: REANALYZE",
+    "MS$DATA_PROCESSING: RECALIBRATE",
+    "MS$DATA_PROCESSING: WHOLE",
+    "PK$SPLASH:",
+    "PK$ANNOTATION:",
+    "PK$NUM_PEAK:")
 }
