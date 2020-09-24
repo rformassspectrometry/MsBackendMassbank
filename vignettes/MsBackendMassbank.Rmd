@@ -78,6 +78,7 @@ spectrum.
 sps <- Spectra(fls[-1],
                source = MsBackendMassbank(),
                backend = MsBackendDataFrame())
+
 spectraVariables(sps)
 ```
 
@@ -88,13 +89,19 @@ This requires to define an additional data frame indicating what shall be read.
 ```{r metadata}
 # create data frame to indicate with metadata blocks shall be read.
 metaDataBlocks <- data.frame(metadata = c("ac", "ch", "sp", "ms", "record", "pk", "comment"),
-                             read = rep(FALSE, 7),
+                             read = rep(TRUE, 7),
                              stringsAsFactors = FALSE)
 
-sps <- Spectra(fls[-1], source = MsBackendMassbank(), metaBlock = metaDataBlocks)
+sps <- Spectra(fls[-1],
+               source = MsBackendMassbank(),
+               backeend = MsBackendDataFrame(),
+               metaBlock = metaDataBlocks)
 
-# variables only contain core variables
+# all spectraVariables possible in MassBank are read
 spectraVariables(sps)
+
+# all NA columns can be dropped
+spectraVariables(dropNaSpectraVariables(sps))
 ```
 
 

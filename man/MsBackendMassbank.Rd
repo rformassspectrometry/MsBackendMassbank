@@ -4,6 +4,8 @@
 \alias{MsBackendMassbank}
 \alias{MsBackendMassbank-class}
 \alias{backendInitialize,MsBackendMassbank-method}
+\alias{spectraVariableMapping}
+\alias{export,MsBackendMassbank-method}
 \title{MS data backend for mgf files}
 \usage{
 \S4method{backendInitialize}{MsBackendMassbank}(
@@ -16,6 +18,10 @@
 )
 
 MsBackendMassbank()
+
+spectraVariableMapping(format = c("Massbank"))
+
+\S4method{export}{MsBackendMassbank}(object, x, file = tempfile(), mapping = spectraVariableMapping(), ...)
 }
 \arguments{
 \item{object}{Instance of \code{MsBackendMassbank} class.}
