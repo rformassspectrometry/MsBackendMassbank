@@ -171,7 +171,15 @@
   meta <- .cleanParsing(meta)
 
   # type conversion
-  meta$collisionEnergy <- as.numeric(meta$collisionEnergy)
+  if(!is.na(meta$collisionEnergy)) {
+
+    meta$collisionEnergy <- as.numeric(regmatches(meta$collisionEnergy, regexpr("[[:digit:]]+\\.[[:digit:]]+", meta$collisionEnergy)))
+
+  } else {
+
+    meta$collisionEnergy <- NA_real_
+
+  }
 
   # convert rtime
   if(!is.na(meta$rtime_string)) {
