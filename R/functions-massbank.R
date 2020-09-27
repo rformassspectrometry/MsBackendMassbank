@@ -174,6 +174,7 @@
   if(!is.na(meta$collisionEnergy)) {
 
     meta$collisionEnergy <- as.numeric(regmatches(meta$collisionEnergy, regexpr("[[:digit:]]+\\.[[:digit:]]+", meta$collisionEnergy)))
+    meta$collisionEnergy <- as.numeric(meta$collisionEnergy)
 
   } else {
 
