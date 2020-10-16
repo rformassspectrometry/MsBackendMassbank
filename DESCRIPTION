@@ -1,11 +1,15 @@
 Package: MsBackendMassbank
 Title: Mass Spectrometry Data Backend for MassBank record Files
-Version: 0.2.0
-Authors@R: 
+Version: 0.3.0
+Authors@R:
     c(person(given = "Michael", family = "Witting",
              role = c("aut", "cre"),
              email = "michael.witting@helmholtz-muenchen.de",
-             comment = c(ORCID = "0000-0002-1462-4426")))
+             comment = c(ORCID = "0000-0002-1462-4426")),
+	     person(given = "Johannes", family = "Rainer",
+		    email = "Johannes.Rainer@eurac.edu",
+		    role = "aut",
+		    comment = c(ORCID = "0000-0002-6977-7147")))
 Description: Mass spectrometry (MS) data backend supporting import and
 	     handling of MS/MS library spectra from MassBank record files.
 Depends:
@@ -15,12 +19,14 @@ Imports:
     BiocParallel,
     S4Vectors,
     IRanges,
-    methods   
+    methods,
+    DBI
 Suggests:
     testthat,
     knitr (>= 1.1.0),
     roxygen2,
     BiocStyle (>= 2.5.19),
+    RSQLite,
     rmarkdown
 Remotes:
    RforMassSpectrometry/Spectra,
@@ -34,7 +40,9 @@ URL: https://github.com/michaelwitting/MsBackendMassbank
 biocViews: Infrastructure, MassSpectrometry, Metabolomics
 Roxygen: list(markdown=TRUE)
 RoxygenNote: 7.1.1
-Collate: 
+Collate:
     'hidden_aliases.R'
     'MsBackendMassbank.R'
+    'MsBackendMassbankDb-functions.R'
+    'MsBackendMassbankDb.R'
     'functions-massbank.R'
