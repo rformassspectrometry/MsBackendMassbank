@@ -6,22 +6,20 @@
 #'
 #' The `MsBackendMassbankSql` provides access to mass spectrometry data from
 #' [MassBank](https://massbank.eu/MassBank/) by directly accessing its
-#' MySQL/MariaDb database.
+#' MySQL/MariaDb database. In addition it supports adding new spectra variables
+#' or *locally* changing spectra variables provided by MassBank (withoug
+#' changing the original values in the database).
 #'
-#' Note that this requires a local installation or the MassBank database since
-#' direct database access is not supported for the *main* MassBank instance.
+#' Note that `MsBackendMassbankSql` requires a local installation of the
+#' MassBank database since direct database access is not supported for the
+#' *main* MassBank instance.
 #'
-#' @param acquisitionNum for `filterPrecursorScan`: `integer` with the
-#'     acquisition number of the spectra to which the object should be
-#'     subsetted.
+#' @param dbcon For `backendInitialize,MsBackendMassbankSql`: SQL database
+#'     connection to the MassBank (MariaDb) database.
 #'
 #' @param columns For `spectraData` accessor: optional `character` with column
 #'     names (spectra variables) that should be included in the
 #'     returned `DataFrame`. By default, all columns are returned.
-#'
-#' @param data For `backendInitialize`: `DataFrame` with spectrum
-#'     metadata/data. This parameter can be empty for `MsBackendMzR` backends
-#'     but needs to be provided for `MsBackendDataFrame` backends.
 #'
 #' @param dataOrigin For `filterDataOrigin`: `character` to define which
 #'     spectra to keep.
@@ -162,9 +160,6 @@
 #' - `filterPrecursorMz`: retains spectra with a precursor m/z within the
 #'   provided m/z range.
 #'
-#' - `filterPrecursorScan`: retains parent (e.g. MS1) and children scans (e.g.
-#'    MS2) of acquisition number `acquisitionNum`.
-#'
 #' - `filterRt`: retains spectra of MS level `msLevel` with retention times
 #'    within (`>=`) `rt[1]` and (`<=`) `rt[2]`.
 #'
@@ -303,7 +298,7 @@
 #' The following functions are not supported by the `MsBackendMassbankSql` since
 #' the original data can not be changed.
 #'
-#' `backendMerge`, `export`, `filterDataStorage`.
+#' `backendMerge`, `export`, `filterDataStorage`, `filterPrecursorScan`.
 #'
 #' @name MsBackendMassbankSql
 #'
@@ -537,16 +532,6 @@ setMethod("dataStorage", "MsBackendMassbankSql", function(object) {
 ## #'
 ## #' @rdname MsBackendMassbankSql
 ## setMethod("filterPrecursorMz", "MsBackendMassbankSql", function(object, mz) {
-##     stop("Not implemented for ", class(object), ".")
-## })
-
-## #' @exportMethod filterPrecursorScan
-## #'
-## #' @importMethodsFrom ProtGenerics filterPrecursorScan
-## #'
-## #' @rdname MsBackendMassbankSql
-## setMethod("filterPrecursorScan", "MsBackendMassbankSql", function(object,
-##                                                        acquisitionNum, ...) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
@@ -831,14 +816,14 @@ setMethod("length", "MsBackendMassbankSql", function(x) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
-## #' @exportMethod spectraData
-## #'
-## #' @rdname MsBackendMassbankSql
-## setMethod(
-##     "spectraData", "MsBackendMassbankSql",
-##     function(object, columns = spectraVariables(object)) {
-##         stop("Not implemented for ", class(object), ".")
-##     })
+#' @exportMethod spectraData
+#'
+#' @rdname MsBackendMassbankSql
+setMethod(
+    "spectraData", "MsBackendMassbankSql",
+    function(object, columns = spectraVariables(object)) {
+        .spectra_data_massbank_sql(object, columns = columns)
+    })
 
 ## #' @exportMethod spectraData<-
 ## #'
@@ -900,16 +885,38 @@ setMethod("spectraVariables", "MsBackendMassbankSql", function(object) {
 ##     stop("Not implemented for ", class(x), ".")
 ## })
 
-## #' @exportMethod $
-## #'
-## #' @rdname MsBackendMassbankSql
-## setMethod("$", "MsBackendMassbankSql", function(x, name) {
-##     stop("Not implemented for ", class(x), ".")
-## })
+#' @exportMethod $
+#'
+#' @rdname MsBackendMassbankSql
+setMethod("$", "MsBackendMassbankSql", function(x, name) {
+    if (!any(spectraVariables(x) == name))
+        stop("Spectra variable '", name, "' not available.")
+    .spectra_data_massbank_sql(x, name)[, 1]
+})
 
-## #' @exportMethod $<-
-## #'
-## #' @rdname MsBackendMassbankSql
-## setReplaceMethod("$", "MsBackendMassbankSql", function(x, name, value) {
-##     stop("Not implemented for ", class(x), ".")
-## })
+#' @exportMethod $<-
+#'
+#' @rdname MsBackendMassbankSql
+setReplaceMethod("$", "MsBackendMassbankSql", function(x, name, value) {
+    if (name %in% c("mz", "intensity"))
+        stop("Replacing m/z and intensity values is not supported.")
+    if (length(value) == 1)
+        value <- rep(value, length(x))
+    if (length(value) != length(x))
+        stop("value has to be either of length 1 or length equal to the ",
+             "number of spectra")
+    if (length(x@localData)) {
+        cn <- colnames(x@localData) == name
+        if (any(cn))
+            x@localData[, cn] <- value
+        else {
+            cn <- colnames(x@localData)
+            x@localData <- cbind(x@localData, value)
+            colnames(x@localData) <- c(cn, name)
+        }
+    } else {
+        x@localData <- DataFrame(value)
+        colnames(x@localData) <- name
+    }
+    x
+})

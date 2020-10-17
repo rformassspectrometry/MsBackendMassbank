@@ -40,3 +40,53 @@ test_that("spectraVariables,MsBackendMassbankSql works", {
     res_2 <- spectraVariables(be)
     expect_true(length(res_2) == (length(res) + 1))
 })
+
+test_that("spectraData,MsBackendMassbankSql works", {
+    be <- MsBackendMassbankSql()
+    res <- spectraData(be)
+    expect_true(is(res, "DataFrame"))
+    expect_true(nrow(res) == 0)
+
+    be <- backendInitialize(be, dbc)
+    res <- spectraData(be)
+    expect_true(is(res, "DataFrame"))
+    expect_true(nrow(res) > 0)
+
+    res <- spectraData(be, columns = "authors")
+    expect_true(is(res, "DataFrame"))
+    expect_true(nrow(res) > 0)
+    expect_equal(colnames(res), "authors")
+})
+
+test_that("$,MsBackendMassbankSql works", {
+    be <- MsBackendMassbankSql()
+    res <- be$rtime
+    expect_true(is.numeric(res))
+    expect_true(length(res) == 0)
+
+    res <- be$mz
+    expect_true(is(res, "NumericList"))
+
+    expect_error(be$other, "not available")
+})
+
+test_that("$<-,MsBackendMassbankSql works", {
+    be <- backendInitialize(MsBackendMassbankSql(), dbc)
+    ## Test adding new column
+    be$new_col <- "a"
+    expect_equal(be$new_col, c("a", "a", "a"))
+
+    ## Test replacing column
+    be$new_col <- 1:3
+    expect_equal(be$new_col, 1:3)
+
+    be$rtime <- 1:3
+    expect_equal(be$rtime, 1:3)
+
+    be$authors <- "a"
+    expect_equal(be$authors, c("a", "a", "a"))
+
+    ## Test errors with m/z etc.
+    expect_error(be$rtime <- c(1, 2), "length 1 or")
+    expect_error(be$mz <- 1:3, "Replacing m/z and intensity")
+})

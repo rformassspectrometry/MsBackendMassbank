@@ -7,7 +7,10 @@
 \alias{backendInitialize,MsBackendMassbankSql-method}
 \alias{dataStorage,MsBackendMassbankSql-method}
 \alias{length,MsBackendMassbankSql-method}
+\alias{spectraData,MsBackendMassbankSql-method}
 \alias{spectraVariables,MsBackendMassbankSql-method}
+\alias{$,MsBackendMassbankSql-method}
+\alias{$<-,MsBackendMassbankSql-method}
 \title{MS backend accessing the MassBank MySQL database}
 \usage{
 MsBackendMassbankSql()
@@ -18,26 +21,33 @@ MsBackendMassbankSql()
 
 \S4method{length}{MsBackendMassbankSql}(x)
 
+\S4method{spectraData}{MsBackendMassbankSql}(object, columns = spectraVariables(object))
+
 \S4method{spectraVariables}{MsBackendMassbankSql}(object)
+
+\S4method{$}{MsBackendMassbankSql}(x, name)
+
+\S4method{$}{MsBackendMassbankSql}(x, name) <- value
 }
 \arguments{
 \item{object}{Object extending \code{MsBackendMassbankSql}.}
+
+\item{dbcon}{For \verb{backendInitialize,MsBackendMassbankSql}: SQL database
+connection to the MassBank (MariaDb) database.}
 
 \item{...}{Additional arguments.}
 
 \item{x}{Object extending \code{MsBackendMassbankSql}.}
 
-\item{acquisitionNum}{for \code{filterPrecursorScan}: \code{integer} with the
-acquisition number of the spectra to which the object should be
-subsetted.}
-
 \item{columns}{For \code{spectraData} accessor: optional \code{character} with column
 names (spectra variables) that should be included in the
 returned \code{DataFrame}. By default, all columns are returned.}
 
-\item{data}{For \code{backendInitialize}: \code{DataFrame} with spectrum
-metadata/data. This parameter can be empty for \code{MsBackendMzR} backends
-but needs to be provided for \code{MsBackendDataFrame} backends.}
+\item{name}{For \code{$} and \verb{$<-}: the name of the spectra variable to return
+or set.}
+
+\item{value}{replacement value for \verb{<-} methods. See individual
+method description or expected data type.}
 
 \item{dataOrigin}{For \code{filterDataOrigin}: \code{character} to define which
 spectra to keep.
@@ -72,9 +82,6 @@ and upper m/z boundary.}
 \item{n}{for \code{filterAcquisitionNum}: \code{integer} with the acquisition numbers
 to filter for.}
 
-\item{name}{For \code{$} and \verb{$<-}: the name of the spectra variable to return
-or set.}
-
 \item{polarity}{For \code{filterPolarity}: \code{integer} specifying the polarity to
 to subset \code{object}.}
 
@@ -85,9 +92,6 @@ be used to subset/filter \code{object}.}
 names of the spectra variables to which the backend should be subsetted.}
 
 \item{use.names}{For \code{lengths}: whether spectrum names should be used.}
-
-\item{value}{replacement value for \verb{<-} methods. See individual
-method description or expected data type.}
 }
 \value{
 See documentation of respective function.
@@ -165,8 +169,6 @@ and \code{isolationWindowUpperMz} \code{>=} \code{mz}.
 \item \code{filterPolarity}: retains spectra of polarity \code{polarity}.
 \item \code{filterPrecursorMz}: retains spectra with a precursor m/z within the
 provided m/z range.
-\item \code{filterPrecursorScan}: retains parent (e.g. MS1) and children scans (e.g.
-MS2) of acquisition number \code{acquisitionNum}.
 \item \code{filterRt}: retains spectra of MS level \code{msLevel} with retention times
 within (\code{>=}) \code{rt[1]} and (\code{<=}) \code{rt[2]}.
 \item \code{intensity}: gets the intensity values from the spectra. Returns
@@ -281,7 +283,7 @@ spectrum, \code{NA_real_} is returned.
 The following functions are not supported by the \code{MsBackendMassbankSql} since
 the original data can not be changed.
 
-\code{backendMerge}, \code{export}, \code{filterDataStorage}.
+\code{backendMerge}, \code{export}, \code{filterDataStorage}, \code{filterPrecursorScan}.
 }
 
 \author{

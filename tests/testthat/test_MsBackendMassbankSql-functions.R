@@ -14,12 +14,6 @@ test_that("MsBackendMassbankSql works", {
     expect_true(is(res, "MsBackendMassbankSql"))
 })
 
-test_that(".spectra_data_massbank works", {
-    be <- MsBackendMassbankSql()
-
-    res <- .spectra_data_massbank(be)
-})
-
 test_that(".fetch_peaks_sql works", {
     be <- MsBackendMassbankSql()
     res <- .fetch_peaks_sql(be)
