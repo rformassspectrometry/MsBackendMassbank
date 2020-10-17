@@ -1,13 +1,16 @@
-#' @rdname MsBackendMassbankDb
+#' @rdname MsBackendMassbankSql
 #'
-#' @export MsBackendMassbankDb
-MsBackendMassbankDb <- function() {
+#' @export MsBackendMassbankSql
+MsBackendMassbankSql <- function() {
     if (!requireNamespace("DBI", quietly = TRUE))
-        stop("'MsBackendMassbankDb' requires package 'DBI'. Please ",
+        stop("'MsBackendMassbankSql' requires package 'DBI'. Please ",
              "install with 'install.packages(\"DBI\")'")
-    new("MsBackendMassbankDb")
+    new("MsBackendMassbankSql")
 }
 
+#' @importFrom DBI dbListTables
+#'
+#' @noRd
 .valid_dbcon <- function(x) {
     if (length(x)) {
         if (!inherits(x, "DBIConnection"))
@@ -18,6 +21,12 @@ MsBackendMassbankDb <- function() {
                           " connection to a MassBank database?"))
     }
     NULL
+}
+
+.valid_local_data <- function(x, y) {
+    if (nrow(x) && nrow(x) != length(y))
+        "Number of rows in local data and number of spectra don't match"
+    else NULL
 }
 
 #' Returns the spectra data, from the database and eventually filling with
@@ -31,15 +40,20 @@ MsBackendMassbankDb <- function() {
 #'
 #' @return a `data.frame` - always, even if only with a single column.
 #'
-#' @importFrom S4Vectors NumericList
+#' @importFrom IRanges NumericList
+#'
+#' @importFrom S4Vectors extractCOLS
+#'
+#' @importFrom methods as
 #'
 #' @author Johannes Rainer
 #'
 #' @noRd
 .spectra_data_massbank_sql <- function(x, columns = spectraVariables(x)) {
-    db_cols <- intersect(x@spectraVariables, columns)
-    mz_cols <- intersect(columns, c("mz", "intensity"))
     local_cols <- intersect(columns, colnames(x@localData))
+    db_cols <- intersect(x@spectraVariables, columns)
+    db_cols <- db_cols[!db_cols %in% local_cols]
+    mz_cols <- intersect(columns, c("mz", "intensity"))
     core_cols <- intersect(columns, names(Spectra:::.SPECTRA_DATA_COLUMNS))
     core_cols <- core_cols[!core_cols %in% c(db_cols, mz_cols, local_cols)]
     res <- NULL
@@ -67,6 +81,11 @@ MsBackendMassbankDb <- function() {
         }
     }
     ## Get local data
+    if (length(local_cols)) {
+        if (length(res))
+            res <- cbind(res, extractCOLS(x@localData, local_cols))
+        else res <- extractCOLS(x@localData, local_cols)
+    }
     ## Create missing core variables
     if (length(core_cols)) {
         tmp <- DataFrame(lapply(Spectra:::.SPECTRA_DATA_COLUMNS[core_cols],
@@ -81,9 +100,12 @@ MsBackendMassbankDb <- function() {
         stop("Column(s) ", paste0(columns[!columns %in% names(res)],
                                   collapse = ", "), " not available.",
              call. = FALSE)
-    res[, columns, drop = FALSE]
+    extractCOLS(res, columns)
 }
 
+#' @importFrom DBI dbSendQuery dbBind dbFetch dbClearResult
+#'
+#' @noRd
 .fetch_peaks_sql <- function(x, columns = c("mz", "intensity")) {
     if (length(x@dbcon)) {
         qry <- dbSendQuery(x@dbcon, paste0("select spectrum_id,",

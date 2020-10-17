@@ -20,6 +20,7 @@ Imports:
     S4Vectors,
     IRanges,
     methods,
+    ProtGenerics,
     DBI
 Suggests:
     testthat,
@@ -43,6 +44,6 @@ RoxygenNote: 7.1.1
 Collate:
     'hidden_aliases.R'
     'MsBackendMassbank.R'
-    'MsBackendMassbankDb-functions.R'
-    'MsBackendMassbankDb.R'
+    'MsBackendMassbankSql-functions.R'
+    'MsBackendMassbankSql.R'
     'functions-massbank.R'

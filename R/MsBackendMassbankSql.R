@@ -1,10 +1,10 @@
 #' @title MS backend accessing the MassBank MySQL database
 #'
-#' @aliases MsBackendMassbankDb-class
+#' @aliases MsBackendMassbankSql-class
 #'
 #' @description
 #'
-#' The `MsBackendMassbankDb` provides access to mass spectrometry data from
+#' The `MsBackendMassbankSql` provides access to mass spectrometry data from
 #' [MassBank](https://massbank.eu/MassBank/) by directly accessing its
 #' MySQL/MariaDb database.
 #'
@@ -59,7 +59,7 @@
 #' @param name For `$` and `$<-`: the name of the spectra variable to return
 #'     or set.
 #'
-#' @param object Object extending `MsBackendMassbankDb`.
+#' @param object Object extending `MsBackendMassbankSql`.
 #'
 #' @param polarity For `filterPolarity`: `integer` specifying the polarity to
 #'     to subset `object`.
@@ -75,14 +75,14 @@
 #' @param value replacement value for `<-` methods. See individual
 #'     method description or expected data type.
 #'
-#' @param x Object extending `MsBackendMassbankDb`.
+#' @param x Object extending `MsBackendMassbankSql`.
 #'
 #' @param ... Additional arguments.
 #'
 #'
 #' @section Supported Backend functions:
 #'
-#' The following functions are supported by the `MsBackendMassbankDbMassbankDb`.
+#' The following functions are supported by the `MsBackendMassbankSqlMassbankDb`.
 #'
 #' - `[`: subset the backend. Only subsetting by element (*row*/`i`) is
 #'   allowed
@@ -249,7 +249,7 @@
 #' - `reset` a backend (if supported). This method will be called on the backend
 #'   by the `reset,Spectra` method that is supposed to restore the data to its
 #'   original state (see `reset,Spectra` for more details). The function
-#'   returns the *reset* backend. The default implementation for `MsBackendMassbankDb`
+#'   returns the *reset* backend. The default implementation for `MsBackendMassbankSql`
 #'   returns the backend as-is.
 #'
 #' - `rtime`, `rtime<-`: gets or sets the retention times for each
@@ -289,8 +289,8 @@
 #'   default not returned by the `spectraVariables,Spectra` method).
 #'
 #' - `split`: splits the backend into a `list` of backends (depending on
-#'   parameter `f`). The default method for `MsBackendMassbankDb` uses [split.default()],
-#'   thus backends extending `MsBackendMassbankDb` don't necessarily need to implement
+#'   parameter `f`). The default method for `MsBackendMassbankSql` uses [split.default()],
+#'   thus backends extending `MsBackendMassbankSql` don't necessarily need to implement
 #'   this method.
 #'
 #' - `tic`: gets the total ion current/count (sum of signal of a
@@ -300,12 +300,12 @@
 #'
 #' @section Not supported Backend functions:
 #'
-#' The following functions are not supported by the `MsBackendMassbankDb` since
+#' The following functions are not supported by the `MsBackendMassbankSql` since
 #' the original data can not be changed.
 #'
 #' `backendMerge`, `export`, `filterDataStorage`.
 #'
-#' @name MsBackendMassbankDb
+#' @name MsBackendMassbankSql
 #'
 #' @return See documentation of respective function.
 #'
@@ -313,7 +313,7 @@
 #'
 #' @md
 #'
-#' @exportClass MsBackendMassbankDb
+#' @exportClass MsBackendMassbankSql
 NULL
 
 setClassUnion("DBIConnectionOrNULL", c("DBIConnection", "NULL"))
@@ -322,7 +322,7 @@ setClassUnion("DBIConnectionOrNULL", c("DBIConnection", "NULL"))
 #'
 #' @importClassesFrom S4Vectors DataFrame
 setClass(
-    "MsBackendMassbankDb",
+    "MsBackendMassbankSql",
     contains = "MsBackend",
     slots = c(
         dbcon = "DBIConnectionOrNULL",
@@ -339,8 +339,9 @@ setClass(
 #' @importFrom methods .valueClassTest is new validObject
 #'
 #' @noRd
-setValidity("MsBackendMassbankDb", function(object) {
+setValidity("MsBackendMassbankSql", function(object) {
     msg <- .valid_dbcon(object@dbcon)
+    msg <- c(msg, .valid_local_data(object@localData, object@spectraIds))
     if (is.null(msg)) TRUE
     else msg
 })
@@ -349,11 +350,11 @@ setValidity("MsBackendMassbankDb", function(object) {
 #'
 #' @importFrom DBI dbGetQuery
 #'
-#' @rdname MsBackendMassbankDb
-setMethod("backendInitialize", "MsBackendMassbankDb", function(object, dbcon,
+#' @rdname MsBackendMassbankSql
+setMethod("backendInitialize", "MsBackendMassbankSql", function(object, dbcon,
                                                                ...) {
     if (missing(dbcon))
-        stop("Parameter 'dbcon' is required for 'MsBackendMassbankDb'")
+        stop("Parameter 'dbcon' is required for 'MsBackendMassbankSql'")
     msg <- .valid_dbcon(dbcon)
     object@dbcon <- dbcon
     if (length(msg))
@@ -370,26 +371,26 @@ setMethod("backendInitialize", "MsBackendMassbankDb", function(object, dbcon,
 ## #'
 ## #' @importMethodsFrom ProtGenerics acquisitionNum
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setMethod("acquisitionNum", "MsBackendMassbankDb", function(object) {
+## #' @rdname MsBackendMassbankSql
+## setMethod("acquisitionNum", "MsBackendMassbankSql", function(object) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
 ## #' @exportMethod peaksData
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setMethod("peaksData", "MsBackendMassbankDb", function(object) {
+## #' @rdname MsBackendMassbankSql
+## setMethod("peaksData", "MsBackendMassbankSql", function(object) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
 ## #' @exportMethod centroided
 ## #'
-## #' @aliases centroided<-,MsBackendMassbankDb-method
+## #' @aliases centroided<-,MsBackendMassbankSql-method
 ## #'
 ## #' @importMethodsFrom ProtGenerics centroided
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setMethod("centroided", "MsBackendMassbankDb", function(object) {
+## #' @rdname MsBackendMassbankSql
+## setMethod("centroided", "MsBackendMassbankSql", function(object) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
@@ -397,8 +398,8 @@ setMethod("backendInitialize", "MsBackendMassbankDb", function(object, dbcon,
 ## #'
 ## #' @importMethodsFrom ProtGenerics centroided<-
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setReplaceMethod("centroided", "MsBackendMassbankDb", function(object, value) {
+## #' @rdname MsBackendMassbankSql
+## setReplaceMethod("centroided", "MsBackendMassbankSql", function(object, value) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
@@ -406,8 +407,8 @@ setMethod("backendInitialize", "MsBackendMassbankDb", function(object, dbcon,
 ## #'
 ## #' @importMethodsFrom ProtGenerics collisionEnergy
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setMethod("collisionEnergy", "MsBackendMassbankDb", function(object) {
+## #' @rdname MsBackendMassbankSql
+## setMethod("collisionEnergy", "MsBackendMassbankSql", function(object) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
@@ -415,8 +416,8 @@ setMethod("backendInitialize", "MsBackendMassbankDb", function(object, dbcon,
 ## #'
 ## #' @importMethodsFrom ProtGenerics collisionEnergy<-
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setReplaceMethod("collisionEnergy", "MsBackendMassbankDb", function(object, value) {
+## #' @rdname MsBackendMassbankSql
+## setReplaceMethod("collisionEnergy", "MsBackendMassbankSql", function(object, value) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
@@ -424,8 +425,8 @@ setMethod("backendInitialize", "MsBackendMassbankDb", function(object, dbcon,
 ## #'
 ## #' @importMethodsFrom ProtGenerics dataOrigin
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setMethod("dataOrigin", "MsBackendMassbankDb", function(object) {
+## #' @rdname MsBackendMassbankSql
+## setMethod("dataOrigin", "MsBackendMassbankSql", function(object) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
@@ -433,8 +434,8 @@ setMethod("backendInitialize", "MsBackendMassbankDb", function(object, dbcon,
 ## #'
 ## #' @importMethodsFrom ProtGenerics dataOrigin<-
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setReplaceMethod("dataOrigin", "MsBackendMassbankDb", function(object, value) {
+## #' @rdname MsBackendMassbankSql
+## setReplaceMethod("dataOrigin", "MsBackendMassbankSql", function(object, value) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
@@ -442,8 +443,8 @@ setMethod("backendInitialize", "MsBackendMassbankDb", function(object, dbcon,
 #'
 #' @importMethodsFrom ProtGenerics dataStorage
 #'
-#' @rdname MsBackendMassbankDb
-setMethod("dataStorage", "MsBackendMassbankDb", function(object) {
+#' @rdname MsBackendMassbankSql
+setMethod("dataStorage", "MsBackendMassbankSql", function(object) {
     rep("<MassBank>", length(object))
 })
 
@@ -451,15 +452,15 @@ setMethod("dataStorage", "MsBackendMassbankDb", function(object) {
 ## #'
 ## #' @importMethodsFrom ProtGenerics dataStorage<-
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setReplaceMethod("dataStorage", "MsBackendMassbankDb", function(object, value) {
+## #' @rdname MsBackendMassbankSql
+## setReplaceMethod("dataStorage", "MsBackendMassbankSql", function(object, value) {
 ##     stop("Method 'dataStorage' is not implemented for ", class(object), ".")
 ## })
 
 ## #' @exportMethod dropNaSpectraVariables
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setMethod("dropNaSpectraVariables", "MsBackendMassbankDb", function(object) {
+## #' @rdname MsBackendMassbankSql
+## setMethod("dropNaSpectraVariables", "MsBackendMassbankSql", function(object) {
 ##     svs <- spectraVariables(object)
 ##     svs <- svs[!(svs %in% c("mz", "intensity"))]
 ##     spd <- spectraData(object, columns = svs)
@@ -471,8 +472,8 @@ setMethod("dataStorage", "MsBackendMassbankDb", function(object) {
 ## #'
 ## #' @importMethodsFrom ProtGenerics filterAcquisitionNum
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setMethod("filterAcquisitionNum", "MsBackendMassbankDb", function(object, n, file, ...) {
+## #' @rdname MsBackendMassbankSql
+## setMethod("filterAcquisitionNum", "MsBackendMassbankSql", function(object, n, file, ...) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
@@ -480,8 +481,8 @@ setMethod("dataStorage", "MsBackendMassbankDb", function(object) {
 ## #'
 ## #' @importMethodsFrom ProtGenerics filterDataOrigin
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setMethod("filterDataOrigin", "MsBackendMassbankDb", function(object, dataOrigin, ...) {
+## #' @rdname MsBackendMassbankSql
+## setMethod("filterDataOrigin", "MsBackendMassbankSql", function(object, dataOrigin, ...) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
@@ -489,8 +490,8 @@ setMethod("dataStorage", "MsBackendMassbankDb", function(object) {
 ## #'
 ## #' @importMethodsFrom ProtGenerics filterDataStorage
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setMethod("filterDataStorage", "MsBackendMassbankDb", function(object, dataStorage, ...) {
+## #' @rdname MsBackendMassbankSql
+## setMethod("filterDataStorage", "MsBackendMassbankSql", function(object, dataStorage, ...) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
@@ -498,8 +499,8 @@ setMethod("dataStorage", "MsBackendMassbankDb", function(object) {
 ## #'
 ## #' @importMethodsFrom ProtGenerics filterEmptySpectra
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setMethod("filterEmptySpectra", "MsBackendMassbankDb", function(object, ...) {
+## #' @rdname MsBackendMassbankSql
+## setMethod("filterEmptySpectra", "MsBackendMassbankSql", function(object, ...) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
@@ -507,8 +508,8 @@ setMethod("dataStorage", "MsBackendMassbankDb", function(object) {
 ## #'
 ## #' @importMethodsFrom ProtGenerics filterIsolationWindow
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setMethod("filterIsolationWindow", "MsBackendMassbankDb", function(object, mz, ...) {
+## #' @rdname MsBackendMassbankSql
+## setMethod("filterIsolationWindow", "MsBackendMassbankSql", function(object, mz, ...) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
@@ -516,8 +517,8 @@ setMethod("dataStorage", "MsBackendMassbankDb", function(object) {
 ## #'
 ## #' @importMethodsFrom ProtGenerics filterMsLevel
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setMethod("filterMsLevel", "MsBackendMassbankDb", function(object, msLevel) {
+## #' @rdname MsBackendMassbankSql
+## setMethod("filterMsLevel", "MsBackendMassbankSql", function(object, msLevel) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
@@ -525,8 +526,8 @@ setMethod("dataStorage", "MsBackendMassbankDb", function(object) {
 ## #'
 ## #' @importMethodsFrom ProtGenerics filterPolarity
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setMethod("filterPolarity", "MsBackendMassbankDb", function(object, polarity) {
+## #' @rdname MsBackendMassbankSql
+## setMethod("filterPolarity", "MsBackendMassbankSql", function(object, polarity) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
@@ -534,8 +535,8 @@ setMethod("dataStorage", "MsBackendMassbankDb", function(object) {
 ## #'
 ## #' @importMethodsFrom ProtGenerics filterPrecursorMz
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setMethod("filterPrecursorMz", "MsBackendMassbankDb", function(object, mz) {
+## #' @rdname MsBackendMassbankSql
+## setMethod("filterPrecursorMz", "MsBackendMassbankSql", function(object, mz) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
@@ -543,8 +544,8 @@ setMethod("dataStorage", "MsBackendMassbankDb", function(object) {
 ## #'
 ## #' @importMethodsFrom ProtGenerics filterPrecursorScan
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setMethod("filterPrecursorScan", "MsBackendMassbankDb", function(object,
+## #' @rdname MsBackendMassbankSql
+## setMethod("filterPrecursorScan", "MsBackendMassbankSql", function(object,
 ##                                                        acquisitionNum, ...) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
@@ -553,8 +554,8 @@ setMethod("dataStorage", "MsBackendMassbankDb", function(object) {
 ## #'
 ## #' @importMethodsFrom ProtGenerics filterRt
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setMethod("filterRt", "MsBackendMassbankDb", function(object, rt, msLevel, ...) {
+## #' @rdname MsBackendMassbankSql
+## setMethod("filterRt", "MsBackendMassbankSql", function(object, rt, msLevel, ...) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
@@ -562,8 +563,8 @@ setMethod("dataStorage", "MsBackendMassbankDb", function(object) {
 ## #'
 ## #' @importMethodsFrom ProtGenerics intensity
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setMethod("intensity", "MsBackendMassbankDb", function(object) {
+## #' @rdname MsBackendMassbankSql
+## setMethod("intensity", "MsBackendMassbankSql", function(object) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
@@ -571,8 +572,8 @@ setMethod("dataStorage", "MsBackendMassbankDb", function(object) {
 ## #'
 ## #' @importMethodsFrom ProtGenerics intensity<-
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setReplaceMethod("intensity", "MsBackendMassbankDb", function(object, value) {
+## #' @rdname MsBackendMassbankSql
+## setReplaceMethod("intensity", "MsBackendMassbankSql", function(object, value) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
@@ -580,8 +581,8 @@ setMethod("dataStorage", "MsBackendMassbankDb", function(object) {
 ## #'
 ## #' @importMethodsFrom ProtGenerics ionCount
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setMethod("ionCount", "MsBackendMassbankDb", function(object) {
+## #' @rdname MsBackendMassbankSql
+## setMethod("ionCount", "MsBackendMassbankSql", function(object) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
@@ -589,17 +590,17 @@ setMethod("dataStorage", "MsBackendMassbankDb", function(object) {
 ## #'
 ## #' @importMethodsFrom ProtGenerics isCentroided
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setMethod("isCentroided", "MsBackendMassbankDb", function(object, ...) {
+## #' @rdname MsBackendMassbankSql
+## setMethod("isCentroided", "MsBackendMassbankSql", function(object, ...) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
 ## #' @exportMethod isEmpty
 ## #'
-## #' @rdname MsBackendMassbankDb
+## #' @rdname MsBackendMassbankSql
 ## #'
 ## #' @importMethodsFrom S4Vectors isEmpty
-## setMethod("isEmpty", "MsBackendMassbankDb", function(x) {
+## setMethod("isEmpty", "MsBackendMassbankSql", function(x) {
 ##     stop("Not implemented for ", class(x), ".")
 ## })
 
@@ -607,8 +608,8 @@ setMethod("dataStorage", "MsBackendMassbankDb", function(object) {
 ## #'
 ## #' @importMethodsFrom ProtGenerics isolationWindowLowerMz
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setMethod("isolationWindowLowerMz", "MsBackendMassbankDb", function(object) {
+## #' @rdname MsBackendMassbankSql
+## setMethod("isolationWindowLowerMz", "MsBackendMassbankSql", function(object) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
@@ -616,8 +617,8 @@ setMethod("dataStorage", "MsBackendMassbankDb", function(object) {
 ## #'
 ## #' @importMethodsFrom ProtGenerics isolationWindowLowerMz<-
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setReplaceMethod("isolationWindowLowerMz", "MsBackendMassbankDb", function(object,
+## #' @rdname MsBackendMassbankSql
+## setReplaceMethod("isolationWindowLowerMz", "MsBackendMassbankSql", function(object,
 ##                                                                  value) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
@@ -626,8 +627,8 @@ setMethod("dataStorage", "MsBackendMassbankDb", function(object) {
 ## #'
 ## #' @importMethodsFrom ProtGenerics isolationWindowTargetMz
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setMethod("isolationWindowTargetMz", "MsBackendMassbankDb", function(object) {
+## #' @rdname MsBackendMassbankSql
+## setMethod("isolationWindowTargetMz", "MsBackendMassbankSql", function(object) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
@@ -635,8 +636,8 @@ setMethod("dataStorage", "MsBackendMassbankDb", function(object) {
 ## #'
 ## #' @importMethodsFrom ProtGenerics isolationWindowTargetMz<-
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setReplaceMethod("isolationWindowTargetMz", "MsBackendMassbankDb", function(object,
+## #' @rdname MsBackendMassbankSql
+## setReplaceMethod("isolationWindowTargetMz", "MsBackendMassbankSql", function(object,
 ##                                                                   value) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
@@ -645,8 +646,8 @@ setMethod("dataStorage", "MsBackendMassbankDb", function(object) {
 ## #'
 ## #' @importMethodsFrom ProtGenerics isolationWindowUpperMz
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setMethod("isolationWindowUpperMz", "MsBackendMassbankDb", function(object) {
+## #' @rdname MsBackendMassbankSql
+## setMethod("isolationWindowUpperMz", "MsBackendMassbankSql", function(object) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
@@ -654,23 +655,23 @@ setMethod("dataStorage", "MsBackendMassbankDb", function(object) {
 ## #'
 ## #' @importMethodsFrom ProtGenerics isolationWindowUpperMz<-
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setReplaceMethod("isolationWindowUpperMz", "MsBackendMassbankDb", function(object,
+## #' @rdname MsBackendMassbankSql
+## setReplaceMethod("isolationWindowUpperMz", "MsBackendMassbankSql", function(object,
 ##                                                                  value) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
 ## #' @exportMethod isReadOnly
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setMethod("isReadOnly", "MsBackendMassbankDb", function(object) {
+## #' @rdname MsBackendMassbankSql
+## setMethod("isReadOnly", "MsBackendMassbankSql", function(object) {
 ##     object@readonly
 ## })
 
 #' @exportMethod length
 #'
-#' @rdname MsBackendMassbankDb
-setMethod("length", "MsBackendMassbankDb", function(x) {
+#' @rdname MsBackendMassbankSql
+setMethod("length", "MsBackendMassbankSql", function(x) {
     length(x@spectraIds)
 })
 
@@ -678,8 +679,8 @@ setMethod("length", "MsBackendMassbankDb", function(x) {
 ## #'
 ## #' @importMethodsFrom ProtGenerics msLevel
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setMethod("msLevel", "MsBackendMassbankDb", function(object) {
+## #' @rdname MsBackendMassbankSql
+## setMethod("msLevel", "MsBackendMassbankSql", function(object) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
@@ -687,8 +688,8 @@ setMethod("length", "MsBackendMassbankDb", function(x) {
 ## #'
 ## #' @importMethodsFrom ProtGenerics mz
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setMethod("mz", "MsBackendMassbankDb", function(object) {
+## #' @rdname MsBackendMassbankSql
+## setMethod("mz", "MsBackendMassbankSql", function(object) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
@@ -696,13 +697,13 @@ setMethod("length", "MsBackendMassbankDb", function(x) {
 ## #'
 ## #' @importMethodsFrom ProtGenerics mz<-
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setReplaceMethod("mz", "MsBackendMassbankDb", function(object, value) {
+## #' @rdname MsBackendMassbankSql
+## setReplaceMethod("mz", "MsBackendMassbankSql", function(object, value) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
-## #' @rdname MsBackendMassbankDb
-## setMethod("lengths", "MsBackendMassbankDb", function(x, use.names = FALSE) {
+## #' @rdname MsBackendMassbankSql
+## setMethod("lengths", "MsBackendMassbankSql", function(x, use.names = FALSE) {
 ##     stop("Not implemented for ", class(x), ".")
 ## })
 
@@ -710,8 +711,8 @@ setMethod("length", "MsBackendMassbankDb", function(x) {
 ## #'
 ## #' @importMethodsFrom ProtGenerics polarity
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setMethod("polarity", "MsBackendMassbankDb", function(object) {
+## #' @rdname MsBackendMassbankSql
+## setMethod("polarity", "MsBackendMassbankSql", function(object) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
@@ -719,8 +720,8 @@ setMethod("length", "MsBackendMassbankDb", function(x) {
 ## #'
 ## #' @importMethodsFrom ProtGenerics polarity<-
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setReplaceMethod("polarity", "MsBackendMassbankDb", function(object, value) {
+## #' @rdname MsBackendMassbankSql
+## setReplaceMethod("polarity", "MsBackendMassbankSql", function(object, value) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
@@ -728,8 +729,8 @@ setMethod("length", "MsBackendMassbankDb", function(x) {
 ## #'
 ## #' @importMethodsFrom ProtGenerics precScanNum
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setMethod("precScanNum", "MsBackendMassbankDb", function(object) {
+## #' @rdname MsBackendMassbankSql
+## setMethod("precScanNum", "MsBackendMassbankSql", function(object) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
@@ -737,8 +738,8 @@ setMethod("length", "MsBackendMassbankDb", function(x) {
 ## #'
 ## #' @importMethodsFrom ProtGenerics precursorCharge
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setMethod("precursorCharge", "MsBackendMassbankDb", function(object) {
+## #' @rdname MsBackendMassbankSql
+## setMethod("precursorCharge", "MsBackendMassbankSql", function(object) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
@@ -746,8 +747,8 @@ setMethod("length", "MsBackendMassbankDb", function(x) {
 ## #'
 ## #' @importMethodsFrom ProtGenerics precursorIntensity
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setMethod("precursorIntensity", "MsBackendMassbankDb", function(object) {
+## #' @rdname MsBackendMassbankSql
+## setMethod("precursorIntensity", "MsBackendMassbankSql", function(object) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
@@ -755,22 +756,22 @@ setMethod("length", "MsBackendMassbankDb", function(x) {
 ## #'
 ## #' @importMethodsFrom ProtGenerics precursorMz
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setMethod("precursorMz", "MsBackendMassbankDb", function(object) {
+## #' @rdname MsBackendMassbankSql
+## setMethod("precursorMz", "MsBackendMassbankSql", function(object) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
 ## #' @exportMethod peaksData<-
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setReplaceMethod("peaksData", "MsBackendMassbankDb", function(object, value) {
+## #' @rdname MsBackendMassbankSql
+## setReplaceMethod("peaksData", "MsBackendMassbankSql", function(object, value) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
 ## #' @exportMethod reset
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setMethod("reset", "MsBackendMassbankDb", function(object) {
+## #' @rdname MsBackendMassbankSql
+## setMethod("reset", "MsBackendMassbankSql", function(object) {
 ##     object
 ## })
 
@@ -778,8 +779,8 @@ setMethod("length", "MsBackendMassbankDb", function(x) {
 ## #'
 ## #' @importMethodsFrom ProtGenerics rtime
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setMethod("rtime", "MsBackendMassbankDb", function(object) {
+## #' @rdname MsBackendMassbankSql
+## setMethod("rtime", "MsBackendMassbankSql", function(object) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
@@ -787,8 +788,8 @@ setMethod("length", "MsBackendMassbankDb", function(x) {
 ## #'
 ## #' @importMethodsFrom ProtGenerics rtime<-
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setReplaceMethod("rtime", "MsBackendMassbankDb", function(object, value) {
+## #' @rdname MsBackendMassbankSql
+## setReplaceMethod("rtime", "MsBackendMassbankSql", function(object, value) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
@@ -796,16 +797,16 @@ setMethod("length", "MsBackendMassbankDb", function(x) {
 ## #'
 ## #' @importMethodsFrom ProtGenerics scanIndex
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setMethod("scanIndex", "MsBackendMassbankDb", function(object) {
+## #' @rdname MsBackendMassbankSql
+## setMethod("scanIndex", "MsBackendMassbankSql", function(object) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
 ## #' @exportMethod selectSpectraVariables
 ## #'
-## #' @rdname MsBackendMassbankDb
+## #' @rdname MsBackendMassbankSql
 ## setMethod(
-##     "selectSpectraVariables", "MsBackendMassbankDb",
+##     "selectSpectraVariables", "MsBackendMassbankSql",
 ##     function(object, spectraVariables = spectraVariables(object)) {
 ##         stop("Not implemented for ", class(object), ".")
 ##     })
@@ -814,35 +815,35 @@ setMethod("length", "MsBackendMassbankDb", function(x) {
 ## #'
 ## #' @importMethodsFrom ProtGenerics smoothed
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setMethod("smoothed", "MsBackendMassbankDb", function(object) {
+## #' @rdname MsBackendMassbankSql
+## setMethod("smoothed", "MsBackendMassbankSql", function(object) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
 ## #' @exportMethod smoothed<-
 ## #'
-## #' @aliases smoothed<-,MsBackendMassbankDb-method
+## #' @aliases smoothed<-,MsBackendMassbankSql-method
 ## #'
 ## #' @importMethodsFrom ProtGenerics smoothed<-
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setReplaceMethod("smoothed", "MsBackendMassbankDb", function(object, value) {
+## #' @rdname MsBackendMassbankSql
+## setReplaceMethod("smoothed", "MsBackendMassbankSql", function(object, value) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
 ## #' @exportMethod spectraData
 ## #'
-## #' @rdname MsBackendMassbankDb
+## #' @rdname MsBackendMassbankSql
 ## setMethod(
-##     "spectraData", "MsBackendMassbankDb",
+##     "spectraData", "MsBackendMassbankSql",
 ##     function(object, columns = spectraVariables(object)) {
 ##         stop("Not implemented for ", class(object), ".")
 ##     })
 
 ## #' @exportMethod spectraData<-
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setReplaceMethod("spectraData", "MsBackendMassbankDb", function(object, value) {
+## #' @rdname MsBackendMassbankSql
+## setReplaceMethod("spectraData", "MsBackendMassbankSql", function(object, value) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
@@ -850,8 +851,8 @@ setMethod("length", "MsBackendMassbankDb", function(x) {
 ## #'
 ## #' @importMethodsFrom ProtGenerics spectraNames
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setMethod("spectraNames", "MsBackendMassbankDb", function(object) {
+## #' @rdname MsBackendMassbankSql
+## setMethod("spectraNames", "MsBackendMassbankSql", function(object) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
@@ -859,8 +860,8 @@ setMethod("length", "MsBackendMassbankDb", function(x) {
 ## #'
 ## #' @importMethodsFrom ProtGenerics spectraNames<-
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setReplaceMethod("spectraNames", "MsBackendMassbankDb", function(object, value) {
+## #' @rdname MsBackendMassbankSql
+## setReplaceMethod("spectraNames", "MsBackendMassbankSql", function(object, value) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
@@ -868,17 +869,18 @@ setMethod("length", "MsBackendMassbankDb", function(x) {
 #'
 #' @importMethodsFrom ProtGenerics spectraVariables
 #'
-#' @rdname MsBackendMassbankDb
-setMethod("spectraVariables", "MsBackendMassbankDb", function(object) {
-    unique(c(names(Spectra:::.SPECTRA_DATA_COLUMNS), object@spectraVariables))
+#' @rdname MsBackendMassbankSql
+setMethod("spectraVariables", "MsBackendMassbankSql", function(object) {
+    unique(c(names(Spectra:::.SPECTRA_DATA_COLUMNS), colnames(object@localData),
+             object@spectraVariables))
 })
 
 ## #' @exportMethod split
 ## #'
 ## #' @importMethodsFrom S4Vectors split
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setMethod("split", "MsBackendMassbankDb", function(x, f, drop = FALSE, ...) {
+## #' @rdname MsBackendMassbankSql
+## setMethod("split", "MsBackendMassbankSql", function(x, f, drop = FALSE, ...) {
 ##     split.default(x, f, drop = drop, ...)
 ## })
 
@@ -886,28 +888,28 @@ setMethod("spectraVariables", "MsBackendMassbankDb", function(object) {
 ## #'
 ## #' @importMethodsFrom ProtGenerics tic
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setMethod("tic", "MsBackendMassbankDb", function(object, initial = TRUE) {
+## #' @rdname MsBackendMassbankSql
+## setMethod("tic", "MsBackendMassbankSql", function(object, initial = TRUE) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
 ## #' @exportMethod [
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setMethod("[", "MsBackendMassbankDb", function(x, i, j, ..., drop = FALSE) {
+## #' @rdname MsBackendMassbankSql
+## setMethod("[", "MsBackendMassbankSql", function(x, i, j, ..., drop = FALSE) {
 ##     stop("Not implemented for ", class(x), ".")
 ## })
 
 ## #' @exportMethod $
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setMethod("$", "MsBackendMassbankDb", function(x, name) {
+## #' @rdname MsBackendMassbankSql
+## setMethod("$", "MsBackendMassbankSql", function(x, name) {
 ##     stop("Not implemented for ", class(x), ".")
 ## })
 
 ## #' @exportMethod $<-
 ## #'
-## #' @rdname MsBackendMassbankDb
-## setReplaceMethod("$", "MsBackendMassbankDb", function(x, name, value) {
+## #' @rdname MsBackendMassbankSql
+## setReplaceMethod("$", "MsBackendMassbankSql", function(x, name, value) {
 ##     stop("Not implemented for ", class(x), ".")
 ## })

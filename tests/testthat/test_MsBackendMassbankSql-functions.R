@@ -3,26 +3,31 @@ test_that(".valid_dbcon works", {
     expect_true(length(.valid_dbcon(4)) == 1)
 })
 
-test_that("MsBackendMassbankDb works", {
-    res <- MsBackendMassbankDb()
+test_that(".valid_local_data works", {
+    expect_true(length(.valid_local_data(DataFrame(), 3)) == 0)
+    expect_true(length(.valid_local_data(data.frame(a = 4), 1:3)) == 1)
+})
+
+test_that("MsBackendMassbankSql works", {
+    res <- MsBackendMassbankSql()
     expect_true(validObject(res))
-    expect_true(is(res, "MsBackendMassbankDb"))
+    expect_true(is(res, "MsBackendMassbankSql"))
 })
 
 test_that(".spectra_data_massbank works", {
-    be <- MsBackendMassbankDb()
+    be <- MsBackendMassbankSql()
 
     res <- .spectra_data_massbank(be)
 })
 
 test_that(".fetch_peaks_sql works", {
-    be <- MsBackendMassbankDb()
+    be <- MsBackendMassbankSql()
     res <- .fetch_peaks_sql(be)
     expect_true(is.data.frame(res))
     expect_equal(colnames(res), c("spectrum_id", "mz", "intensity"))
     expect_true(nrow(res) == 0)
 
-    be <- backendInitialize(MsBackendMassbankDb(), dbc)
+    be <- backendInitialize(MsBackendMassbankSql(), dbc)
     res <- .fetch_peaks_sql(be)
     expect_true(is.data.frame(res))
     expect_equal(colnames(res), c("spectrum_id", "mz", "intensity"))
@@ -30,7 +35,7 @@ test_that(".fetch_peaks_sql works", {
 })
 
 test_that(".fetch_spectra_data_sql works", {
-    be <- backendInitialize(MsBackendMassbankDb(), dbc)
+    be <- backendInitialize(MsBackendMassbankSql(), dbc)
     res <- .fetch_spectra_data_sql(be)
     expect_true(nrow(res) > 0)
     expect_true(colnames(res) == "spectrum_id")
@@ -43,13 +48,13 @@ test_that(".fetch_spectra_data_sql works", {
 })
 
 test_that(".spectra_data_massbank_sql works", {
-    be <- MsBackendMassbankDb()
+    be <- MsBackendMassbankSql()
     res <- .spectra_data_massbank_sql(be)
     expect_true(is(res, "DataFrame"))
     expect_true(nrow(res) == 0L)
     expect_equal(colnames(res), names(Spectra:::.SPECTRA_DATA_COLUMNS))
 
-    be <- backendInitialize(MsBackendMassbankDb(), dbc)
+    be <- backendInitialize(MsBackendMassbankSql(), dbc)
     ## Full data.
     expect_error(.spectra_data_massbank_sql(be, columns = "other"), "available")
     res <- .spectra_data_massbank_sql(be)
@@ -96,9 +101,15 @@ test_that(".spectra_data_massbank_sql works", {
     expect_true(is(res$intensity, "NumericList"))
 
     ## With local data.
-    stop("implement local data")
-    ## - validation method that checks that nrow @localData and @spectrumIds
-    ##   have same length.
-    ## - spectraVariables adds also columns from there (unique one).
-    ## - spectraData takes columns FIRST from there (not from other sources).
-)
+    be@localData <- DataFrame(rtime = as.numeric(1:3))
+    res <- .spectra_data_massbank_sql(be, columns = c("mz", "rtime", "spectrum_id"))
+    expect_true(is(res, "DataFrame"))
+    expect_true(nrow(res) > 0)
+    expect_equal(res$rtime, 1:3)
+
+    be@localData$authors <- c("a", "b", "c")
+    res <- .spectra_data_massbank_sql(be, columns = c("rtime", "authors"))
+    expect_true(is(res, "DataFrame"))
+    expect_true(nrow(res) > 0)
+    expect_equal(res$authors, c("a", "b", "c"))
+})
