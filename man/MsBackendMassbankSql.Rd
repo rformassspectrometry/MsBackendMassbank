@@ -5,6 +5,12 @@
 \alias{MsBackendMassbankSql}
 \alias{MsBackendMassbankSql-class}
 \alias{backendInitialize,MsBackendMassbankSql-method}
+\alias{acquisitionNum,MsBackendMassbankSql-method}
+\alias{peaksData,MsBackendMassbankSql-method}
+\alias{centroided,MsBackendMassbankSql-method}
+\alias{centroided<-,MsBackendMassbankSql-method}
+\alias{collisionEnergy,MsBackendMassbankSql-method}
+\alias{collisionEnergy<-,MsBackendMassbankSql-method}
 \alias{dataStorage,MsBackendMassbankSql-method}
 \alias{length,MsBackendMassbankSql-method}
 \alias{spectraData,MsBackendMassbankSql-method}
@@ -16,6 +22,18 @@
 MsBackendMassbankSql()
 
 \S4method{backendInitialize}{MsBackendMassbankSql}(object, dbcon, ...)
+
+\S4method{acquisitionNum}{MsBackendMassbankSql}(object)
+
+\S4method{peaksData}{MsBackendMassbankSql}(object)
+
+\S4method{centroided}{MsBackendMassbankSql}(object)
+
+\S4method{centroided}{MsBackendMassbankSql}(object) <- value
+
+\S4method{collisionEnergy}{MsBackendMassbankSql}(object)
+
+\S4method{collisionEnergy}{MsBackendMassbankSql}(object) <- value
 
 \S4method{dataStorage}{MsBackendMassbankSql}(object)
 
@@ -37,6 +55,9 @@ connection to the MassBank (MariaDb) database.}
 
 \item{...}{Additional arguments.}
 
+\item{value}{replacement value for \verb{<-} methods. See individual
+method description or expected data type.}
+
 \item{x}{Object extending \code{MsBackendMassbankSql}.}
 
 \item{columns}{For \code{spectraData} accessor: optional \code{character} with column
@@ -45,9 +66,6 @@ returned \code{DataFrame}. By default, all columns are returned.}
 
 \item{name}{For \code{$} and \verb{$<-}: the name of the spectra variable to return
 or set.}
-
-\item{value}{replacement value for \verb{<-} methods. See individual
-method description or expected data type.}
 
 \item{dataOrigin}{For \code{filterDataOrigin}: \code{character} to define which
 spectra to keep.
@@ -99,10 +117,13 @@ See documentation of respective function.
 \description{
 The \code{MsBackendMassbankSql} provides access to mass spectrometry data from
 \href{https://massbank.eu/MassBank/}{MassBank} by directly accessing its
-MySQL/MariaDb database.
+MySQL/MariaDb database. In addition it supports adding new spectra variables
+or \emph{locally} changing spectra variables provided by MassBank (withoug
+changing the original values in the database).
 
-Note that this requires a local installation or the MassBank database since
-direct database access is not supported for the \emph{main} MassBank instance.
+Note that \code{MsBackendMassbankSql} requires a local installation of the
+MassBank database since direct database access is not supported for the
+\emph{main} MassBank instance.
 }
 \section{Supported Backend functions}{
 
@@ -227,11 +248,6 @@ and acquisition number (\code{interger}) of the precursor for MS level
 2 and above spectra from the object. Returns a vector of length equal to
 the number of spectra in \code{object}. \code{NA} are reported for MS1
 spectra of if no precursor information is available.
-\item \verb{peaksData<-} replaces the peak data (m/z and intensity values) of the
-backend. This method expects a \code{list} of \code{matrix} objects with columns
-\code{"mz"} and \code{"intensity"} that has the same length as the number of
-spectra in the backend. Note that just writeable backends support this
-method.
 \item \code{reset} a backend (if supported). This method will be called on the backend
 by the \verb{reset,Spectra} method that is supposed to restore the data to its
 original state (see \verb{reset,Spectra} for more details). The function
@@ -283,7 +299,8 @@ spectrum, \code{NA_real_} is returned.
 The following functions are not supported by the \code{MsBackendMassbankSql} since
 the original data can not be changed.
 
-\code{backendMerge}, \code{export}, \code{filterDataStorage}, \code{filterPrecursorScan}.
+\code{backendMerge}, \code{export}, \code{filterDataStorage}, \code{filterPrecursorScan},
+\verb{peaksData<-}
 }
 
 \author{

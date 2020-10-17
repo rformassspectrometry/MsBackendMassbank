@@ -235,12 +235,6 @@
 #'   the number of spectra in `object`. `NA` are reported for MS1
 #'   spectra of if no precursor information is available.
 #'
-#' - `peaksData<-` replaces the peak data (m/z and intensity values) of the
-#'   backend. This method expects a `list` of `matrix` objects with columns
-#'   `"mz"` and `"intensity"` that has the same length as the number of
-#'   spectra in the backend. Note that just writeable backends support this
-#'   method.
-#'
 #' - `reset` a backend (if supported). This method will be called on the backend
 #'   by the `reset,Spectra` method that is supposed to restore the data to its
 #'   original state (see `reset,Spectra` for more details). The function
@@ -298,7 +292,8 @@
 #' The following functions are not supported by the `MsBackendMassbankSql` since
 #' the original data can not be changed.
 #'
-#' `backendMerge`, `export`, `filterDataStorage`, `filterPrecursorScan`.
+#' `backendMerge`, `export`, `filterDataStorage`, `filterPrecursorScan`,
+#' `peaksData<-`
 #'
 #' @name MsBackendMassbankSql
 #'
@@ -362,59 +357,78 @@ setMethod("backendInitialize", "MsBackendMassbankSql", function(object, dbcon,
     object
 })
 
-## #' @exportMethod acquisitionNum
-## #'
-## #' @importMethodsFrom ProtGenerics acquisitionNum
-## #'
-## #' @rdname MsBackendMassbankSql
-## setMethod("acquisitionNum", "MsBackendMassbankSql", function(object) {
-##     stop("Not implemented for ", class(object), ".")
-## })
+#' @exportMethod acquisitionNum
+#'
+#' @importMethodsFrom ProtGenerics acquisitionNum
+#'
+#' @rdname MsBackendMassbankSql
+setMethod("acquisitionNum", "MsBackendMassbankSql", function(object) {
+    if (length(object))
+        .spectra_data_massbank_sql(object, "acquisitionNum")[, 1]
+    else integer()
+})
 
-## #' @exportMethod peaksData
-## #'
-## #' @rdname MsBackendMassbankSql
-## setMethod("peaksData", "MsBackendMassbankSql", function(object) {
-##     stop("Not implemented for ", class(object), ".")
-## })
+#' @exportMethod peaksData
+#'
+#' @rdname MsBackendMassbankSql
+setMethod("peaksData", "MsBackendMassbankSql", function(object) {
+    pks <- .fetch_peaks_sql(object)
+    f <- factor(pks$spectrum_id, levels = object@spectraIds)
+    pks <- split.data.frame(pks, f)
+    lapply(pks, function(z) {
+        if (nrow(z))
+            as.matrix(z[, 2:3], rownames.force = FALSE)
+        else matrix(ncol = 2, nrow = 0,
+                    dimnames = list(character(), c("mz", "intensity")))
+    })
+})
 
-## #' @exportMethod centroided
-## #'
-## #' @aliases centroided<-,MsBackendMassbankSql-method
-## #'
-## #' @importMethodsFrom ProtGenerics centroided
-## #'
-## #' @rdname MsBackendMassbankSql
-## setMethod("centroided", "MsBackendMassbankSql", function(object) {
-##     stop("Not implemented for ", class(object), ".")
-## })
+#' @exportMethod centroided
+#'
+#' @aliases centroided<-,MsBackendMassbankSql-method
+#'
+#' @importMethodsFrom ProtGenerics centroided
+#'
+#' @rdname MsBackendMassbankSql
+setMethod("centroided", "MsBackendMassbankSql", function(object) {
+    if (length(object))
+        .spectra_data_massbank_sql(object, "centroided")[, 1]
+    else logical()
+})
 
-## #' @exportMethod centroided<-
-## #'
-## #' @importMethodsFrom ProtGenerics centroided<-
-## #'
-## #' @rdname MsBackendMassbankSql
-## setReplaceMethod("centroided", "MsBackendMassbankSql", function(object, value) {
-##     stop("Not implemented for ", class(object), ".")
-## })
+#' @exportMethod centroided<-
+#'
+#' @importMethodsFrom ProtGenerics centroided<-
+#'
+#' @rdname MsBackendMassbankSql
+setReplaceMethod("centroided", "MsBackendMassbankSql", function(object, value) {
+    if (!is.logical(value))
+        stop("'value' has to be a logical")
+    object$centroided <- value
+})
 
-## #' @exportMethod collisionEnergy
-## #'
-## #' @importMethodsFrom ProtGenerics collisionEnergy
-## #'
-## #' @rdname MsBackendMassbankSql
-## setMethod("collisionEnergy", "MsBackendMassbankSql", function(object) {
-##     stop("Not implemented for ", class(object), ".")
-## })
+#' @exportMethod collisionEnergy
+#'
+#' @importMethodsFrom ProtGenerics collisionEnergy
+#'
+#' @rdname MsBackendMassbankSql
+setMethod("collisionEnergy", "MsBackendMassbankSql", function(object) {
+    if (length(object))
+        .spectra_data_massbank_sql(object, "collisionEnergy")[, 1]
+    else numeric()
+})
 
-## #' @exportMethod collisionEnergy<-
-## #'
-## #' @importMethodsFrom ProtGenerics collisionEnergy<-
-## #'
-## #' @rdname MsBackendMassbankSql
-## setReplaceMethod("collisionEnergy", "MsBackendMassbankSql", function(object, value) {
-##     stop("Not implemented for ", class(object), ".")
-## })
+#' @exportMethod collisionEnergy<-
+#'
+#' @importMethodsFrom ProtGenerics collisionEnergy<-
+#'
+#' @rdname MsBackendMassbankSql
+setReplaceMethod("collisionEnergy", "MsBackendMassbankSql",
+                 function(object, value) {
+                     if (!is.numeric(value))
+                         stop("'value' has to be a numeric value")
+                     object$collisionEnergy <- value
+})
 
 ## #' @exportMethod dataOrigin
 ## #'
@@ -746,13 +760,6 @@ setMethod("length", "MsBackendMassbankSql", function(x) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
-## #' @exportMethod peaksData<-
-## #'
-## #' @rdname MsBackendMassbankSql
-## setReplaceMethod("peaksData", "MsBackendMassbankSql", function(object, value) {
-##     stop("Not implemented for ", class(object), ".")
-## })
-
 ## #' @exportMethod reset
 ## #'
 ## #' @rdname MsBackendMassbankSql
@@ -918,5 +925,6 @@ setReplaceMethod("$", "MsBackendMassbankSql", function(x, name, value) {
         x@localData <- DataFrame(value)
         colnames(x@localData) <- name
     }
+    validObject(x)
     x
 })

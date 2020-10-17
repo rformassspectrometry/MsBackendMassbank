@@ -90,3 +90,59 @@ test_that("$<-,MsBackendMassbankSql works", {
     expect_error(be$rtime <- c(1, 2), "length 1 or")
     expect_error(be$mz <- 1:3, "Replacing m/z and intensity")
 })
+
+test_that("acquisitionNum,MsBackendMassbankSql works", {
+    be <- MsBackendMassbankSql()
+    res <- acquisitionNum(be)
+    expect_equal(res, integer())
+
+    be <- backendInitialize(be, dbc)
+    res <- acquisitionNum(be)
+    expect_equal(res, rep(NA_integer_, 3))
+})
+
+test_that("centroided,centroided<-,MsBackendMassbankSql works", {
+    be <- MsBackendMassbankSql()
+    res <- centroided(be)
+    expect_equal(res, logical())
+
+    be <- backendInitialize(be, dbc)
+    res <- centroided(be)
+    expect_equal(res, rep(NA, 3))
+
+    be$centroided <- FALSE
+    res <- centroided(be)
+    expect_equal(res, rep(FALSE, 3))
+
+    expect_error(centroided(be) <- 3, "logical")
+})
+
+test_that("collisionEnergy,collisionEnergy<-,MsBackendMassbankSql works", {
+    be <- MsBackendMassbankSql()
+    res <- collisionEnergy(be)
+    expect_equal(res, numeric())
+
+    be <- backendInitialize(be, dbc)
+    res <- collisionEnergy(be)
+    expect_equal(res, rep(NA_real_, 3))
+
+    be$collisionEnergy <- 1.2
+    res <- collisionEnergy(be)
+    expect_equal(res, rep(1.2, 3))
+
+    expect_error(collisionEnergy(be) <- "a", "numeric")
+})
+
+test_that("peaksData,MsBackendMassbankSql works", {
+    be <- MsBackendMassbankSql()
+    res <- peaksData(be)
+    expect_true(is.list(res))
+
+    be <- backendInitialize(be, dbc)
+    res <- peaksData(be)
+    expect_true(is.list(res))
+    expect_true(length(res) == length(be))
+    expect_true(is.matrix(res[[1]]))
+    expect_true(is.matrix(res[[2]]))
+    expect_true(is.matrix(res[[3]]))
+})
