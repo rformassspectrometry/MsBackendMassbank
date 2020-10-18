@@ -136,5 +136,7 @@ MsBackendMassbankSql <- function() {
         pol[res$polarity == "NEGATIVE"] <- 0L
         res$polarity <- pol
     }
+    if (any(columns == "publication"))
+        res$dataOrigin <- res$publication
     res
 }

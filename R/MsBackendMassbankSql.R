@@ -346,6 +346,8 @@ setMethod("acquisitionNum", "MsBackendMassbankSql", function(object) {
     else integer()
 })
 
+#' @importMethodsFrom Spectra peaksData
+#'
 #' @exportMethod peaksData
 #'
 #' @rdname MsBackendMassbankSql
@@ -740,6 +742,8 @@ setMethod("length", "MsBackendMassbankSql", function(x) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
+#' @importMethodsFrom Spectra selectSpectraVariables
+#'
 #' @exportMethod selectSpectraVariables
 #'
 #' @rdname MsBackendMassbankSql
@@ -837,6 +841,10 @@ setMethod("spectraVariables", "MsBackendMassbankSql", function(object) {
 #' @exportMethod [
 #'
 #' @importFrom MsCoreUtils i2index
+#'
+#' @importFrom methods slot<-
+#'
+#' @importFrom S4Vectors extractROWS
 #'
 #' @rdname MsBackendMassbankSql
 setMethod("[", "MsBackendMassbankSql", function(x, i, j, ..., drop = FALSE) {

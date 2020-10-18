@@ -53,28 +53,3 @@ test_that("backendInitialize,MsBackendMassbank works", {
   expect_error(backendInitialize(be, 4), "expected to be a character")
   expect_error(backendInitialize(be, "a"), "a not found")
 })
-
-test_that("[,MsBackendMassbankSql works", {
-    be <- backendInitialize(MsBackendMassbankSql(), dbc)
-
-    res <- be[2:3]
-    expect_true(length(res) == 2)
-    expect_equal(res@spectraIds, be@spectraIds[2:3])
-    expect_equal(be$mz[2:3], res$mz)
-
-    res <- be[c(3, 1)]
-    expect_true(length(res) == 2)
-    expect_equal(res@spectraIds, be@spectraIds[c(3, 1)])
-    expect_equal(be$mz[c(3, 1)], res$mz)
-    expect_equal(be$splash[c(3, 1)], res$splash)
-})
-
-test_that("filterDataOrigin,MsBackendMassbankSql works", {
-    be <- backendInitialize(MsBackendMassbankSql(), dbc)
-    be$dataOrigin <- c("a", "b", "c")
-    res <- filterDataOrigin(be, c("c", "a"))
-
-    expect_true(length(res) == 2)
-    expect_equal(res$dataOrigin, c("c", "a"))
-    expect_equal(be$mz[c(3, 1)], res$mz)
-})

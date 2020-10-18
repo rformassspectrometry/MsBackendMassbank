@@ -21,6 +21,7 @@ Imports:
     IRanges,
     methods,
     ProtGenerics,
+    MsCoreUtils,
     DBI
 Suggests:
     testthat,
