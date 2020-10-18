@@ -23,8 +23,6 @@
 #'
 #' @param dataOrigin For `filterDataOrigin`: `character` to define which
 #'     spectra to keep.
-#'     For `filterAcquisitionNum`: optionally specify if filtering should occurr
-#'     only for spectra of selected `dataOrigin`.
 #'
 #' @param drop For `[`: not considered.
 #'
@@ -50,9 +48,6 @@
 #' @param mz For `filterIsolationWindow`: `numeric(1)` with the m/z value to
 #'     filter the object. For `filterPrecursorMz`: `numeric(2)` with the lower
 #'     and upper m/z boundary.
-#'
-#' @param n for `filterAcquisitionNum`: `integer` with the acquisition numbers
-#'     to filter for.
 #'
 #' @param name For `$` and `$<-`: the name of the spectra variable to return
 #'     or set.
@@ -128,12 +123,6 @@
 #'   returns a `numeric` with length equal to the number of spectra
 #'   (`NA_real_` if not present/defined), `collisionEnergy<-` takes a
 #'   `numeric` of length equal to the number of spectra in `object`.
-#'
-#' - `filterAcquisitionNum`: filters the object keeping only spectra matching
-#'   the provided acquisition numbers (argument `n`). If `dataOrigin` or
-#'   `dataStorage` is also provided, `object` is subsetted to the spectra with
-#'   an acquisition number equal to `n` **in spectra with matching dataOrigin
-#'   or dataStorage values** retaining all other spectra.
 #'
 #' - `filterDataOrigin`: filters the object retaining spectra matching the
 #'   provided `dataOrigin`. Parameter `dataOrigin` has to be of type
@@ -293,7 +282,7 @@
 #' the original data can not be changed.
 #'
 #' `backendMerge`, `export`, `filterDataStorage`, `filterPrecursorScan`,
-#' `peaksData<-`
+#' `peaksData<-`, `filterAcquisitionNum`.
 #'
 #' @name MsBackendMassbankSql
 #'
@@ -318,11 +307,13 @@ setClass(
         dbcon = "DBIConnectionOrNULL",
         spectraIds = "character",
         spectraVariables = "character",
+        coreSpectraVariables = "character",
         localData = "DataFrame"),
     prototype = prototype(
         dbcon = NULL,
         spectraIds = character(),
         spectraVariables = character(),
+        coreSpectraVariables = names(Spectra:::.SPECTRA_DATA_COLUMNS),
         localData = DataFrame(),
         readonly = TRUE, version = "0.1"))
 
@@ -405,6 +396,8 @@ setReplaceMethod("centroided", "MsBackendMassbankSql", function(object, value) {
     if (!is.logical(value))
         stop("'value' has to be a logical")
     object$centroided <- value
+    validObject(object)
+    object
 })
 
 #' @exportMethod collisionEnergy
@@ -428,25 +421,33 @@ setReplaceMethod("collisionEnergy", "MsBackendMassbankSql",
                      if (!is.numeric(value))
                          stop("'value' has to be a numeric value")
                      object$collisionEnergy <- value
+                     validObject(object)
+                     object
 })
 
-## #' @exportMethod dataOrigin
-## #'
-## #' @importMethodsFrom ProtGenerics dataOrigin
-## #'
-## #' @rdname MsBackendMassbankSql
-## setMethod("dataOrigin", "MsBackendMassbankSql", function(object) {
-##     stop("Not implemented for ", class(object), ".")
-## })
+#' @exportMethod dataOrigin
+#'
+#' @importMethodsFrom ProtGenerics dataOrigin
+#'
+#' @rdname MsBackendMassbankSql
+setMethod("dataOrigin", "MsBackendMassbankSql", function(object) {
+    if (length(object))
+        .spectra_data_massbank_sql(object, "dataOrigin")[, 1]
+    else character()
+})
 
-## #' @exportMethod dataOrigin<-
-## #'
-## #' @importMethodsFrom ProtGenerics dataOrigin<-
-## #'
-## #' @rdname MsBackendMassbankSql
-## setReplaceMethod("dataOrigin", "MsBackendMassbankSql", function(object, value) {
-##     stop("Not implemented for ", class(object), ".")
-## })
+#' @exportMethod dataOrigin<-
+#'
+#' @importMethodsFrom ProtGenerics dataOrigin<-
+#'
+#' @rdname MsBackendMassbankSql
+setReplaceMethod("dataOrigin", "MsBackendMassbankSql", function(object, value) {
+                     if (!is.character(value))
+                         stop("'value' has to be a character")
+                     object$dataOrigin <- value
+                     validObject(object)
+                     object
+})
 
 #' @exportMethod dataStorage
 #'
@@ -456,15 +457,6 @@ setReplaceMethod("collisionEnergy", "MsBackendMassbankSql",
 setMethod("dataStorage", "MsBackendMassbankSql", function(object) {
     rep("<MassBank>", length(object))
 })
-
-## #' @exportMethod dataStorage<-
-## #'
-## #' @importMethodsFrom ProtGenerics dataStorage<-
-## #'
-## #' @rdname MsBackendMassbankSql
-## setReplaceMethod("dataStorage", "MsBackendMassbankSql", function(object, value) {
-##     stop("Method 'dataStorage' is not implemented for ", class(object), ".")
-## })
 
 ## #' @exportMethod dropNaSpectraVariables
 ## #'
@@ -477,30 +469,12 @@ setMethod("dataStorage", "MsBackendMassbankSql", function(object) {
 ##     selectSpectraVariables(object, c(svs[keep], "mz", "intensity"))
 ## })
 
-## #' @exportMethod filterAcquisitionNum
-## #'
-## #' @importMethodsFrom ProtGenerics filterAcquisitionNum
-## #'
-## #' @rdname MsBackendMassbankSql
-## setMethod("filterAcquisitionNum", "MsBackendMassbankSql", function(object, n, file, ...) {
-##     stop("Not implemented for ", class(object), ".")
-## })
-
 ## #' @exportMethod filterDataOrigin
 ## #'
 ## #' @importMethodsFrom ProtGenerics filterDataOrigin
 ## #'
 ## #' @rdname MsBackendMassbankSql
 ## setMethod("filterDataOrigin", "MsBackendMassbankSql", function(object, dataOrigin, ...) {
-##     stop("Not implemented for ", class(object), ".")
-## })
-
-## #' @exportMethod filterDataStorage
-## #'
-## #' @importMethodsFrom ProtGenerics filterDataStorage
-## #'
-## #' @rdname MsBackendMassbankSql
-## setMethod("filterDataStorage", "MsBackendMassbankSql", function(object, dataStorage, ...) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
@@ -794,14 +768,26 @@ setMethod("length", "MsBackendMassbankSql", function(x) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
-## #' @exportMethod selectSpectraVariables
-## #'
-## #' @rdname MsBackendMassbankSql
-## setMethod(
-##     "selectSpectraVariables", "MsBackendMassbankSql",
-##     function(object, spectraVariables = spectraVariables(object)) {
-##         stop("Not implemented for ", class(object), ".")
-##     })
+#' @exportMethod selectSpectraVariables
+#'
+#' @rdname MsBackendMassbankSql
+setMethod(
+    "selectSpectraVariables", "MsBackendMassbankSql",
+    function(object, spectraVariables = spectraVariables(object)) {
+        if (any(!spectraVariables %in% spectraVariables(object)))
+            stop("spectra variable(s) ",
+                 paste(spectraVariables[!spectraVariables %in%
+                                        spectraVariables(object)],
+                       collapse = ", "), " not available")
+        object@spectraVariables <- intersect(object@spectraVariables,
+                                             spectraVariables)
+        object@coreSpectraVariables <- intersect(object@coreSpectraVariables,
+                                                 spectraVariables)
+        object@localData <- object@localData[, colnames(object@localData) %in%
+                                               spectraVariables]
+        validObject(object)
+        object
+    })
 
 ## #' @exportMethod smoothed
 ## #'
@@ -863,7 +849,7 @@ setMethod(
 #'
 #' @rdname MsBackendMassbankSql
 setMethod("spectraVariables", "MsBackendMassbankSql", function(object) {
-    unique(c(names(Spectra:::.SPECTRA_DATA_COLUMNS), colnames(object@localData),
+    unique(c(object@coreSpectraVariables, colnames(object@localData),
              object@spectraVariables))
 })
 

@@ -11,8 +11,11 @@
 \alias{centroided<-,MsBackendMassbankSql-method}
 \alias{collisionEnergy,MsBackendMassbankSql-method}
 \alias{collisionEnergy<-,MsBackendMassbankSql-method}
+\alias{dataOrigin,MsBackendMassbankSql-method}
+\alias{dataOrigin<-,MsBackendMassbankSql-method}
 \alias{dataStorage,MsBackendMassbankSql-method}
 \alias{length,MsBackendMassbankSql-method}
+\alias{selectSpectraVariables,MsBackendMassbankSql-method}
 \alias{spectraData,MsBackendMassbankSql-method}
 \alias{spectraVariables,MsBackendMassbankSql-method}
 \alias{$,MsBackendMassbankSql-method}
@@ -35,9 +38,15 @@ MsBackendMassbankSql()
 
 \S4method{collisionEnergy}{MsBackendMassbankSql}(object) <- value
 
+\S4method{dataOrigin}{MsBackendMassbankSql}(object)
+
+\S4method{dataOrigin}{MsBackendMassbankSql}(object) <- value
+
 \S4method{dataStorage}{MsBackendMassbankSql}(object)
 
 \S4method{length}{MsBackendMassbankSql}(x)
+
+\S4method{selectSpectraVariables}{MsBackendMassbankSql}(object, spectraVariables = spectraVariables(object))
 
 \S4method{spectraData}{MsBackendMassbankSql}(object, columns = spectraVariables(object))
 
@@ -60,6 +69,9 @@ method description or expected data type.}
 
 \item{x}{Object extending \code{MsBackendMassbankSql}.}
 
+\item{spectraVariables}{For \code{selectSpectraVariables}: \code{character} with the
+names of the spectra variables to which the backend should be subsetted.}
+
 \item{columns}{For \code{spectraData} accessor: optional \code{character} with column
 names (spectra variables) that should be included in the
 returned \code{DataFrame}. By default, all columns are returned.}
@@ -68,9 +80,7 @@ returned \code{DataFrame}. By default, all columns are returned.}
 or set.}
 
 \item{dataOrigin}{For \code{filterDataOrigin}: \code{character} to define which
-spectra to keep.
-For \code{filterAcquisitionNum}: optionally specify if filtering should occurr
-only for spectra of selected \code{dataOrigin}.}
+spectra to keep.}
 
 \item{drop}{For \code{[}: not considered.}
 
@@ -97,17 +107,11 @@ function should be applied. For \code{filterMsLevel}: the MS level to which
 filter the object. For \code{filterPrecursorMz}: \code{numeric(2)} with the lower
 and upper m/z boundary.}
 
-\item{n}{for \code{filterAcquisitionNum}: \code{integer} with the acquisition numbers
-to filter for.}
-
 \item{polarity}{For \code{filterPolarity}: \code{integer} specifying the polarity to
 to subset \code{object}.}
 
 \item{rt}{for \code{filterRt}: \code{numeric(2)} defining the retention time range to
 be used to subset/filter \code{object}.}
-
-\item{spectraVariables}{For \code{selectSpectraVariables}: \code{character} with the
-names of the spectra variables to which the backend should be subsetted.}
 
 \item{use.names}{For \code{lengths}: whether spectrum names should be used.}
 }
@@ -167,11 +171,6 @@ collision energy for all spectra in \code{object}. \code{collisionEnergy}
 returns a \code{numeric} with length equal to the number of spectra
 (\code{NA_real_} if not present/defined), \verb{collisionEnergy<-} takes a
 \code{numeric} of length equal to the number of spectra in \code{object}.
-\item \code{filterAcquisitionNum}: filters the object keeping only spectra matching
-the provided acquisition numbers (argument \code{n}). If \code{dataOrigin} or
-\code{dataStorage} is also provided, \code{object} is subsetted to the spectra with
-an acquisition number equal to \code{n} \strong{in spectra with matching dataOrigin
-or dataStorage values} retaining all other spectra.
 \item \code{filterDataOrigin}: filters the object retaining spectra matching the
 provided \code{dataOrigin}. Parameter \code{dataOrigin} has to be of type
 \code{character} and needs to match exactly the data origin value of the
@@ -300,7 +299,7 @@ The following functions are not supported by the \code{MsBackendMassbankSql} sin
 the original data can not be changed.
 
 \code{backendMerge}, \code{export}, \code{filterDataStorage}, \code{filterPrecursorScan},
-\verb{peaksData<-}
+\verb{peaksData<-}, \code{filterAcquisitionNum}.
 }
 
 \author{

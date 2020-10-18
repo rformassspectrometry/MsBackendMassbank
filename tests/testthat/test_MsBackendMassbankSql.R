@@ -110,7 +110,7 @@ test_that("centroided,centroided<-,MsBackendMassbankSql works", {
     res <- centroided(be)
     expect_equal(res, rep(NA, 3))
 
-    be$centroided <- FALSE
+    centroided(be) <- FALSE
     res <- centroided(be)
     expect_equal(res, rep(FALSE, 3))
 
@@ -145,4 +145,38 @@ test_that("peaksData,MsBackendMassbankSql works", {
     expect_true(is.matrix(res[[1]]))
     expect_true(is.matrix(res[[2]]))
     expect_true(is.matrix(res[[3]]))
+})
+
+test_that("dataOrigin, dataOrigin<-,MsBackendMassbankSql works", {
+    be <- MsBackendMassbankSql()
+    res <- dataOrigin(be)
+    expect_equal(res, character())
+
+    be <- backendInitialize(be, dbc)
+    res <- dataOrigin(be)
+    expect_true(is.character(res))
+
+    dataOrigin(be) <- "b"
+    res <- dataOrigin(be)
+    expect_equal(res, rep("b", 3))
+
+    expect_error(dataOrigin(be) <- 1, "character")
+})
+
+test_that("selectSpectraVariables,MsBackendMassbankSql works", {
+    be <- backendInitialize(MsBackendMassbankSql(), dbc)
+    res <- selectSpectraVariables(be, spectraVariables = spectraVariables(be))
+    expect_equal(spectraVariables(be), spectraVariables(res))
+
+    ## errors
+    expect_error(selectSpectraVariables(be, c("rtime", "other")), "available")
+
+    res <- selectSpectraVariables(be, c("rtime", "mz", "intensity", "authors"))
+    expect_equal(spectraVariables(res),
+                 c("rtime", "mz", "intensity", "authors"))
+    res$new_col <- "b"
+    expect_equal(spectraVariables(res),
+                 c("rtime", "mz", "intensity", "new_col", "authors"))
+    res <- selectSpectraVariables(res, c("rtime"))
+    expect_equal(spectraVariables(res), "rtime")
 })
