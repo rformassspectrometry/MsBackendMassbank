@@ -26,8 +26,6 @@
 #'
 #' @param drop For `[`: not considered.
 #'
-#' @param f `factor` defining the grouping to split `x`. See [split()].
-#'
 #' @param file For `filterFile`: index or name of the file(s) to which the data
 #'     should be subsetted. For `export`: `character` of length 1 or equal to
 #'     the number of spectra.
@@ -103,12 +101,6 @@
 #'
 #' - `dataStorage`: returns `"<MassBank>"` for all spectra.
 #'
-#' - `dropNaSpectraVariables`: removes spectra variables (i.e. columns in the
-#'   object's `spectraData` that contain only missing values (`NA`). Note that
-#'   while columns with only `NA`s are removed, a `spectraData` call after
-#'   `dropNaSpectraVariables` might still show columns containing `NA` values
-#'   for *core* spectra variables.
-#'
 #' - `centroided`, `centroided<-`: gets or sets the centroiding
 #'   information of the spectra. `centroided` returns a `logical`
 #'   vector of length equal to the number of spectra with `TRUE` if a
@@ -128,7 +120,7 @@
 #'   provided `dataOrigin`. Parameter `dataOrigin` has to be of type
 #'   `character` and needs to match exactly the data origin value of the
 #'   spectra to subset.
-#'   `filterDataOrigin` should return the data ordered by the provided
+#'   `filterDataOrigin` returns the data ordered by the provided
 #'   `dataOrigin` parameter, i.e. if `dataOrigin = c("2", "1")` was provided,
 #'   the spectra in the resulting object should be ordered accordingly (first
 #'   spectra from data origin `"2"` and then from `"1"`).
@@ -265,11 +257,6 @@
 #'   available in `object`. This should return **all** spectra variables which
 #'   are present in `object`, also `"mz"` and `"intensity"` (which are by
 #'   default not returned by the `spectraVariables,Spectra` method).
-#'
-#' - `split`: splits the backend into a `list` of backends (depending on
-#'   parameter `f`). The default method for `MsBackendMassbankSql` uses [split.default()],
-#'   thus backends extending `MsBackendMassbankSql` don't necessarily need to implement
-#'   this method.
 #'
 #' - `tic`: gets the total ion current/count (sum of signal of a
 #'   spectrum) for all spectra in `object`. By default, the value
@@ -458,25 +445,17 @@ setMethod("dataStorage", "MsBackendMassbankSql", function(object) {
     rep("<MassBank>", length(object))
 })
 
-## #' @exportMethod dropNaSpectraVariables
-## #'
-## #' @rdname MsBackendMassbankSql
-## setMethod("dropNaSpectraVariables", "MsBackendMassbankSql", function(object) {
-##     svs <- spectraVariables(object)
-##     svs <- svs[!(svs %in% c("mz", "intensity"))]
-##     spd <- spectraData(object, columns = svs)
-##     keep <- !vapply1l(spd, function(z) all(is.na(z)))
-##     selectSpectraVariables(object, c(svs[keep], "mz", "intensity"))
-## })
-
-## #' @exportMethod filterDataOrigin
-## #'
-## #' @importMethodsFrom ProtGenerics filterDataOrigin
-## #'
-## #' @rdname MsBackendMassbankSql
-## setMethod("filterDataOrigin", "MsBackendMassbankSql", function(object, dataOrigin, ...) {
-##     stop("Not implemented for ", class(object), ".")
-## })
+#' @exportMethod filterDataOrigin
+#'
+#' @importMethodsFrom ProtGenerics filterDataOrigin
+#'
+#' @rdname MsBackendMassbankSql
+setMethod("filterDataOrigin", "MsBackendMassbankSql",
+          function(object, dataOrigin, ...) {
+              keep <- match(dataOrigin, object$dataOrigin)
+              keep <- keep[!is.na(keep)]
+              object[keep, ]
+})
 
 ## #' @exportMethod filterEmptySpectra
 ## #'
@@ -632,13 +611,6 @@ setMethod("dataStorage", "MsBackendMassbankSql", function(object) {
 ## setReplaceMethod("isolationWindowUpperMz", "MsBackendMassbankSql", function(object,
 ##                                                                  value) {
 ##     stop("Not implemented for ", class(object), ".")
-## })
-
-## #' @exportMethod isReadOnly
-## #'
-## #' @rdname MsBackendMassbankSql
-## setMethod("isReadOnly", "MsBackendMassbankSql", function(object) {
-##     object@readonly
 ## })
 
 #' @exportMethod length
@@ -853,15 +825,6 @@ setMethod("spectraVariables", "MsBackendMassbankSql", function(object) {
              object@spectraVariables))
 })
 
-## #' @exportMethod split
-## #'
-## #' @importMethodsFrom S4Vectors split
-## #'
-## #' @rdname MsBackendMassbankSql
-## setMethod("split", "MsBackendMassbankSql", function(x, f, drop = FALSE, ...) {
-##     split.default(x, f, drop = drop, ...)
-## })
-
 ## #' @exportMethod tic
 ## #'
 ## #' @importMethodsFrom ProtGenerics tic
@@ -871,12 +834,20 @@ setMethod("spectraVariables", "MsBackendMassbankSql", function(object) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
-## #' @exportMethod [
-## #'
-## #' @rdname MsBackendMassbankSql
-## setMethod("[", "MsBackendMassbankSql", function(x, i, j, ..., drop = FALSE) {
-##     stop("Not implemented for ", class(x), ".")
-## })
+#' @exportMethod [
+#'
+#' @importFrom MsCoreUtils i2index
+#'
+#' @rdname MsBackendMassbankSql
+setMethod("[", "MsBackendMassbankSql", function(x, i, j, ..., drop = FALSE) {
+    if (missing(i))
+        return(x)
+    i <- i2index(i, length(x), x@spectraIds)
+    slot(x, "spectraIds", check = FALSE) <- x@spectraIds[i]
+    if (length(x@localData))
+        slot(x, "localData", check = FALSE) <- extractROWS(x@localData, i)
+    x
+})
 
 #' @exportMethod $
 #'

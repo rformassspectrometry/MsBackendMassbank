@@ -14,10 +14,12 @@
 \alias{dataOrigin,MsBackendMassbankSql-method}
 \alias{dataOrigin<-,MsBackendMassbankSql-method}
 \alias{dataStorage,MsBackendMassbankSql-method}
+\alias{filterDataOrigin,MsBackendMassbankSql-method}
 \alias{length,MsBackendMassbankSql-method}
 \alias{selectSpectraVariables,MsBackendMassbankSql-method}
 \alias{spectraData,MsBackendMassbankSql-method}
 \alias{spectraVariables,MsBackendMassbankSql-method}
+\alias{[,MsBackendMassbankSql-method}
 \alias{$,MsBackendMassbankSql-method}
 \alias{$<-,MsBackendMassbankSql-method}
 \title{MS backend accessing the MassBank MySQL database}
@@ -44,6 +46,8 @@ MsBackendMassbankSql()
 
 \S4method{dataStorage}{MsBackendMassbankSql}(object)
 
+\S4method{filterDataOrigin}{MsBackendMassbankSql}(object, dataOrigin, ...)
+
 \S4method{length}{MsBackendMassbankSql}(x)
 
 \S4method{selectSpectraVariables}{MsBackendMassbankSql}(object, spectraVariables = spectraVariables(object))
@@ -51,6 +55,8 @@ MsBackendMassbankSql()
 \S4method{spectraData}{MsBackendMassbankSql}(object, columns = spectraVariables(object))
 
 \S4method{spectraVariables}{MsBackendMassbankSql}(object)
+
+\S4method{[}{MsBackendMassbankSql}(x, i, j, ..., drop = FALSE)
 
 \S4method{$}{MsBackendMassbankSql}(x, name)
 
@@ -67,6 +73,9 @@ connection to the MassBank (MariaDb) database.}
 \item{value}{replacement value for \verb{<-} methods. See individual
 method description or expected data type.}
 
+\item{dataOrigin}{For \code{filterDataOrigin}: \code{character} to define which
+spectra to keep.}
+
 \item{x}{Object extending \code{MsBackendMassbankSql}.}
 
 \item{spectraVariables}{For \code{selectSpectraVariables}: \code{character} with the
@@ -76,15 +85,14 @@ names of the spectra variables to which the backend should be subsetted.}
 names (spectra variables) that should be included in the
 returned \code{DataFrame}. By default, all columns are returned.}
 
-\item{name}{For \code{$} and \verb{$<-}: the name of the spectra variable to return
-or set.}
+\item{i}{For \code{[}: \code{integer}, \code{logical} or \code{character} to subset the object.}
 
-\item{dataOrigin}{For \code{filterDataOrigin}: \code{character} to define which
-spectra to keep.}
+\item{j}{For \code{[}: not supported.}
 
 \item{drop}{For \code{[}: not considered.}
 
-\item{f}{\code{factor} defining the grouping to split \code{x}. See \code{\link[=split]{split()}}.}
+\item{name}{For \code{$} and \verb{$<-}: the name of the spectra variable to return
+or set.}
 
 \item{file}{For \code{filterFile}: index or name of the file(s) to which the data
 should be subsetted. For \code{export}: \code{character} of length 1 or equal to
@@ -94,10 +102,6 @@ the number of spectra.}
 reported total ion current should be reported, or whether the
 total ion current should be (re)calculated on the actual data
 (\code{initial = FALSE}).}
-
-\item{i}{For \code{[}: \code{integer}, \code{logical} or \code{character} to subset the object.}
-
-\item{j}{For \code{[}: not supported.}
 
 \item{msLevel}{\code{integer} defining the MS level of the spectra to which the
 function should be applied. For \code{filterMsLevel}: the MS level to which
@@ -153,11 +157,6 @@ MassBank MySQL database is required.
 in \code{object} with the \emph{data origin} of each spectrum. This could e.g. be
 the mzML file from which the data was read.
 \item \code{dataStorage}: returns \code{"<MassBank>"} for all spectra.
-\item \code{dropNaSpectraVariables}: removes spectra variables (i.e. columns in the
-object's \code{spectraData} that contain only missing values (\code{NA}). Note that
-while columns with only \code{NA}s are removed, a \code{spectraData} call after
-\code{dropNaSpectraVariables} might still show columns containing \code{NA} values
-for \emph{core} spectra variables.
 \item \code{centroided}, \verb{centroided<-}: gets or sets the centroiding
 information of the spectra. \code{centroided} returns a \code{logical}
 vector of length equal to the number of spectra with \code{TRUE} if a
@@ -175,7 +174,7 @@ returns a \code{numeric} with length equal to the number of spectra
 provided \code{dataOrigin}. Parameter \code{dataOrigin} has to be of type
 \code{character} and needs to match exactly the data origin value of the
 spectra to subset.
-\code{filterDataOrigin} should return the data ordered by the provided
+\code{filterDataOrigin} returns the data ordered by the provided
 \code{dataOrigin} parameter, i.e. if \code{dataOrigin = c("2", "1")} was provided,
 the spectra in the resulting object should be ordered accordingly (first
 spectra from data origin \code{"2"} and then from \code{"1"}).
@@ -281,10 +280,6 @@ available spectra variables (columns, fields or attributes)
 available in \code{object}. This should return \strong{all} spectra variables which
 are present in \code{object}, also \code{"mz"} and \code{"intensity"} (which are by
 default not returned by the \verb{spectraVariables,Spectra} method).
-\item \code{split}: splits the backend into a \code{list} of backends (depending on
-parameter \code{f}). The default method for \code{MsBackendMassbankSql} uses \code{\link[=split.default]{split.default()}},
-thus backends extending \code{MsBackendMassbankSql} don't necessarily need to implement
-this method.
 \item \code{tic}: gets the total ion current/count (sum of signal of a
 spectrum) for all spectra in \code{object}. By default, the value
 reported in the original raw data file is returned. For an empty
