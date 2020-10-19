@@ -14,10 +14,16 @@
 \alias{dataOrigin,MsBackendMassbankSql-method}
 \alias{dataOrigin<-,MsBackendMassbankSql-method}
 \alias{dataStorage,MsBackendMassbankSql-method}
-\alias{filterDataOrigin,MsBackendMassbankSql-method}
-\alias{filterEmptySpectra,MsBackendMassbankSql-method}
 \alias{intensity,MsBackendMassbankSql-method}
 \alias{intensity<-,MsBackendMassbankSql-method}
+\alias{ionCount,MsBackendMassbankSql-method}
+\alias{isEmpty,MsBackendMassbankSql-method}
+\alias{isolationWindowLowerMz,MsBackendMassbankSql-method}
+\alias{isolationWindowLowerMz<-,MsBackendMassbankSql-method}
+\alias{isolationWindowTargetMz,MsBackendMassbankSql-method}
+\alias{isolationWindowTargetMz<-,MsBackendMassbankSql-method}
+\alias{isolationWindowUpperMz,MsBackendMassbankSql-method}
+\alias{isolationWindowUpperMz<-,MsBackendMassbankSql-method}
 \alias{length,MsBackendMassbankSql-method}
 \alias{mz,MsBackendMassbankSql-method}
 \alias{mz<-,MsBackendMassbankSql-method}
@@ -52,13 +58,25 @@ MsBackendMassbankSql()
 
 \S4method{dataStorage}{MsBackendMassbankSql}(object)
 
-\S4method{filterDataOrigin}{MsBackendMassbankSql}(object, dataOrigin, ...)
-
-\S4method{filterEmptySpectra}{MsBackendMassbankSql}(object, ...)
-
 \S4method{intensity}{MsBackendMassbankSql}(object)
 
 \S4method{intensity}{MsBackendMassbankSql}(object) <- value
+
+\S4method{ionCount}{MsBackendMassbankSql}(object)
+
+\S4method{isEmpty}{MsBackendMassbankSql}(x)
+
+\S4method{isolationWindowLowerMz}{MsBackendMassbankSql}(object)
+
+\S4method{isolationWindowLowerMz}{MsBackendMassbankSql}(object) <- value
+
+\S4method{isolationWindowTargetMz}{MsBackendMassbankSql}(object)
+
+\S4method{isolationWindowTargetMz}{MsBackendMassbankSql}(object) <- value
+
+\S4method{isolationWindowUpperMz}{MsBackendMassbankSql}(object)
+
+\S4method{isolationWindowUpperMz}{MsBackendMassbankSql}(object) <- value
 
 \S4method{length}{MsBackendMassbankSql}(x)
 
@@ -91,9 +109,6 @@ connection to the MassBank (MariaDb) database.}
 \item{value}{replacement value for \verb{<-} methods. See individual
 method description or expected data type.}
 
-\item{dataOrigin}{For \code{filterDataOrigin}: \code{character} to define which
-spectra to keep.}
-
 \item{x}{Object extending \code{MsBackendMassbankSql}.}
 
 \item{use.names}{For \code{lengths}: whether spectrum names should be used.}
@@ -114,28 +129,13 @@ returned \code{DataFrame}. By default, all columns are returned.}
 \item{name}{For \code{$} and \verb{$<-}: the name of the spectra variable to return
 or set.}
 
-\item{file}{For \code{filterFile}: index or name of the file(s) to which the data
-should be subsetted. For \code{export}: \code{character} of length 1 or equal to
-the number of spectra.}
-
 \item{initial}{For \code{tic}: \code{logical(1)} whether the initially
 reported total ion current should be reported, or whether the
 total ion current should be (re)calculated on the actual data
 (\code{initial = FALSE}).}
 
 \item{msLevel}{\code{integer} defining the MS level of the spectra to which the
-function should be applied. For \code{filterMsLevel}: the MS level to which
-\code{object} should be subsetted.}
-
-\item{mz}{For \code{filterIsolationWindow}: \code{numeric(1)} with the m/z value to
-filter the object. For \code{filterPrecursorMz}: \code{numeric(2)} with the lower
-and upper m/z boundary.}
-
-\item{polarity}{For \code{filterPolarity}: \code{integer} specifying the polarity to
-to subset \code{object}.}
-
-\item{rt}{for \code{filterRt}: \code{numeric(2)} defining the retention time range to
-be used to subset/filter \code{object}.}
+function should be applied.}
 }
 \value{
 See documentation of respective function.
@@ -195,26 +195,6 @@ returns a \code{numeric} with length equal to the number of spectra
 \code{numeric} of length equal to the number of spectra in \code{object}. Note that
 the collision energy description from MassBank are provided as spectra
 variable \code{"collisionEnergyText"}.
-\item \code{filterDataOrigin}: filters the object retaining spectra matching the
-provided \code{dataOrigin}. Parameter \code{dataOrigin} has to be of type
-\code{character} and needs to match exactly the data origin value of the
-spectra to subset.
-\code{filterDataOrigin} returns the data ordered by the provided
-\code{dataOrigin} parameter, i.e. if \code{dataOrigin = c("2", "1")} was provided,
-the spectra in the resulting object should be ordered accordingly (first
-spectra from data origin \code{"2"} and then from \code{"1"}).
-\item \code{filterEmptySpectra}: removes empty spectra (i.e. spectra without peaks).
-\item \code{filterFile}: retains data of files matching the file index or file name
-provided with parameter \code{file}.
-\item \code{filterIsolationWindow}: retains spectra that contain \code{mz} in their
-isolation window m/z range (i.e. with an \code{isolationWindowLowerMz} \code{<=} \code{mz}
-and \code{isolationWindowUpperMz} \code{>=} \code{mz}.
-\item \code{filterMsLevel}: retains spectra of MS level \code{msLevel}.
-\item \code{filterPolarity}: retains spectra of polarity \code{polarity}.
-\item \code{filterPrecursorMz}: retains spectra with a precursor m/z within the
-provided m/z range.
-\item \code{filterRt}: retains spectra of MS level \code{msLevel} with retention times
-within (\code{>=}) \code{rt[1]} and (\code{<=}) \code{rt[2]}.
 \item \code{intensity}: gets the intensity values from the spectra. Returns
 a \code{\link[=NumericList]{NumericList()}} of \code{numeric} vectors (intensity values for each
 spectrum). The length of the \code{list} is equal to the number of

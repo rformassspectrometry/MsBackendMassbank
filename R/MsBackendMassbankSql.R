@@ -26,14 +26,7 @@
 #'     names (spectra variables) that should be included in the
 #'     returned `DataFrame`. By default, all columns are returned.
 #'
-#' @param dataOrigin For `filterDataOrigin`: `character` to define which
-#'     spectra to keep.
-#'
 #' @param drop For `[`: not considered.
-#'
-#' @param file For `filterFile`: index or name of the file(s) to which the data
-#'     should be subsetted. For `export`: `character` of length 1 or equal to
-#'     the number of spectra.
 #'
 #' @param initial For `tic`: `logical(1)` whether the initially
 #'     reported total ion current should be reported, or whether the
@@ -45,23 +38,12 @@
 #' @param j For `[`: not supported.
 #'
 #' @param msLevel `integer` defining the MS level of the spectra to which the
-#'     function should be applied. For `filterMsLevel`: the MS level to which
-#'     `object` should be subsetted.
-#'
-#' @param mz For `filterIsolationWindow`: `numeric(1)` with the m/z value to
-#'     filter the object. For `filterPrecursorMz`: `numeric(2)` with the lower
-#'     and upper m/z boundary.
+#'     function should be applied.
 #'
 #' @param name For `$` and `$<-`: the name of the spectra variable to return
 #'     or set.
 #'
 #' @param object Object extending `MsBackendMassbankSql`.
-#'
-#' @param polarity For `filterPolarity`: `integer` specifying the polarity to
-#'     to subset `object`.
-#'
-#' @param rt for `filterRt`: `numeric(2)` defining the retention time range to
-#'     be used to subset/filter `object`.
 #'
 #' @param spectraVariables For `selectSpectraVariables`: `character` with the
 #'     names of the spectra variables to which the backend should be subsetted.
@@ -122,34 +104,6 @@
 #'   `numeric` of length equal to the number of spectra in `object`. Note that
 #'   the collision energy description from MassBank are provided as spectra
 #'   variable `"collisionEnergyText"`.
-#'
-#' - `filterDataOrigin`: filters the object retaining spectra matching the
-#'   provided `dataOrigin`. Parameter `dataOrigin` has to be of type
-#'   `character` and needs to match exactly the data origin value of the
-#'   spectra to subset.
-#'   `filterDataOrigin` returns the data ordered by the provided
-#'   `dataOrigin` parameter, i.e. if `dataOrigin = c("2", "1")` was provided,
-#'   the spectra in the resulting object should be ordered accordingly (first
-#'   spectra from data origin `"2"` and then from `"1"`).
-#'
-#' - `filterEmptySpectra`: removes empty spectra (i.e. spectra without peaks).
-#'
-#' - `filterFile`: retains data of files matching the file index or file name
-#'    provided with parameter `file`.
-#'
-#' - `filterIsolationWindow`: retains spectra that contain `mz` in their
-#'   isolation window m/z range (i.e. with an `isolationWindowLowerMz` `<=` `mz`
-#'   and `isolationWindowUpperMz` `>=` `mz`.
-#'
-#' - `filterMsLevel`: retains spectra of MS level `msLevel`.
-#'
-#' - `filterPolarity`: retains spectra of polarity `polarity`.
-#'
-#' - `filterPrecursorMz`: retains spectra with a precursor m/z within the
-#'   provided m/z range.
-#'
-#' - `filterRt`: retains spectra of MS level `msLevel` with retention times
-#'    within (`>=`) `rt[1]` and (`<=`) `rt[2]`.
 #'
 #' - `intensity`: gets the intensity values from the spectra. Returns
 #'   a [NumericList()] of `numeric` vectors (intensity values for each
@@ -427,11 +381,11 @@ setMethod("dataOrigin", "MsBackendMassbankSql", function(object) {
 #'
 #' @rdname MsBackendMassbankSql
 setReplaceMethod("dataOrigin", "MsBackendMassbankSql", function(object, value) {
-                     if (!is.character(value))
-                         stop("'value' has to be a character")
-                     object$dataOrigin <- value
-                     validObject(object)
-                     object
+    if (!is.character(value))
+        stop("'value' has to be a character")
+    object$dataOrigin <- value
+    validObject(object)
+    object
 })
 
 #' @exportMethod dataStorage
@@ -442,73 +396,6 @@ setReplaceMethod("dataOrigin", "MsBackendMassbankSql", function(object, value) {
 setMethod("dataStorage", "MsBackendMassbankSql", function(object) {
     rep("<MassBank>", length(object))
 })
-
-#' @exportMethod filterDataOrigin
-#'
-#' @importMethodsFrom ProtGenerics filterDataOrigin
-#'
-#' @rdname MsBackendMassbankSql
-setMethod("filterDataOrigin", "MsBackendMassbankSql",
-          function(object, dataOrigin, ...) {
-              keep <- match(dataOrigin, object$dataOrigin)
-              keep <- keep[!is.na(keep)]
-              object[keep, ]
-})
-
-#' @exportMethod filterEmptySpectra
-#'
-#' @importMethodsFrom ProtGenerics filterEmptySpectra
-#'
-#' @rdname MsBackendMassbankSql
-setMethod("filterEmptySpectra", "MsBackendMassbankSql", function(object, ...) {
-    if (!length(object)) return(object)
-    object[as.logical(lengths(object))]
-})
-
-## #' @exportMethod filterIsolationWindow
-## #'
-## #' @importMethodsFrom ProtGenerics filterIsolationWindow
-## #'
-## #' @rdname MsBackendMassbankSql
-## setMethod("filterIsolationWindow", "MsBackendMassbankSql", function(object, mz, ...) {
-##     stop("Not implemented for ", class(object), ".")
-## })
-
-## #' @exportMethod filterMsLevel
-## #'
-## #' @importMethodsFrom ProtGenerics filterMsLevel
-## #'
-## #' @rdname MsBackendMassbankSql
-## setMethod("filterMsLevel", "MsBackendMassbankSql", function(object, msLevel) {
-##     stop("Not implemented for ", class(object), ".")
-## })
-
-## #' @exportMethod filterPolarity
-## #'
-## #' @importMethodsFrom ProtGenerics filterPolarity
-## #'
-## #' @rdname MsBackendMassbankSql
-## setMethod("filterPolarity", "MsBackendMassbankSql", function(object, polarity) {
-##     stop("Not implemented for ", class(object), ".")
-## })
-
-## #' @exportMethod filterPrecursorMz
-## #'
-## #' @importMethodsFrom ProtGenerics filterPrecursorMz
-## #'
-## #' @rdname MsBackendMassbankSql
-## setMethod("filterPrecursorMz", "MsBackendMassbankSql", function(object, mz) {
-##     stop("Not implemented for ", class(object), ".")
-## })
-
-## #' @exportMethod filterRt
-## #'
-## #' @importMethodsFrom ProtGenerics filterRt
-## #'
-## #' @rdname MsBackendMassbankSql
-## setMethod("filterRt", "MsBackendMassbankSql", function(object, rt, msLevel, ...) {
-##     stop("Not implemented for ", class(object), ".")
-## })
 
 #' @exportMethod intensity
 #'
@@ -530,89 +417,100 @@ setReplaceMethod("intensity", "MsBackendMassbankSql", function(object, value) {
     stop("Can not replace original intensity values in MassBank.")
 })
 
-## #' @exportMethod ionCount
-## #'
-## #' @importMethodsFrom ProtGenerics ionCount
-## #'
-## #' @rdname MsBackendMassbankSql
-## setMethod("ionCount", "MsBackendMassbankSql", function(object) {
-##     stop("Not implemented for ", class(object), ".")
-## })
+#' @exportMethod ionCount
+#'
+#' @importMethodsFrom ProtGenerics ionCount
+#'
+#' @importFrom MsCoreUtils vapply1d
+#'
+#' @rdname MsBackendMassbankSql
+setMethod("ionCount", "MsBackendMassbankSql", function(object) {
+    vapply1d(intensity(object), sum, na.rm = TRUE)
+})
 
-## #' @exportMethod isCentroided
-## #'
-## #' @importMethodsFrom ProtGenerics isCentroided
-## #'
-## #' @rdname MsBackendMassbankSql
-## setMethod("isCentroided", "MsBackendMassbankSql", function(object, ...) {
-##     stop("Not implemented for ", class(object), ".")
-## })
+#' @exportMethod isEmpty
+#'
+#' @rdname MsBackendMassbankSql
+#'
+#' @importMethodsFrom S4Vectors isEmpty
+setMethod("isEmpty", "MsBackendMassbankSql", function(x) {
+    lengths(intensity(x)) == 0
+})
 
-## #' @exportMethod isEmpty
-## #'
-## #' @rdname MsBackendMassbankSql
-## #'
-## #' @importMethodsFrom S4Vectors isEmpty
-## setMethod("isEmpty", "MsBackendMassbankSql", function(x) {
-##     stop("Not implemented for ", class(x), ".")
-## })
+#' @exportMethod isolationWindowLowerMz
+#'
+#' @importMethodsFrom ProtGenerics isolationWindowLowerMz
+#'
+#' @rdname MsBackendMassbankSql
+setMethod("isolationWindowLowerMz", "MsBackendMassbankSql", function(object) {
+    if (length(object))
+        .spectra_data_massbank_sql(object, "isolationWindowLowerMz")[, 1]
+    else numeric()
+})
 
-## #' @exportMethod isolationWindowLowerMz
-## #'
-## #' @importMethodsFrom ProtGenerics isolationWindowLowerMz
-## #'
-## #' @rdname MsBackendMassbankSql
-## setMethod("isolationWindowLowerMz", "MsBackendMassbankSql", function(object) {
-##     stop("Not implemented for ", class(object), ".")
-## })
+#' @exportMethod isolationWindowLowerMz<-
+#'
+#' @importMethodsFrom ProtGenerics isolationWindowLowerMz<-
+#'
+#' @rdname MsBackendMassbankSql
+setReplaceMethod("isolationWindowLowerMz", "MsBackendMassbankSql",
+                 function(object, value) {
+                     if (!is.numeric(value))
+                         stop("'value' has to be numeric")
+                     object$isolationWindowLowerMz <- value
+                     validObject(object)
+                     object
+                 })
 
-## #' @exportMethod isolationWindowLowerMz<-
-## #'
-## #' @importMethodsFrom ProtGenerics isolationWindowLowerMz<-
-## #'
-## #' @rdname MsBackendMassbankSql
-## setReplaceMethod("isolationWindowLowerMz", "MsBackendMassbankSql", function(object,
-##                                                                  value) {
-##     stop("Not implemented for ", class(object), ".")
-## })
+#' @exportMethod isolationWindowTargetMz
+#'
+#' @importMethodsFrom ProtGenerics isolationWindowTargetMz
+#'
+#' @rdname MsBackendMassbankSql
+setMethod("isolationWindowTargetMz", "MsBackendMassbankSql", function(object) {
+    if (length(object))
+        .spectra_data_massbank_sql(object, "isolationWindowTargetMz")[, 1]
+    else numeric()
+})
 
-## #' @exportMethod isolationWindowTargetMz
-## #'
-## #' @importMethodsFrom ProtGenerics isolationWindowTargetMz
-## #'
-## #' @rdname MsBackendMassbankSql
-## setMethod("isolationWindowTargetMz", "MsBackendMassbankSql", function(object) {
-##     stop("Not implemented for ", class(object), ".")
-## })
+#' @exportMethod isolationWindowTargetMz<-
+#'
+#' @importMethodsFrom ProtGenerics isolationWindowTargetMz<-
+#'
+#' @rdname MsBackendMassbankSql
+setReplaceMethod("isolationWindowTargetMz", "MsBackendMassbankSql",
+                 function(object, value) {
+                     if (!is.numeric(value))
+                         stop("'value' has to be numeric")
+                     object$isolationWindowTargetMz <- value
+                     validObject(object)
+                     object
+                 })
 
-## #' @exportMethod isolationWindowTargetMz<-
-## #'
-## #' @importMethodsFrom ProtGenerics isolationWindowTargetMz<-
-## #'
-## #' @rdname MsBackendMassbankSql
-## setReplaceMethod("isolationWindowTargetMz", "MsBackendMassbankSql", function(object,
-##                                                                   value) {
-##     stop("Not implemented for ", class(object), ".")
-## })
+#' @exportMethod isolationWindowUpperMz
+#'
+#' @importMethodsFrom ProtGenerics isolationWindowUpperMz
+#'
+#' @rdname MsBackendMassbankSql
+setMethod("isolationWindowUpperMz", "MsBackendMassbankSql", function(object) {
+    if (length(object))
+        .spectra_data_massbank_sql(object, "isolationWindowUpperMz")[, 1]
+    else numeric()
+})
 
-## #' @exportMethod isolationWindowUpperMz
-## #'
-## #' @importMethodsFrom ProtGenerics isolationWindowUpperMz
-## #'
-## #' @rdname MsBackendMassbankSql
-## setMethod("isolationWindowUpperMz", "MsBackendMassbankSql", function(object) {
-##     stop("Not implemented for ", class(object), ".")
-## })
-
-## #' @exportMethod isolationWindowUpperMz<-
-## #'
-## #' @importMethodsFrom ProtGenerics isolationWindowUpperMz<-
-## #'
-## #' @rdname MsBackendMassbankSql
-## setReplaceMethod("isolationWindowUpperMz", "MsBackendMassbankSql", function(object,
-##                                                                  value) {
-##     stop("Not implemented for ", class(object), ".")
-## })
+#' @exportMethod isolationWindowUpperMz<-
+#'
+#' @importMethodsFrom ProtGenerics isolationWindowUpperMz<-
+#'
+#' @rdname MsBackendMassbankSql
+setReplaceMethod("isolationWindowUpperMz", "MsBackendMassbankSql",
+                 function(object, value) {
+                     if (!is.numeric(value))
+                         stop("'value' has to be numeric")
+                     object$isolationWindowUpperMz <- value
+                     validObject(object)
+                     object
+                 })
 
 #' @exportMethod length
 #'

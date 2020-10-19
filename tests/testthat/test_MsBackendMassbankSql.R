@@ -196,16 +196,6 @@ test_that("[,MsBackendMassbankSql works", {
     expect_equal(be$splash[c(3, 1)], res$splash)
 })
 
-test_that("filterDataOrigin,MsBackendMassbankSql works", {
-    be <- backendInitialize(MsBackendMassbankSql(), dbc)
-    be$dataOrigin <- c("a", "b", "c")
-    res <- filterDataOrigin(be, c("c", "a"))
-
-    expect_true(length(res) == 2)
-    expect_equal(res$dataOrigin, c("c", "a"))
-    expect_equal(be$mz[c(3, 1)], res$mz)
-})
-
 test_that("lengths,MsBackendMassbankSql works", {
     be <- MsBackendMassbankSql()
     expect_equal(lengths(be), integer())
@@ -214,15 +204,6 @@ test_that("lengths,MsBackendMassbankSql works", {
     res <- lengths(be)
     expect_true(length(res) > 0)
     expect_true(all(res > 0))
-})
-
-test_that("filterEmptySpectra,MsBackendMassbankSql works", {
-    be <- MsBackendMassbankSql()
-    expect_equal(be, filterEmptySpectra(be))
-
-    be <- backendInitialize(be, dbc)
-    res <- filterEmptySpectra(be)
-    expect_equal(be, res)
 })
 
 test_that("intensity,intensity<-,MsBackendMassbankSql works", {
@@ -251,4 +232,77 @@ test_that("mz,mz<-,MsBackendMassbankSql works", {
     expect_true(all(lengths(res) > 0))
 
     expect_error(mz(be) <- 3, "Can not")
+})
+
+test_that("ionCount,MsBackendMassbankSql works", {
+    be <- MsBackendMassbankSql()
+    res <- ionCount(be)
+    expect_equal(res, numeric())
+
+    be <- backendInitialize(be, dbc)
+    res <- ionCount(be)
+    expect_true(is.numeric(res))
+    expect_equal(length(res), length(be))
+    expect_true(all(res > 0))
+})
+
+test_that("isEmpty,MsBackendMassbankSql works", {
+    be <- MsBackendMassbankSql()
+    res <- isEmpty(be)
+    expect_equal(res, logical())
+
+    be <- backendInitialize(be, dbc)
+    res <- isEmpty(be)
+    expect_true(all(!res))
+})
+
+test_that("isolationWindowLowerMz,&<-,MsBackendMassbankSql works", {
+    be <- MsBackendMassbankSql()
+    res <- isolationWindowLowerMz(be)
+    expect_equal(res, numeric())
+
+    be <- backendInitialize(be, dbc)
+    res <- isolationWindowLowerMz(be)
+    expect_equal(res, rep(NA_real_, length(be)))
+
+    isolationWindowLowerMz(be) <- c(1, 2, 3)
+    res <- isolationWindowLowerMz(be)
+    expect_equal(res, 1:3)
+
+    expect_error(isolationWindowLowerMz(be) <- 1:2, "length 1")
+    expect_error(isolationWindowLowerMz(be) <- "a", "numeric")
+})
+
+test_that("isolationWindowTargetMz,&<-,MsBackendMassbankSql works", {
+    be <- MsBackendMassbankSql()
+    res <- isolationWindowTargetMz(be)
+    expect_equal(res, numeric())
+
+    be <- backendInitialize(be, dbc)
+    res <- isolationWindowTargetMz(be)
+    expect_equal(res, rep(NA_real_, length(be)))
+
+    isolationWindowTargetMz(be) <- c(1, 2, 3)
+    res <- isolationWindowTargetMz(be)
+    expect_equal(res, 1:3)
+
+    expect_error(isolationWindowTargetMz(be) <- 1:2, "length 1")
+    expect_error(isolationWindowTargetMz(be) <- "a", "numeric")
+})
+
+test_that("isolationWindowUpperMz,&<-,MsBackendMassbankSql works", {
+    be <- MsBackendMassbankSql()
+    res <- isolationWindowUpperMz(be)
+    expect_equal(res, numeric())
+
+    be <- backendInitialize(be, dbc)
+    res <- isolationWindowUpperMz(be)
+    expect_equal(res, rep(NA_real_, length(be)))
+
+    isolationWindowUpperMz(be) <- c(1, 2, 3)
+    res <- isolationWindowUpperMz(be)
+    expect_equal(res, 1:3)
+
+    expect_error(isolationWindowUpperMz(be) <- 1:2, "length 1")
+    expect_error(isolationWindowUpperMz(be) <- "a", "numeric")
 })
