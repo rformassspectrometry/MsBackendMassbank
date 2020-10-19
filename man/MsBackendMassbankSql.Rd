@@ -4,6 +4,7 @@
 \name{MsBackendMassbankSql}
 \alias{MsBackendMassbankSql}
 \alias{MsBackendMassbankSql-class}
+\alias{show,MsBackendMassbankSql-method}
 \alias{backendInitialize,MsBackendMassbankSql-method}
 \alias{acquisitionNum,MsBackendMassbankSql-method}
 \alias{peaksData,MsBackendMassbankSql-method}
@@ -28,6 +29,15 @@
 \alias{mz,MsBackendMassbankSql-method}
 \alias{mz<-,MsBackendMassbankSql-method}
 \alias{lengths,MsBackendMassbankSql-method}
+\alias{polarity,MsBackendMassbankSql-method}
+\alias{polarity<-,MsBackendMassbankSql-method}
+\alias{precursorCharge,MsBackendMassbankSql-method}
+\alias{precursorIntensity,MsBackendMassbankSql-method}
+\alias{precursorMz,MsBackendMassbankSql-method}
+\alias{reset,MsBackendMassbankSql-method}
+\alias{rtime,MsBackendMassbankSql-method}
+\alias{rtime<-,MsBackendMassbankSql-method}
+\alias{scanIndex,MsBackendMassbankSql-method}
 \alias{selectSpectraVariables,MsBackendMassbankSql-method}
 \alias{spectraData,MsBackendMassbankSql-method}
 \alias{spectraVariables,MsBackendMassbankSql-method}
@@ -37,6 +47,8 @@
 \title{MS backend accessing the MassBank MySQL database}
 \usage{
 MsBackendMassbankSql()
+
+\S4method{show}{MsBackendMassbankSql}(object)
 
 \S4method{backendInitialize}{MsBackendMassbankSql}(object, dbcon, ...)
 
@@ -85,6 +97,24 @@ MsBackendMassbankSql()
 \S4method{mz}{MsBackendMassbankSql}(object) <- value
 
 \S4method{lengths}{MsBackendMassbankSql}(x, use.names = FALSE)
+
+\S4method{polarity}{MsBackendMassbankSql}(object)
+
+\S4method{polarity}{MsBackendMassbankSql}(object) <- value
+
+\S4method{precursorCharge}{MsBackendMassbankSql}(object)
+
+\S4method{precursorIntensity}{MsBackendMassbankSql}(object)
+
+\S4method{precursorMz}{MsBackendMassbankSql}(object)
+
+\S4method{reset}{MsBackendMassbankSql}(object)
+
+\S4method{rtime}{MsBackendMassbankSql}(object)
+
+\S4method{rtime}{MsBackendMassbankSql}(object) <- value
+
+\S4method{scanIndex}{MsBackendMassbankSql}(object)
 
 \S4method{selectSpectraVariables}{MsBackendMassbankSql}(object, spectraVariables = spectraVariables(object))
 
@@ -242,11 +272,9 @@ and acquisition number (\code{interger}) of the precursor for MS level
 2 and above spectra from the object. Returns a vector of length equal to
 the number of spectra in \code{object}. \code{NA} are reported for MS1
 spectra of if no precursor information is available.
-\item \code{reset} a backend (if supported). This method will be called on the backend
-by the \verb{reset,Spectra} method that is supposed to restore the data to its
-original state (see \verb{reset,Spectra} for more details). The function
-returns the \emph{reset} backend. The default implementation for \code{MsBackendMassbankSql}
-returns the backend as-is.
+\item \code{reset}: restores the backend to its original state, i.e. deletes all
+locally modified data and reinitializes the backend to the full data
+available in the database.
 \item \code{rtime}, \verb{rtime<-}: gets or sets the retention times for each
 spectrum (in seconds). \code{rtime} returns a \code{numeric} vector (length equal to
 the number of spectra) with the retention time for each spectrum.
@@ -290,7 +318,7 @@ The following functions are not supported by the \code{MsBackendMassbankSql} sin
 the original data can not be changed.
 
 \code{backendMerge}, \code{export}, \code{filterDataStorage}, \code{filterPrecursorScan},
-\verb{peaksData<-}, \code{filterAcquisitionNum}, \verb{intensity<-}, \verb{mz<-}.
+\verb{peaksData<-}, \code{filterAcquisitionNum}, \verb{intensity<-}, \verb{mz<-}, \code{precScanNum}.
 }
 
 \author{

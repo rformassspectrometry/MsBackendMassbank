@@ -138,5 +138,11 @@ MsBackendMassbankSql <- function() {
     }
     if (any(columns == "publication"))
         res$dataOrigin <- res$publication
+    if (any(columns == "precursorIntensity"))
+        res$precursorIntensity <- as.numeric(res$precursorIntensity)
+    ## So far we're not dealing with multiple precursor m/z here!
+    if (any(columns == "precursorMz"))
+        suppressWarnings(
+            res$precursorMz <- as.numeric(res$precursorMz))
     res
 }

@@ -3,6 +3,8 @@ test_that("MsBackendMassbankSql class works", {
     expect_true(validObject(obj))
     obj <- new("MsBackendMassbankSql")
     expect_true(validObject(obj))
+
+    show(obj)
 })
 
 test_that("backendInitialize,MsBackendMassbankSql works", {
@@ -11,6 +13,7 @@ test_that("backendInitialize,MsBackendMassbankSql works", {
     be <- backendInitialize(MsBackendMassbankSql(), dbcon = dbc)
     expect_true(length(be@spectraIds) > 0)
     expect_true(length(be@spectraVariables) > 0)
+    show(be)
 })
 
 test_that("length,MsBackendMassbankSql works", {
@@ -305,4 +308,112 @@ test_that("isolationWindowUpperMz,&<-,MsBackendMassbankSql works", {
 
     expect_error(isolationWindowUpperMz(be) <- 1:2, "length 1")
     expect_error(isolationWindowUpperMz(be) <- "a", "numeric")
+})
+
+test_that("polarity,&<-,MsBackendMassbankSql works", {
+    be <- MsBackendMassbankSql()
+    res <- polarity(be)
+    expect_equal(res, integer())
+
+    be <- backendInitialize(be, dbc)
+    res <- polarity(be)
+    expect_equal(res, rep(1L, length(be)))
+
+    polarity(be) <- c(1, 0, 1)
+    res <- polarity(be)
+    expect_equal(res, c(1L, 0L, 1L))
+
+    expect_error(polarity(be) <- 1:2, "length 1")
+    expect_error(polarity(be) <- "a", "numeric")
+})
+
+test_that("precursorCharge,MsBackendMassbankSql works", {
+    be <- MsBackendMassbankSql()
+    res <- precursorCharge(be)
+    expect_equal(res, integer())
+
+    be <- backendInitialize(be, dbc)
+    res <- precursorCharge(be)
+    expect_equal(res, rep(NA_integer_, length(be)))
+
+    be$precursorCharge <- c(1L, 0L, 1L)
+    res <- precursorCharge(be)
+    expect_equal(res, c(1L, 0L, 1L))
+})
+
+test_that("precursorIntensity,MsBackendMassbankSql works", {
+    be <- MsBackendMassbankSql()
+    res <- precursorIntensity(be)
+    expect_equal(res, numeric())
+
+    be <- backendInitialize(be, dbc)
+    res <- precursorIntensity(be)
+    expect_true(all(res > 0))
+    expect_true(is.numeric(res))
+
+    be$precursorIntensity <- c(1243, 2321.2, 2312)
+    res <- precursorIntensity(be)
+    expect_equal(res, c(1243, 2321.2, 2312))
+})
+
+test_that("precursorMz,MsBackendMassbankSql works", {
+    be <- MsBackendMassbankSql()
+    res <- precursorMz(be)
+    expect_equal(res, numeric())
+
+    be <- backendInitialize(be, dbc)
+    res <- precursorMz(be)
+    expect_true(all(res > 0))
+    expect_true(is.numeric(res))
+
+    be$precursorMz <- 12.21
+    res <- precursorMz(be)
+    expect_equal(res, rep(12.21, 3))
+})
+
+test_that("reset,MsBackendMassbankSql works", {
+    be <- MsBackendMassbankSql()
+    res <- reset(be)
+    expect_equal(res, be)
+
+    be <- backendInitialize(be, dbc)
+    res <- reset(be)
+    expect_equal(res, be)
+
+    be$new_col <- "c"
+    be <- be[c(3, 1)]
+    res <- reset(be)
+    expect_true(length(res) == 3)
+    expect_true(!any(spectraVariables(res) == "new_col"))
+})
+
+test_that("rtime,rtime<-,MsBackendMassbankSql works", {
+    be <- MsBackendMassbankSql()
+    res <- rtime(be)
+    expect_equal(res, numeric())
+
+    be <- backendInitialize(be, dbc)
+    res <- rtime(be)
+    expect_equal(res, rep(NA_real_, length(be)))
+
+    rtime(be) <- 1.4
+    res <- rtime(be)
+    expect_equal(res, rep(1.4, 3))
+
+    expect_error(rtime(be) <- 1:2, "length 1")
+    expect_error(rtime(be) <- "a", "numeric")
+})
+
+test_that("scanIndex,MsBackendMassbankSql works", {
+    be <- MsBackendMassbankSql()
+    res <- scanIndex(be)
+    expect_equal(res, integer())
+
+    be <- backendInitialize(be, dbc)
+    res <- scanIndex(be)
+    expect_equal(res, rep(NA_integer_, length(be)))
+
+    be$scanIndex <- 1:3
+    res <- scanIndex(be)
+    expect_equal(res, 1:3)
 })
