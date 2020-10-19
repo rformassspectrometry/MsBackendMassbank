@@ -14,6 +14,11 @@
 #' MassBank database since direct database access is not supported for the
 #' *main* MassBank instance.
 #'
+#' Also, some of the fields in the MassBank database are not directly compatible
+#' with `Spectra`, such as the *collision energy* which is not available as a
+#' numeric value. The collision energy as available in MassBank is reported as
+#' spectra variable `"collisionEnergyText"`.
+#'
 #' @param dbcon For `backendInitialize,MsBackendMassbankSql`: SQL database
 #'     connection to the MassBank (MariaDb) database.
 #'
@@ -114,7 +119,9 @@
 #'   collision energy for all spectra in `object`. `collisionEnergy`
 #'   returns a `numeric` with length equal to the number of spectra
 #'   (`NA_real_` if not present/defined), `collisionEnergy<-` takes a
-#'   `numeric` of length equal to the number of spectra in `object`.
+#'   `numeric` of length equal to the number of spectra in `object`. Note that
+#'   the collision energy description from MassBank are provided as spectra
+#'   variable `"collisionEnergyText"`.
 #'
 #' - `filterDataOrigin`: filters the object retaining spectra matching the
 #'   provided `dataOrigin`. Parameter `dataOrigin` has to be of type
@@ -148,12 +155,6 @@
 #'   a [NumericList()] of `numeric` vectors (intensity values for each
 #'   spectrum). The length of the `list` is equal to the number of
 #'   `spectra` in `object`.
-#'
-#' - `intensity<-`: replaces the intensity values. `value` has to be a `list`
-#'   (or [NumericList()]) of length equal to the number of spectra and the
-#'   number of values within each list element identical to the number of
-#'   peaks in each spectrum (i.e. the `lengths(x)`). Note that just
-#'   writeable backends support this method.
 #'
 #' - `ionCount`: returns a `numeric` with the sum of intensities for
 #'   each spectrum. If the spectrum is empty (see `isEmpty`),
@@ -196,11 +197,6 @@
 #'   spectra. Returns a [NumericList()] or length equal to the number of
 #'   spectra, each element a `numeric` vector with the m/z values of
 #'   one spectrum.
-#'
-#' - `mz<-`: replaces the m/z values. `value` has to be a `list` of length equal
-#'   to the number of spectra and the number of values within each list element
-#'   identical to the number of peaks in each spectrum (i.e. the
-#'   `lengths(x)`). Note that just writeable backends support this method.
 #'
 #' - `polarity`, `polarity<-`: gets or sets the polarity for each
 #'   spectrum.  `polarity` returns an `integer` vector (length equal
@@ -269,7 +265,7 @@
 #' the original data can not be changed.
 #'
 #' `backendMerge`, `export`, `filterDataStorage`, `filterPrecursorScan`,
-#' `peaksData<-`, `filterAcquisitionNum`.
+#' `peaksData<-`, `filterAcquisitionNum`, `intensity<-`, `mz<-`.
 #'
 #' @name MsBackendMassbankSql
 #'
@@ -459,14 +455,15 @@ setMethod("filterDataOrigin", "MsBackendMassbankSql",
               object[keep, ]
 })
 
-## #' @exportMethod filterEmptySpectra
-## #'
-## #' @importMethodsFrom ProtGenerics filterEmptySpectra
-## #'
-## #' @rdname MsBackendMassbankSql
-## setMethod("filterEmptySpectra", "MsBackendMassbankSql", function(object, ...) {
-##     stop("Not implemented for ", class(object), ".")
-## })
+#' @exportMethod filterEmptySpectra
+#'
+#' @importMethodsFrom ProtGenerics filterEmptySpectra
+#'
+#' @rdname MsBackendMassbankSql
+setMethod("filterEmptySpectra", "MsBackendMassbankSql", function(object, ...) {
+    if (!length(object)) return(object)
+    object[as.logical(lengths(object))]
+})
 
 ## #' @exportMethod filterIsolationWindow
 ## #'
@@ -513,23 +510,25 @@ setMethod("filterDataOrigin", "MsBackendMassbankSql",
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
-## #' @exportMethod intensity
-## #'
-## #' @importMethodsFrom ProtGenerics intensity
-## #'
-## #' @rdname MsBackendMassbankSql
-## setMethod("intensity", "MsBackendMassbankSql", function(object) {
-##     stop("Not implemented for ", class(object), ".")
-## })
+#' @exportMethod intensity
+#'
+#' @importMethodsFrom ProtGenerics intensity
+#'
+#' @rdname MsBackendMassbankSql
+setMethod("intensity", "MsBackendMassbankSql", function(object) {
+    if (length(object)) {
+        .spectra_data_massbank_sql(object, "intensity")[, 1]
+    } else NumericList()
+})
 
-## #' @exportMethod intensity<-
-## #'
-## #' @importMethodsFrom ProtGenerics intensity<-
-## #'
-## #' @rdname MsBackendMassbankSql
-## setReplaceMethod("intensity", "MsBackendMassbankSql", function(object, value) {
-##     stop("Not implemented for ", class(object), ".")
-## })
+#' @exportMethod intensity<-
+#'
+#' @importMethodsFrom ProtGenerics intensity<-
+#'
+#' @rdname MsBackendMassbankSql
+setReplaceMethod("intensity", "MsBackendMassbankSql", function(object, value) {
+    stop("Can not replace original intensity values in MassBank.")
+})
 
 ## #' @exportMethod ionCount
 ## #'
@@ -631,28 +630,30 @@ setMethod("length", "MsBackendMassbankSql", function(x) {
 ##     stop("Not implemented for ", class(object), ".")
 ## })
 
-## #' @exportMethod mz
-## #'
-## #' @importMethodsFrom ProtGenerics mz
-## #'
-## #' @rdname MsBackendMassbankSql
-## setMethod("mz", "MsBackendMassbankSql", function(object) {
-##     stop("Not implemented for ", class(object), ".")
-## })
+#' @exportMethod mz
+#'
+#' @importMethodsFrom ProtGenerics mz
+#'
+#' @rdname MsBackendMassbankSql
+setMethod("mz", "MsBackendMassbankSql", function(object) {
+    if (length(object)) {
+        .spectra_data_massbank_sql(object, "mz")[, 1]
+    } else NumericList()
+})
 
-## #' @exportMethod mz<-
-## #'
-## #' @importMethodsFrom ProtGenerics mz<-
-## #'
-## #' @rdname MsBackendMassbankSql
-## setReplaceMethod("mz", "MsBackendMassbankSql", function(object, value) {
-##     stop("Not implemented for ", class(object), ".")
-## })
+#' @exportMethod mz<-
+#'
+#' @importMethodsFrom ProtGenerics mz<-
+#'
+#' @rdname MsBackendMassbankSql
+setReplaceMethod("mz", "MsBackendMassbankSql", function(object, value) {
+    stop("Can not replace original data in MassBank.")
+})
 
-## #' @rdname MsBackendMassbankSql
-## setMethod("lengths", "MsBackendMassbankSql", function(x, use.names = FALSE) {
-##     stop("Not implemented for ", class(x), ".")
-## })
+#' @rdname MsBackendMassbankSql
+setMethod("lengths", "MsBackendMassbankSql", function(x, use.names = FALSE) {
+    lengths(mz(x))
+})
 
 ## #' @exportMethod polarity
 ## #'

@@ -124,7 +124,7 @@ test_that("collisionEnergy,collisionEnergy<-,MsBackendMassbankSql works", {
 
     be <- backendInitialize(be, dbc)
     res <- collisionEnergy(be)
-    expect_equal(res, rep(NA_real_, 3))
+    expect_true(is.numeric(res))
 
     be$collisionEnergy <- 1.2
     res <- collisionEnergy(be)
@@ -204,4 +204,51 @@ test_that("filterDataOrigin,MsBackendMassbankSql works", {
     expect_true(length(res) == 2)
     expect_equal(res$dataOrigin, c("c", "a"))
     expect_equal(be$mz[c(3, 1)], res$mz)
+})
+
+test_that("lengths,MsBackendMassbankSql works", {
+    be <- MsBackendMassbankSql()
+    expect_equal(lengths(be), integer())
+
+    be <- backendInitialize(be, dbc)
+    res <- lengths(be)
+    expect_true(length(res) > 0)
+    expect_true(all(res > 0))
+})
+
+test_that("filterEmptySpectra,MsBackendMassbankSql works", {
+    be <- MsBackendMassbankSql()
+    expect_equal(be, filterEmptySpectra(be))
+
+    be <- backendInitialize(be, dbc)
+    res <- filterEmptySpectra(be)
+    expect_equal(be, res)
+})
+
+test_that("intensity,intensity<-,MsBackendMassbankSql works", {
+    be <- MsBackendMassbankSql()
+    res <- intensity(be)
+    expect_equal(res, IRanges::NumericList())
+
+    be <- backendInitialize(be, dbc)
+    res <- intensity(be)
+    expect_true(is(res, "NumericList"))
+    expect_true(length(res) == length(be))
+    expect_true(all(lengths(res) > 0))
+
+    expect_error(intensity(be) <- 3, "Can not")
+})
+
+test_that("mz,mz<-,MsBackendMassbankSql works", {
+    be <- MsBackendMassbankSql()
+    res <- mz(be)
+    expect_equal(res, IRanges::NumericList())
+
+    be <- backendInitialize(be, dbc)
+    res <- mz(be)
+    expect_true(is(res, "NumericList"))
+    expect_true(length(res) == length(be))
+    expect_true(all(lengths(res) > 0))
+
+    expect_error(mz(be) <- 3, "Can not")
 })

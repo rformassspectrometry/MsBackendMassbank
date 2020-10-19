@@ -15,7 +15,13 @@
 \alias{dataOrigin<-,MsBackendMassbankSql-method}
 \alias{dataStorage,MsBackendMassbankSql-method}
 \alias{filterDataOrigin,MsBackendMassbankSql-method}
+\alias{filterEmptySpectra,MsBackendMassbankSql-method}
+\alias{intensity,MsBackendMassbankSql-method}
+\alias{intensity<-,MsBackendMassbankSql-method}
 \alias{length,MsBackendMassbankSql-method}
+\alias{mz,MsBackendMassbankSql-method}
+\alias{mz<-,MsBackendMassbankSql-method}
+\alias{lengths,MsBackendMassbankSql-method}
 \alias{selectSpectraVariables,MsBackendMassbankSql-method}
 \alias{spectraData,MsBackendMassbankSql-method}
 \alias{spectraVariables,MsBackendMassbankSql-method}
@@ -48,7 +54,19 @@ MsBackendMassbankSql()
 
 \S4method{filterDataOrigin}{MsBackendMassbankSql}(object, dataOrigin, ...)
 
+\S4method{filterEmptySpectra}{MsBackendMassbankSql}(object, ...)
+
+\S4method{intensity}{MsBackendMassbankSql}(object)
+
+\S4method{intensity}{MsBackendMassbankSql}(object) <- value
+
 \S4method{length}{MsBackendMassbankSql}(x)
+
+\S4method{mz}{MsBackendMassbankSql}(object)
+
+\S4method{mz}{MsBackendMassbankSql}(object) <- value
+
+\S4method{lengths}{MsBackendMassbankSql}(x, use.names = FALSE)
 
 \S4method{selectSpectraVariables}{MsBackendMassbankSql}(object, spectraVariables = spectraVariables(object))
 
@@ -77,6 +95,8 @@ method description or expected data type.}
 spectra to keep.}
 
 \item{x}{Object extending \code{MsBackendMassbankSql}.}
+
+\item{use.names}{For \code{lengths}: whether spectrum names should be used.}
 
 \item{spectraVariables}{For \code{selectSpectraVariables}: \code{character} with the
 names of the spectra variables to which the backend should be subsetted.}
@@ -116,8 +136,6 @@ to subset \code{object}.}
 
 \item{rt}{for \code{filterRt}: \code{numeric(2)} defining the retention time range to
 be used to subset/filter \code{object}.}
-
-\item{use.names}{For \code{lengths}: whether spectrum names should be used.}
 }
 \value{
 See documentation of respective function.
@@ -132,6 +150,11 @@ changing the original values in the database).
 Note that \code{MsBackendMassbankSql} requires a local installation of the
 MassBank database since direct database access is not supported for the
 \emph{main} MassBank instance.
+
+Also, some of the fields in the MassBank database are not directly compatible
+with \code{Spectra}, such as the \emph{collision energy} which is not available as a
+numeric value. The collision energy as available in MassBank is reported as
+spectra variable \code{"collisionEnergyText"}.
 }
 \section{Supported Backend functions}{
 
@@ -169,7 +192,9 @@ length equal to the number of spectra in \code{object}.
 collision energy for all spectra in \code{object}. \code{collisionEnergy}
 returns a \code{numeric} with length equal to the number of spectra
 (\code{NA_real_} if not present/defined), \verb{collisionEnergy<-} takes a
-\code{numeric} of length equal to the number of spectra in \code{object}.
+\code{numeric} of length equal to the number of spectra in \code{object}. Note that
+the collision energy description from MassBank are provided as spectra
+variable \code{"collisionEnergyText"}.
 \item \code{filterDataOrigin}: filters the object retaining spectra matching the
 provided \code{dataOrigin}. Parameter \code{dataOrigin} has to be of type
 \code{character} and needs to match exactly the data origin value of the
@@ -194,11 +219,6 @@ within (\code{>=}) \code{rt[1]} and (\code{<=}) \code{rt[2]}.
 a \code{\link[=NumericList]{NumericList()}} of \code{numeric} vectors (intensity values for each
 spectrum). The length of the \code{list} is equal to the number of
 \code{spectra} in \code{object}.
-\item \verb{intensity<-}: replaces the intensity values. \code{value} has to be a \code{list}
-(or \code{\link[=NumericList]{NumericList()}}) of length equal to the number of spectra and the
-number of values within each list element identical to the number of
-peaks in each spectrum (i.e. the \code{lengths(x)}). Note that just
-writeable backends support this method.
 \item \code{ionCount}: returns a \code{numeric} with the sum of intensities for
 each spectrum. If the spectrum is empty (see \code{isEmpty}),
 \code{NA_real_} is returned.
@@ -230,10 +250,6 @@ level for each spectrum (or \code{NA_integer_} if not available).
 spectra. Returns a \code{\link[=NumericList]{NumericList()}} or length equal to the number of
 spectra, each element a \code{numeric} vector with the m/z values of
 one spectrum.
-\item \verb{mz<-}: replaces the m/z values. \code{value} has to be a \code{list} of length equal
-to the number of spectra and the number of values within each list element
-identical to the number of peaks in each spectrum (i.e. the
-\code{lengths(x)}). Note that just writeable backends support this method.
 \item \code{polarity}, \verb{polarity<-}: gets or sets the polarity for each
 spectrum.  \code{polarity} returns an \code{integer} vector (length equal
 to the number of spectra), with \code{0} and \code{1} representing negative
@@ -294,7 +310,7 @@ The following functions are not supported by the \code{MsBackendMassbankSql} sin
 the original data can not be changed.
 
 \code{backendMerge}, \code{export}, \code{filterDataStorage}, \code{filterPrecursorScan},
-\verb{peaksData<-}, \code{filterAcquisitionNum}.
+\verb{peaksData<-}, \code{filterAcquisitionNum}, \verb{intensity<-}, \verb{mz<-}.
 }
 
 \author{
