@@ -37,9 +37,6 @@
 #'
 #' @param j For `[`: not supported.
 #'
-#' @param msLevel `integer` defining the MS level of the spectra to which the
-#'     function should be applied.
-#'
 #' @param name For `$` and `$<-`: the name of the spectra variable to return
 #'     or set.
 #'
@@ -190,12 +187,9 @@
 #'   to the number of spectra. `smoothed<-` takes a `logical` vector
 #'   of length 1 or equal to the number of spectra in `object`.
 #'
-#' - `spectraData`, `spectraData<-`: gets or sets general spectrum
-#'   metadata (annotation, also called header).  `spectraData` returns
-#'   a `DataFrame`, `spectraData<-` expects a `DataFrame` with the same number
-#'   of rows as there are spectra in `object`. Note that `spectraData` has to
-#'   return the full data, i.e. also the m/z and intensity values (as a `list`
-#'   or `SimpleList` in columns `"mz"` and `"intensity"`.
+#' - `spectraData`: gets general spectrummetadata (annotation, also called
+#'   header).  `spectraData` returns a `DataFrame`. Note that replacing the
+#'   spectra data with `spectraData<-` is not supported.
 #'
 #' - `spectraNames`: returns a `character` vector with the names of
 #'   the spectra in `object`.
@@ -217,7 +211,8 @@
 #' the original data can not be changed.
 #'
 #' `backendMerge`, `export`, `filterDataStorage`, `filterPrecursorScan`,
-#' `peaksData<-`, `filterAcquisitionNum`, `intensity<-`, `mz<-`, `precScanNum`.
+#' `peaksData<-`, `filterAcquisitionNum`, `intensity<-`, `mz<-`, `precScanNum`,
+#' `spectraData<-`, `spectraNames<-`.
 #'
 #' @name MsBackendMassbankSql
 #'
@@ -228,6 +223,41 @@
 #' @md
 #'
 #' @exportClass MsBackendMassbankSql
+#'
+#' @examples
+#'
+#' ## Create a connection to a database with MassBank data - in the present
+#' ## example we connect to a tiny SQLite database bundled in this package
+#' ## as public access to the MassBank MySQL is not (yet) supported. See the
+#' ## vignette for more information on how to install MassBank locally and
+#' ## enable MySQL database connections
+#' library(RSQLite)
+#' con <- dbConnect(SQLite(), system.file("sql/minimassbank.sql", package = "MsBackendMassbank"))
+#'
+#' ## Given that we have the connection to a MassBank databas we can
+#' ## initialize the backend:
+#' be <- backendInitialize(MsBackendMassbankSql(), dbcon = con)
+#' be
+#'
+#' ## Access MS level
+#' msLevel(be)
+#' be$msLevel
+#'
+#' ## Access m/z values
+#' be$mz
+#'
+#' ## Access the full spectra data (including m/z and intensity values)
+#' spectraData(be)
+#'
+#' ## Add a new spectra variable
+#' be$new_variable <- "b"
+#' be$new_variable
+#'
+#' ## Subset the backend
+#' be_sub <- be[c(3, 1)]
+#'
+#' spectraNames(be)
+#' spectraNames(be_sub)
 NULL
 
 setClassUnion("DBIConnectionOrNULL", c("DBIConnection", "NULL"))
@@ -263,6 +293,10 @@ setValidity("MsBackendMassbankSql", function(object) {
 })
 
 #' @rdname MsBackendMassbankSql
+#'
+#' @importFrom utils capture.output head tail
+#'
+#' @importMethodsFrom methods show
 #'
 #' @export
 setMethod("show", "MsBackendMassbankSql", function(object) {
@@ -536,14 +570,16 @@ setMethod("length", "MsBackendMassbankSql", function(x) {
     length(x@spectraIds)
 })
 
-## #' @exportMethod msLevel
-## #'
-## #' @importMethodsFrom ProtGenerics msLevel
-## #'
-## #' @rdname MsBackendMassbankSql
-## setMethod("msLevel", "MsBackendMassbankSql", function(object) {
-##     stop("Not implemented for ", class(object), ".")
-## })
+#' @exportMethod msLevel
+#'
+#' @importMethodsFrom ProtGenerics msLevel
+#'
+#' @rdname MsBackendMassbankSql
+setMethod("msLevel", "MsBackendMassbankSql", function(object) {
+    if (length(object)) {
+        .spectra_data_massbank_sql(object, "msLevel")[, 1]
+    } else integer()
+})
 
 #' @exportMethod mz
 #'
@@ -629,6 +665,8 @@ setMethod("precursorMz", "MsBackendMassbankSql", function(object) {
 
 #' @exportMethod reset
 #'
+#' @importMethodsFrom Spectra reset
+#'
 #' @rdname MsBackendMassbankSql
 setMethod("reset", "MsBackendMassbankSql", function(object) {
     message("Restoring original data ...", appendLF = FALSE)
@@ -674,7 +712,7 @@ setMethod("scanIndex", "MsBackendMassbankSql", function(object) {
     else numeric()
 })
 
-#' @importmethodsfrom Spectra selectSpectraVariables
+#' @importMethodsFrom Spectra selectSpectraVariables
 #'
 #' @exportMethod selectSpectraVariables
 #'
@@ -697,25 +735,31 @@ setMethod(
         object
     })
 
-## #' @exportMethod smoothed
-## #'
-## #' @importMethodsFrom ProtGenerics smoothed
-## #'
-## #' @rdname MsBackendMassbankSql
-## setMethod("smoothed", "MsBackendMassbankSql", function(object) {
-##     stop("Not implemented for ", class(object), ".")
-## })
+#' @exportMethod smoothed
+#'
+#' @importMethodsFrom ProtGenerics smoothed
+#'
+#' @rdname MsBackendMassbankSql
+setMethod("smoothed", "MsBackendMassbankSql", function(object) {
+    if (length(object))
+        .spectra_data_massbank_sql(object, "smoothed")[, 1]
+    else logical()
+})
 
-## #' @exportMethod smoothed<-
-## #'
-## #' @aliases smoothed<-,MsBackendMassbankSql-method
-## #'
-## #' @importMethodsFrom ProtGenerics smoothed<-
-## #'
-## #' @rdname MsBackendMassbankSql
-## setReplaceMethod("smoothed", "MsBackendMassbankSql", function(object, value) {
-##     stop("Not implemented for ", class(object), ".")
-## })
+#' @exportMethod smoothed<-
+#'
+#' @aliases smoothed<-,MsBackendMassbankSql-method
+#'
+#' @importMethodsFrom ProtGenerics smoothed<-
+#'
+#' @rdname MsBackendMassbankSql
+setReplaceMethod("smoothed", "MsBackendMassbankSql", function(object, value) {
+    if (!is.logical(value))
+        stop("'value' has to be logical")
+    object$smoothed <- value
+    validObject(object)
+    object
+})
 
 #' @exportMethod spectraData
 #'
@@ -726,30 +770,32 @@ setMethod(
         .spectra_data_massbank_sql(object, columns = columns)
     })
 
-## #' @exportMethod spectraData<-
-## #'
-## #' @rdname MsBackendMassbankSql
-## setReplaceMethod("spectraData", "MsBackendMassbankSql", function(object, value) {
-##     stop("Not implemented for ", class(object), ".")
-## })
+#' @exportMethod spectraData<-
+#'
+#' @rdname MsBackendMassbankSql
+setReplaceMethod("spectraData", "MsBackendMassbankSql",function(object, value) {
+    stop(class(object)[1], " does not support replacing the full spectra data.")
+})
 
-## #' @exportMethod spectraNames
-## #'
-## #' @importMethodsFrom ProtGenerics spectraNames
-## #'
-## #' @rdname MsBackendMassbankSql
-## setMethod("spectraNames", "MsBackendMassbankSql", function(object) {
-##     stop("Not implemented for ", class(object), ".")
-## })
+#' @exportMethod spectraNames
+#'
+#' @importMethodsFrom ProtGenerics spectraNames
+#'
+#' @rdname MsBackendMassbankSql
+setMethod("spectraNames", "MsBackendMassbankSql", function(object) {
+    object@spectraIds
+})
 
-## #' @exportMethod spectraNames<-
-## #'
-## #' @importMethodsFrom ProtGenerics spectraNames<-
-## #'
-## #' @rdname MsBackendMassbankSql
-## setReplaceMethod("spectraNames", "MsBackendMassbankSql", function(object, value) {
-##     stop("Not implemented for ", class(object), ".")
-## })
+#' @exportMethod spectraNames<-
+#'
+#' @importMethodsFrom ProtGenerics spectraNames<-
+#'
+#' @rdname MsBackendMassbankSql
+setReplaceMethod("spectraNames", "MsBackendMassbankSql",
+                 function(object, value) {
+                     stop(class(object)[1],
+                          " does not support replacing spectra names (IDs).")
+})
 
 #' @exportMethod spectraVariables
 #'
@@ -761,14 +807,18 @@ setMethod("spectraVariables", "MsBackendMassbankSql", function(object) {
              object@spectraVariables))
 })
 
-## #' @exportMethod tic
-## #'
-## #' @importMethodsFrom ProtGenerics tic
-## #'
-## #' @rdname MsBackendMassbankSql
-## setMethod("tic", "MsBackendMassbankSql", function(object, initial = TRUE) {
-##     stop("Not implemented for ", class(object), ".")
-## })
+#' @exportMethod tic
+#'
+#' @importMethodsFrom ProtGenerics tic
+#'
+#' @rdname MsBackendMassbankSql
+setMethod("tic", "MsBackendMassbankSql", function(object, initial = TRUE) {
+    if (initial) {
+        if (any(colnames(object@localData) == "totIonCurrent"))
+            object@localData[, "totIonCurrent"]
+        else rep(NA_real_, times = length(object))
+    } else vapply1d(intensity(object), sum, na.rm = TRUE)
+})
 
 #' @exportMethod [
 #'

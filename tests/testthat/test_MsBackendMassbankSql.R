@@ -417,3 +417,71 @@ test_that("scanIndex,MsBackendMassbankSql works", {
     res <- scanIndex(be)
     expect_equal(res, 1:3)
 })
+
+test_that("smoothed,smoothed<-,MsBackendMassbankSql works", {
+    be <- MsBackendMassbankSql()
+    res <- smoothed(be)
+    expect_equal(res, logical())
+
+    be <- backendInitialize(be, dbc)
+    res <- smoothed(be)
+    expect_equal(res, rep(NA, length(be)))
+
+    smoothed(be) <- c(TRUE, FALSE, FALSE)
+    res <- smoothed(be)
+    expect_equal(res, c(TRUE, FALSE, FALSE))
+
+    expect_error(smoothed(be) <- c(TRUE, FALSE), "length 1")
+    expect_error(smoothed(be) <- "a", "logical")
+})
+
+test_that("spectraData<-,MsBackendMassbankSql works", {
+    be <- MsBackendMassbankSql()
+    expect_error(spectraData(be) <- spectraData(be), "not support")
+})
+
+test_that("spectraNames,spectraNames<-,MsBackendMassbankSql works", {
+    be <- MsBackendMassbankSql()
+    res <- spectraNames(be)
+    expect_equal(res, character())
+
+    be <- backendInitialize(be, dbc)
+    res <- spectraNames(be)
+    expect_true(is.character(res))
+    expect_true(length(res) == length(be))
+    expect_equal(res, be@spectraIds)
+
+    expect_error(spectraNames(be) <- "a", "not support")
+})
+
+test_that("tic,MsBackendMassbankSql works", {
+    be <- MsBackendMassbankSql()
+    res <- tic(be)
+    expect_equal(res, numeric())
+
+    be <- backendInitialize(be, dbc)
+    res <- tic(be)
+    expect_true(is.numeric(res))
+    expect_true(all(is.na(res)))
+
+    be$totIonCurrent <- 1.12
+    res <- tic(be)
+    expect_equal(res, rep(1.12, length(be)))
+
+    res <- tic(be, initial = FALSE)
+    expect_true(is.numeric(res))
+    expect_true(length(res) == length(be))
+    expect_true(all(res > 0))
+})
+
+test_that("msLevel,MsBackendMassbankSql works", {
+    be <- MsBackendMassbankSql()
+    res <- msLevel(be)
+    expect_equal(res, integer())
+
+    be <- backendInitialize(be, dbc)
+    res <- msLevel(be)
+    expect_true(is.integer(res))
+    expect_true(length(res) == length(be))
+    expect_true(all(res == 2L))
+})

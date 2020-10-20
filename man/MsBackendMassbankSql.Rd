@@ -26,6 +26,7 @@
 \alias{isolationWindowUpperMz,MsBackendMassbankSql-method}
 \alias{isolationWindowUpperMz<-,MsBackendMassbankSql-method}
 \alias{length,MsBackendMassbankSql-method}
+\alias{msLevel,MsBackendMassbankSql-method}
 \alias{mz,MsBackendMassbankSql-method}
 \alias{mz<-,MsBackendMassbankSql-method}
 \alias{lengths,MsBackendMassbankSql-method}
@@ -39,8 +40,14 @@
 \alias{rtime<-,MsBackendMassbankSql-method}
 \alias{scanIndex,MsBackendMassbankSql-method}
 \alias{selectSpectraVariables,MsBackendMassbankSql-method}
+\alias{smoothed,MsBackendMassbankSql-method}
+\alias{smoothed<-,MsBackendMassbankSql-method}
 \alias{spectraData,MsBackendMassbankSql-method}
+\alias{spectraData<-,MsBackendMassbankSql-method}
+\alias{spectraNames,MsBackendMassbankSql-method}
+\alias{spectraNames<-,MsBackendMassbankSql-method}
 \alias{spectraVariables,MsBackendMassbankSql-method}
+\alias{tic,MsBackendMassbankSql-method}
 \alias{[,MsBackendMassbankSql-method}
 \alias{$,MsBackendMassbankSql-method}
 \alias{$<-,MsBackendMassbankSql-method}
@@ -92,6 +99,8 @@ MsBackendMassbankSql()
 
 \S4method{length}{MsBackendMassbankSql}(x)
 
+\S4method{msLevel}{MsBackendMassbankSql}(object)
+
 \S4method{mz}{MsBackendMassbankSql}(object)
 
 \S4method{mz}{MsBackendMassbankSql}(object) <- value
@@ -118,9 +127,21 @@ MsBackendMassbankSql()
 
 \S4method{selectSpectraVariables}{MsBackendMassbankSql}(object, spectraVariables = spectraVariables(object))
 
+\S4method{smoothed}{MsBackendMassbankSql}(object)
+
+\S4method{smoothed}{MsBackendMassbankSql}(object) <- value
+
 \S4method{spectraData}{MsBackendMassbankSql}(object, columns = spectraVariables(object))
 
+\S4method{spectraData}{MsBackendMassbankSql}(object) <- value
+
+\S4method{spectraNames}{MsBackendMassbankSql}(object)
+
+\S4method{spectraNames}{MsBackendMassbankSql}(object) <- value
+
 \S4method{spectraVariables}{MsBackendMassbankSql}(object)
+
+\S4method{tic}{MsBackendMassbankSql}(object, initial = TRUE)
 
 \S4method{[}{MsBackendMassbankSql}(x, i, j, ..., drop = FALSE)
 
@@ -150,6 +171,11 @@ names of the spectra variables to which the backend should be subsetted.}
 names (spectra variables) that should be included in the
 returned \code{DataFrame}. By default, all columns are returned.}
 
+\item{initial}{For \code{tic}: \code{logical(1)} whether the initially
+reported total ion current should be reported, or whether the
+total ion current should be (re)calculated on the actual data
+(\code{initial = FALSE}).}
+
 \item{i}{For \code{[}: \code{integer}, \code{logical} or \code{character} to subset the object.}
 
 \item{j}{For \code{[}: not supported.}
@@ -158,14 +184,6 @@ returned \code{DataFrame}. By default, all columns are returned.}
 
 \item{name}{For \code{$} and \verb{$<-}: the name of the spectra variable to return
 or set.}
-
-\item{initial}{For \code{tic}: \code{logical(1)} whether the initially
-reported total ion current should be reported, or whether the
-total ion current should be (re)calculated on the actual data
-(\code{initial = FALSE}).}
-
-\item{msLevel}{\code{integer} defining the MS level of the spectra to which the
-function should be applied.}
 }
 \value{
 See documentation of respective function.
@@ -291,12 +309,9 @@ the selected spectra variables.
 \emph{smoothed}. \code{smoothed} returns a \code{logical} vector of length equal
 to the number of spectra. \verb{smoothed<-} takes a \code{logical} vector
 of length 1 or equal to the number of spectra in \code{object}.
-\item \code{spectraData}, \verb{spectraData<-}: gets or sets general spectrum
-metadata (annotation, also called header).  \code{spectraData} returns
-a \code{DataFrame}, \verb{spectraData<-} expects a \code{DataFrame} with the same number
-of rows as there are spectra in \code{object}. Note that \code{spectraData} has to
-return the full data, i.e. also the m/z and intensity values (as a \code{list}
-or \code{SimpleList} in columns \code{"mz"} and \code{"intensity"}.
+\item \code{spectraData}: gets general spectrummetadata (annotation, also called
+header).  \code{spectraData} returns a \code{DataFrame}. Note that replacing the
+spectra data with \verb{spectraData<-} is not supported.
 \item \code{spectraNames}: returns a \code{character} vector with the names of
 the spectra in \code{object}.
 \item \code{spectraVariables}: returns a \code{character} vector with the
@@ -318,9 +333,45 @@ The following functions are not supported by the \code{MsBackendMassbankSql} sin
 the original data can not be changed.
 
 \code{backendMerge}, \code{export}, \code{filterDataStorage}, \code{filterPrecursorScan},
-\verb{peaksData<-}, \code{filterAcquisitionNum}, \verb{intensity<-}, \verb{mz<-}, \code{precScanNum}.
+\verb{peaksData<-}, \code{filterAcquisitionNum}, \verb{intensity<-}, \verb{mz<-}, \code{precScanNum},
+\verb{spectraData<-}, \verb{spectraNames<-}.
 }
 
+\examples{
+
+## Create a connection to a database with MassBank data - in the present
+## example we connect to a tiny SQLite database bundled in this package
+## as public access to the MassBank MySQL is not (yet) supported. See the
+## vignette for more information on how to install MassBank locally and
+## enable MySQL database connections
+library(RSQLite)
+con <- dbConnect(SQLite(), system.file("sql/minimassbank.sql", package = "MsBackendMassbank"))
+
+## Given that we have the connection to a MassBank databas we can
+## initialize the backend:
+be <- backendInitialize(MsBackendMassbankSql(), dbcon = con)
+be
+
+## Access MS level
+msLevel(be)
+be$msLevel
+
+## Access m/z values
+be$mz
+
+## Access the full spectra data (including m/z and intensity values)
+spectraData(be)
+
+## Add a new spectra variable
+be$new_variable <- "b"
+be$new_variable
+
+## Subset the backend
+be_sub <- be[c(3, 1)]
+
+spectraNames(be)
+spectraNames(be_sub)
+}
 \author{
 Johannes Rainer
 }
