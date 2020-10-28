@@ -87,19 +87,13 @@ parameter nonStop." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MsBackendMassbank</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/MsBackendMassbank.html">Get started</a>
 </li>
 <li>
@@ -151,16 +145,21 @@ parameter <code>nonStop</code>.</p>
     </div>
 
     <pre class="usage"><span class='co'># S4 method for MsBackendMassbank</span>
-<span class='fu'>backendInitialize</span>(
-  <span class='kw'>object</span>,
-  <span class='kw'>files</span>,
-  metaBlocks = <span class='fu'><a href='metaDataBlocks.html'>metaDataBlocks</a></span>(),
-  nonStop = <span class='fl'>FALSE</span>,
-  <span class='kw'>...</span>,
-  BPPARAM = <span class='fu'>bpparam</span>()
-)
+<span class='fu'>backendInitialize</span><span class='op'>(</span>
+  <span class='va'>object</span>,
+  <span class='va'>files</span>,
+  metaBlocks <span class='op'>=</span> <span class='fu'><a href='metaDataBlocks.html'>metaDataBlocks</a></span><span class='op'>(</span><span class='op'>)</span>,
+  nonStop <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  <span class='va'>...</span>,
+  BPPARAM <span class='op'>=</span> <span class='fu'>bpparam</span><span class='op'>(</span><span class='op'>)</span>
+<span class='op'>)</span>
 
-<span class='fu'>MsBackendMassbank</span>()</pre>
+<span class='fu'>MsBackendMassbank</span><span class='op'>(</span><span class='op'>)</span>
+
+<span class='fu'>spectraVariableMapping</span><span class='op'>(</span>format <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Massbank"</span><span class='op'>)</span><span class='op'>)</span>
+
+<span class='co'># S4 method for MsBackendMassbank</span>
+<span class='fu'>export</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>x</span>, file <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/tempfile.html'>tempfile</a></span><span class='op'>(</span><span class='op'>)</span>, mapping <span class='op'>=</span> <span class='fu'>spectraVariableMapping</span><span class='op'>(</span><span class='op'>)</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -194,6 +193,27 @@ xml file does not contain all required fields. Defaults to
       <td><p>Parameter object defining the parallel processing
 setup to import data in parallel. Defaults to <code>BPPARAM = bpparam()</code>. See <code>bpparam()</code> for more information.</p></td>
     </tr>
+    <tr>
+      <th>format</th>
+      <td><p>for <code>spectraVariableMapping</code>: <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> defining the
+format to be used. Currently only <code>format = "Massbank"</code> is supported.</p></td>
+    </tr>
+    <tr>
+      <th>x</th>
+      <td><p><code>Spectra()</code> object that should be exported.</p></td>
+    </tr>
+    <tr>
+      <th>file</th>
+      <td><p>for <code>export</code>: <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> defining the output file.</p></td>
+    </tr>
+    <tr>
+      <th>mapping</th>
+      <td><p>for <code>export</code>: named <code>character</code> vector
+allowing to specify how fields from the Massbank file should be renamed.
+Names are supposed to be the spectra variable name and values of the
+vector the field names in the Massbank file. See output of
+<code>spectraVariableMapping()</code> for the expected format.</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
@@ -203,10 +223,10 @@ setup to import data in parallel. Defaults to <code>BPPARAM = bpparam()</code>. 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='co'>## Create an MsBackendMassbank backend and import data from test xml files.</span>
-<span class='kw'>fls</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>dir</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"extdata"</span>, package = <span class='st'>"MsBackendMassbank"</span>),
-    full.names = <span class='fl'>TRUE</span>, pattern = <span class='st'>"txt$"</span>)
-<span class='kw'>be</span> <span class='op'>&lt;-</span> <span class='fu'>backendInitialize</span>(<span class='fu'>MsBackendMassbank</span>(), <span class='kw'>fls</span>)
-</div><div class='output co'>#&gt; <span class='message'>Start data import from 8 files ... </span></div><div class='output co'>#&gt; <span class='message'>done</span></div><div class='input'><span class='kw'>be</span>
+<span class='va'>fls</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>dir</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"extdata"</span>, package <span class='op'>=</span> <span class='st'>"MsBackendMassbank"</span><span class='op'>)</span>,
+    full.names <span class='op'>=</span> <span class='cn'>TRUE</span>, pattern <span class='op'>=</span> <span class='st'>"txt$"</span><span class='op'>)</span>
+<span class='va'>be</span> <span class='op'>&lt;-</span> <span class='fu'>backendInitialize</span><span class='op'>(</span><span class='fu'>MsBackendMassbank</span><span class='op'>(</span><span class='op'>)</span>, <span class='va'>fls</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'>Start data import from 8 files ... </span></div><div class='output co'>#&gt; <span class='message'>done</span></div><div class='input'><span class='va'>be</span>
 </div><div class='output co'>#&gt; MsBackendMassbank with 10 spectra
 #&gt;      msLevel     rtime scanIndex
 #&gt;    &lt;integer&gt; &lt;numeric&gt; &lt;integer&gt;
@@ -220,9 +240,9 @@ setup to import data in parallel. Defaults to <code>BPPARAM = bpparam()</code>. 
 #&gt; 8          2    143.94         1
 #&gt; 9          2    143.94         1
 #&gt; 10         2    143.94         1
-#&gt;  ... 30 more variables/columns.</div><div class='input'>
-<span class='kw'>be</span><span class='op'>$</span><span class='kw'>msLevel</span>
-</div><div class='output co'>#&gt;  [1] 2 2 2 2 2 2 2 2 2 2</div><div class='input'><span class='kw'>be</span><span class='op'>$</span><span class='kw'>intensity</span>
+#&gt;  ... 28 more variables/columns.</div><div class='input'>
+<span class='va'>be</span><span class='op'>$</span><span class='va'>msLevel</span>
+</div><div class='output co'>#&gt;  [1] 2 2 2 2 2 2 2 2 2 2</div><div class='input'><span class='va'>be</span><span class='op'>$</span><span class='va'>intensity</span>
 </div><div class='output co'>#&gt; NumericList of length 10
 #&gt; [["intensity"]] 12461 2208 2394 40390 2816 3122 ... 6937 2914 6059 1871 9233
 #&gt; [[""]] 646 980 2114 20052 1248 7628 2036 494048 75708
@@ -233,7 +253,7 @@ setup to import data in parallel. Defaults to <code>BPPARAM = bpparam()</code>. 
 #&gt; [["intensity"]] 324 184 138 3770 500 800 7214 ... 206 898 162 166 814 250 1840
 #&gt; [["intensity"]] 150 200 32 232 80 12162
 #&gt; [["intensity"]] 460 3630 658 74 28 190 44 142 50 52 634
-#&gt; [["intensity"]] 282 424</div><div class='input'><span class='kw'>be</span><span class='op'>$</span><span class='kw'>mz</span>
+#&gt; [["intensity"]] 282 424</div><div class='input'><span class='va'>be</span><span class='op'>$</span><span class='va'>mz</span>
 </div><div class='output co'>#&gt; NumericList of length 10
 #&gt; [["mz"]] 84.1 105.1 107.1 114.1 115.1 119.1 ... 393.3 396.3 410.3 411.3 414.3
 #&gt; [[""]] 74.0233 132.0807 144.0805 146.0598 ... 170.0597 188.0699 205.0965
@@ -256,7 +276,7 @@ setup to import data in parallel. Defaults to <code>BPPARAM = bpparam()</code>. 
 
       <footer>
       <div class="copyright">
-  <p>Developed by Michael Witting.</p>
+  <p>Developed by Michael Witting, Johannes Rainer.</p>
 </div>
 
 <div class="pkgdown">
