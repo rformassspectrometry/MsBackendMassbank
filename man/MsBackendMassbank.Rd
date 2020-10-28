@@ -40,6 +40,19 @@ xml file does not contain all required fields. Defaults to
 
 \item{BPPARAM}{Parameter object defining the parallel processing
 setup to import data in parallel. Defaults to \code{BPPARAM = bpparam()}. See \code{\link[=bpparam]{bpparam()}} for more information.}
+
+\item{format}{for \code{spectraVariableMapping}: \code{character(1)} defining the
+format to be used. Currently only \code{format = "Massbank"} is supported.}
+
+\item{x}{\code{\link[=Spectra]{Spectra()}} object that should be exported.}
+
+\item{file}{for \code{export}: \code{character(1)} defining the output file.}
+
+\item{mapping}{for \code{export}: named \code{character} vector
+allowing to specify how fields from the Massbank file should be renamed.
+Names are supposed to be the spectra variable name and values of the
+vector the field names in the Massbank file. See output of
+\code{spectraVariableMapping()} for the expected format.}
 }
 \description{
 The \code{MsBackendMassbank} class supports import of MS/MS spectra data from

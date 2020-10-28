@@ -29,8 +29,19 @@ NULL
 #'
 #' @param object Instance of `MsBackendMassbank` class.
 #'
+#' @param file for `export`: `character(1)` defining the output file.
+#'
 #' @param files `character` with the (full) file name(s) of the mgf file(s)
 #'     from which MS/MS data should be imported.
+#'
+#' @param format for `spectraVariableMapping`: `character(1)` defining the
+#'     format to be used. Currently only `format = "Massbank"` is supported.
+#'
+#' @param mapping for `export`: named `character` vector
+#'     allowing to specify how fields from the Massbank file should be renamed.
+#'     Names are supposed to be the spectra variable name and values of the
+#'     vector the field names in the Massbank file. See output of
+#'     `spectraVariableMapping()` for the expected format.
 #'
 #' @param metaBlocks `data.frame` data frame indicating which metadata shall
 #'     be read Default is [metaDataBlocks()].
@@ -42,6 +53,8 @@ NULL
 #' @param BPPARAM Parameter object defining the parallel processing
 #'     setup to import data in parallel. Defaults to `BPPARAM =
 #'     bpparam()`. See [bpparam()] for more information.
+#'
+#' @param x [Spectra()] object that should be exported.
 #'
 #' @param ... Currently ignored.
 #'

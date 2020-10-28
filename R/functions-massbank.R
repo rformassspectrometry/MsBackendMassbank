@@ -557,8 +557,6 @@ metaDataBlocks <- function() {
 #' @importMethodsFrom Spectra spectraVariables spectraNames spectraData
 #'
 #' @noRd
-#'
-#' @examples
 .export_massbank <- function(x, con = stdout(), mapping = spectraVariableMapping()) {
 
   if (class(con) == "character" && file.exists(con)) {

@@ -4,11 +4,11 @@ output:
     BiocStyle::html_document:
         toc_float: true
 vignette: >
-    %\VignetteIndexEntry{Description and usage of Description and usage of MsBackendMassbank}
+    %\VignetteIndexEntry{Description and usage of MsBackendMassbank}
     %\VignetteEngine{knitr::rmarkdown}
     %\VignetteEncoding{UTF-8}
     %\VignettePackage{Spectra}
-    %\VignetteDepends{Spectra,BiocStyle}
+    %\VignetteDepends{Spectra,BiocStyle,RSQLite}
 ---
 
 ```{r style, echo = FALSE, results = 'asis', message=FALSE}
@@ -22,27 +22,29 @@ BiocStyle::markdown()
 
 ```{r, echo = FALSE, message = FALSE}
 library(Spectra)
+knitr::opts_chunk$set(echo = TRUE, message = FALSE)
 library(BiocStyle)
 ```
 
 # Introduction
 
-The `Spectra` package provides a central infrastructure for the
-handling of Mass Spectrometry (MS) data. The package supports
-interchangeable use of different *backends* to import MS data from a
-variety of sources (such as mzML files). The `MsBackendMassbank` package
-allows the import of handle MS/MS spectrum 
-data from [Massbank](https://github.com/MassBank/MassBank-data) files. 
-This vignette illustrates the usage of the `MsBackendMassbank`
-package.
+The `Spectra` package provides a central infrastructure for the handling of Mass
+Spectrometry (MS) data. The package supports interchangeable use of different
+*backends* to import MS data from a variety of sources (such as mzML files). The
+`MsBackendMassbank` package allows import and handling MS/MS spectrum data from
+[Massbank](https://massbank.eu/MassBank/). This vignette illustrates the usage
+of the `MsBackendMassbank` package to include MassBank data into MS data
+analysis workflow with the `Spectra` package in R.
+
 
 # Importing MS/MS data from MassBank files
 
-MassBAnk files store normally one library spectrum per file, typically
-centroided and of MS level 2. In our short example below, we load data from a 
-file containing multiple library spectra per file or from files with each a 
-single spectrum provided with this package. Below we first load all required packages
-and define the paths to the Massbank files.
+MassBank files (as provided by the [Massbank github
+repository](https://github.com/MassBank/MassBank-data)) store normally one
+library spectrum per file, typically centroided and of MS level 2. In our short
+example below, we load data from a file containing multiple library spectra per
+file or from files with each a single spectrum provided with this package. Below
+we first load all required packages and define the paths to the Massbank files.
 
 ```{r load-libs}
 library(Spectra)
@@ -71,7 +73,7 @@ that we list below.
 spectraVariables(sps)
 ```
 
-The same is possible with multiple files, containing each one individual library
+The same is possible with multiple files, each containing a library
 spectrum.
 
 ```{r import2}
@@ -83,14 +85,16 @@ spectraVariables(sps)
 ```
 
 By default the complete metadata is read together with the spectra. This can
-increase loading time. The different metadata blocks can blocked from reading.
-This requires to define an additional data frame indicating what shall be read.
+increase loading time. The different metadata blocks can be skipped which
+reduces import time. This requires to define an additional `data.frame`
+indicating what shall be read.
+
 
 ```{r metadata}
 # create data frame to indicate with metadata blocks shall be read.
-metaDataBlocks <- data.frame(metadata = c("ac", "ch", "sp", "ms", "record", "pk", "comment"),
-                             read = rep(TRUE, 7),
-                             stringsAsFactors = FALSE)
+metaDataBlocks <- data.frame(metadata = c("ac", "ch", "sp", "ms",
+                                          "record", "pk", "comment"),
+                             read = rep(TRUE, 7))
 
 sps <- Spectra(fls[-1],
                source = MsBackendMassbank(),
@@ -124,11 +128,138 @@ intensity(sps)
 
 When importing a large number of mgf files, setting `nonStop = TRUE`
 prevents the call to stop whenever problematic mgf files are
-encountered. 
+encountered.
 
 ```{r all-import, eval = FALSE}
-sps <- Spectra(fls, source = MsBackendMgf(), nonStop = TRUE)
+sps <- Spectra(fls, source = MsBackendMassbank(), nonStop = TRUE)
 ```
+
+# Accessing the MassBank MySQL database
+
+An alternative to the import of the MassBank data from individual text files
+(which can take a considerable amount of time) is to directly access the MS/MS
+data in the MassBank MySQL database. For demonstration purposes we are using
+here a tiny subset of the MassBank data which is stored as a SQLite database
+within this package.
+
+## Pre-requisites
+
+At present it is not possible to directly connect to the main MassBank
+*production* MySQL server, thus, to use the `MsBackendMassbankSql` backend it is
+required to install the database locally. The MySQL database dump for each
+MassBank release can be downloaded from [here](). This dump could be imported to
+a local MySQL server.
+
+
+## Direct access to the MassBank database
+
+To use the `MsBackendMassbankSql` it is required to first connect to a
+*MassBank* database. Below we show the R code which could be used for that - but
+the actual settings (user name, password, database name, or host) will depend on
+where and how the MassBank database was installed.
+
+```{r mysql, eval = FALSE}
+library(RMariaDB)
+con <- dbConnect(MariaDB(), host = "localhost", user = "massbank",
+                 dbname = "MassBank")
+```
+
+To illustrate the general functionality of this backend we use a tiny subset of
+the MassBank (release 2020.10) which is provided as an small SQLite database
+within this package. Below we connect to this database.
+
+```{r sqlite}
+library(RSQLite)
+con <- dbConnect(SQLite(), system.file("sql/minimassbank.sql",
+                                       package = "MsBackendMassbank"))
+```
+
+We next *initialize* the `MsBackendMassbankSql` backend which supports direct
+access to the MassBank in a SQL database and create a `Spectra` object from
+that.
+
+```{r}
+be <- backendInitialize(MsBackendMassbankSql(), dbcon = con)
+mb <- Spectra(be)
+mb
+```
+
+We can now use this `Spectra` object to access and use the MassBank data for our
+analysis. Note that the `Spectra` object itself does not contain any data from
+MassBank. Any data will be fetched on demand from the database backend.
+
+To get a listing of all available annotations for each spectrum (the so-called
+*spectra variables*) we can use the `spectraVariables` function.
+
+```{r}
+spectraVariables(mb)
+```
+
+We can access *core* spectra variables, such as the MS level with the
+corresponding function `msLevel`.
+
+```{r}
+head(msLevel(mb))
+```
+
+Spectra variables can also be accessed with `$` and the name of the
+variable. Thus, MS levels can also be accessed with `$msLevel`:
+
+```{r}
+head(mb$msLevel)
+```
+
+In addition to spectra variables, we can also get the actual peaks (i.e. m/z and
+intensity values) with the `mz` and `intensity` functions:
+
+```{r}
+mz(mb)
+```
+
+Note that not all spectra from the database were generated using the same
+instrumentation. Below we list the number of spectra for each type of
+instrument.
+
+```{r}
+table(mb$instrument_type)
+```
+
+We next subset the data to all spectra from ions generated by electro spray
+ionization (ESI).
+
+```{r}
+mb <- mb[mb$ionization == "ESI"]
+length(mb)
+```
+
+As a simple example to illustrate the `Spectra` functionality we next calculate
+spectra similarity between one spectrum against all other spectra in the
+database. To this end we use the `compareSpectra` function with the normalized
+dot product as similarity function and allowing 20 ppm difference in m/z between
+matching peaks
+
+```{r}
+library(MsCoreUtils)
+sims <- compareSpectra(mb[11], mb[-11], FUN = ndotproduct, ppm = 40)
+max(sims)
+```
+
+We plot next a mirror plot for the two best matching spectra.
+
+```{r}
+plotSpectraMirror(mb[11], mb[(which.max(sims) + 1)], ppm = 40)
+```
+
+We can also retrieve the *compound* information for these two best matching
+spectra. Note that this `compounds` function works only with the
+`MsBackendMassbankSql` backend as it retrieves the corresponding information
+from the database's compound annotation table.
+
+```{r}
+mb_match <- mb[c(11, which.max(sims) + 1)]
+compounds(mb_match)
+```
+
 
 # Session information
 
