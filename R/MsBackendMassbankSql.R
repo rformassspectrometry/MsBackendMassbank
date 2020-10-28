@@ -333,7 +333,7 @@ setMethod("backendInitialize", "MsBackendMassbankSql", function(object, dbcon,
     if (length(msg))
         stop(msg)
     res <- dbGetQuery(dbcon, "select spectrum_id from msms_spectrum")
-    object@spectraIds <- res[, 1]
+    object@spectraIds <- as.character(res[, 1])
     res <- dbGetQuery(dbcon, "select * from msms_spectrum limit 1")
     object@spectraVariables <- c(.map_sql_to_spectraVariables(colnames(res)),
                                  "precursor_mz_text")

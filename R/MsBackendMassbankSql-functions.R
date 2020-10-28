@@ -192,5 +192,8 @@ MsBackendMassbankSql <- function() {
     qry <- dbBind(qry, list(id))
     res <- dbFetch(qry)
     dbClearResult(qry)
-    res[, -which(colnames(res) == "compound_id")[2]]
+    idx <- grep("^compound_id", colnames(res))
+    if (length(idx) > 1)
+        res <- res[, -idx[-1]]
+    res
 }
