@@ -35,10 +35,10 @@ test_that(".fetch_spectra_data_sql works", {
     expect_true(colnames(res) == "spectrum_id")
 
     res <- .fetch_spectra_data_sql(be, columns = "msLevel")
-    expect_true(all(res$msLevel == 2L))
+    expect_true(all(res$msLevel %in% c(NA_integer_, 2L)))
 
     res <- .fetch_spectra_data_sql(be, columns = "polarity")
-    expect_true(all(res$polarity == 1L))
+    expect_true(all(res$polarity %in% c(1L, 0L)))
 })
 
 test_that(".spectra_data_massbank_sql works", {
@@ -69,7 +69,7 @@ test_that(".spectra_data_massbank_sql works", {
     expect_true(is(res, "DataFrame"))
     expect_true(nrow(res) > 0)
     expect_equal(colnames(res), "msLevel")
-    expect_true(all(res$msLevel == 2L))
+    expect_true(all(res$msLevel %in% c(NA, 2L)))
 
     res <- .spectra_data_massbank_sql(be, "mz")
     expect_true(is(res, "DataFrame"))
@@ -82,7 +82,7 @@ test_that(".spectra_data_massbank_sql works", {
     expect_true(is(res, "DataFrame"))
     expect_true(nrow(res) > 0)
     expect_equal(colnames(res), c("rtime", "polarity"))
-    expect_true(all(res$polarity == 1L))
+    expect_true(all(res$polarity %in% c(0L, 1L)))
     expect_true(all(is.na(res$rtime)))
 
     res <- .spectra_data_massbank_sql(
@@ -90,20 +90,40 @@ test_that(".spectra_data_massbank_sql works", {
     expect_true(is(res, "DataFrame"))
     expect_true(nrow(res) > 0)
     expect_equal(colnames(res), c("mz", "polarity", "intensity"))
-    expect_true(all(res$polarity == 1L))
+    expect_true(all(res$polarity %in% c(0L, 1L)))
     expect_true(is(res$mz, "NumericList"))
     expect_true(is(res$intensity, "NumericList"))
 
     ## With local data.
-    be@localData <- DataFrame(rtime = as.numeric(1:3))
-    res <- .spectra_data_massbank_sql(be, columns = c("mz", "rtime", "spectrum_id"))
+    be@localData <- DataFrame(rtime = seq_len(length(be)))
+    res <- .spectra_data_massbank_sql(
+        be, columns = c("mz", "rtime", "spectrum_id"))
     expect_true(is(res, "DataFrame"))
     expect_true(nrow(res) > 0)
-    expect_equal(res$rtime, 1:3)
+    expect_equal(res$rtime, seq_len(length(be)))
 
-    be@localData$authors <- c("a", "b", "c")
+    be@localData$authors <- rep("A", length(be))
     res <- .spectra_data_massbank_sql(be, columns = c("rtime", "authors"))
     expect_true(is(res, "DataFrame"))
     expect_true(nrow(res) > 0)
-    expect_equal(res$authors, c("a", "b", "c"))
+    expect_equal(res$authors, rep("A", length(be)))
+})
+
+test_that(".compounds_sql works", {
+    res <- .compounds_sql(dbc, id = c(2, 4, 6))
+    expect_true(all(c(2, 4, 6) %in% res$compound_id))
+})
+
+test_that(".map_spectraVariables_to_sql works", {
+    res <- .map_spectraVariables_to_sql("msLevel")
+    expect_equal(res, "ms_level")
+    res <- .map_spectraVariables_to_sql(c("mz", "collisionEnergy", "ms_level"))
+    expect_equal(res, c("mz", "collisionEnergy", "ms_level"))
+})
+
+test_that(".map_sql_to_spectraVariables works", {
+    res <- .map_sql_to_spectraVariables("ms_level")
+    expect_equal(res, "msLevel")
+    res <- .map_sql_to_spectraVariables(c("precursor_mz_text", "intensity"))
+    expect_equal(res, c("precursorMz", "intensity"))
 })

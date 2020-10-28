@@ -4,11 +4,11 @@ output:
     BiocStyle::html_document:
         toc_float: true
 vignette: >
-    %\VignetteIndexEntry{Description and usage of Description and usage of MsBackendMassbank}
+    %\VignetteIndexEntry{Description and usage of MsBackendMassbank}
     %\VignetteEngine{knitr::rmarkdown}
     %\VignetteEncoding{UTF-8}
     %\VignettePackage{Spectra}
-    %\VignetteDepends{Spectra,BiocStyle}
+    %\VignetteDepends{Spectra,BiocStyle,RSQLite}
 ---
 
 ```{r style, echo = FALSE, results = 'asis', message=FALSE}
@@ -22,27 +22,29 @@ BiocStyle::markdown()
 
 ```{r, echo = FALSE, message = FALSE}
 library(Spectra)
+knitr::opts_chunk$set(echo = TRUE, message = FALSE)
 library(BiocStyle)
 ```
 
 # Introduction
 
-The `Spectra` package provides a central infrastructure for the
-handling of Mass Spectrometry (MS) data. The package supports
-interchangeable use of different *backends* to import MS data from a
-variety of sources (such as mzML files). The `MsBackendMassbank` package
-allows the import of handle MS/MS spectrum 
-data from [Massbank](https://github.com/MassBank/MassBank-data) files. 
-This vignette illustrates the usage of the `MsBackendMassbank`
-package.
+The `Spectra` package provides a central infrastructure for the handling of Mass
+Spectrometry (MS) data. The package supports interchangeable use of different
+*backends* to import MS data from a variety of sources (such as mzML files). The
+`MsBackendMassbank` package allows import and handling MS/MS spectrum data from
+[Massbank](https://massbank.eu/MassBank/). This vignette illustrates the usage
+of the `MsBackendMassbank` package to include MassBank data into MS data
+analysis workflow with the `Spectra` package in R.
+
 
 # Importing MS/MS data from MassBank files
 
-MassBAnk files store normally one library spectrum per file, typically
-centroided and of MS level 2. In our short example below, we load data from a 
-file containing multiple library spectra per file or from files with each a 
-single spectrum provided with this package. Below we first load all required packages
-and define the paths to the Massbank files.
+MassBank files (as provided by the [Massbank github
+repository](https://github.com/MassBank/MassBank-data)) store normally one
+library spectrum per file, typically centroided and of MS level 2. In our short
+example below, we load data from a file containing multiple library spectra per
+file or from files with each a single spectrum provided with this package. Below
+we first load all required packages and define the paths to the Massbank files.
 
 ```{r load-libs}
 library(Spectra)
@@ -71,7 +73,7 @@ that we list below.
 spectraVariables(sps)
 ```
 
-The same is possible with multiple files, containing each one individual library
+The same is possible with multiple files, each containing a library
 spectrum.
 
 ```{r import2}
@@ -83,14 +85,16 @@ spectraVariables(sps)
 ```
 
 By default the complete metadata is read together with the spectra. This can
-increase loading time. The different metadata blocks can blocked from reading.
-This requires to define an additional data frame indicating what shall be read.
+increase loading time. The different metadata blocks can be skipped which
+reduces import time. This requires to define an additional `data.frame`
+indicating what shall be read.
+
 
 ```{r metadata}
 # create data frame to indicate with metadata blocks shall be read.
-metaDataBlocks <- data.frame(metadata = c("ac", "ch", "sp", "ms", "record", "pk", "comment"),
-                             read = rep(TRUE, 7),
-                             stringsAsFactors = FALSE)
+metaDataBlocks <- data.frame(metadata = c("ac", "ch", "sp", "ms",
+                                          "record", "pk", "comment"),
+                             read = rep(TRUE, 7))
 
 sps <- Spectra(fls[-1],
                source = MsBackendMassbank(),
@@ -124,11 +128,44 @@ intensity(sps)
 
 When importing a large number of mgf files, setting `nonStop = TRUE`
 prevents the call to stop whenever problematic mgf files are
-encountered. 
+encountered.
 
 ```{r all-import, eval = FALSE}
-sps <- Spectra(fls, source = MsBackendMgf(), nonStop = TRUE)
+sps <- Spectra(fls, source = MsBackendMassbank(), nonStop = TRUE)
 ```
+
+# Accessing the MassBank MySQL database
+
+An alternative to the import of the MassBank data from individual text files
+(which can take a considerable amount of time) is to directly access the MS/MS
+data in the MassBank MySQL database. For demonstration purposes we are using
+here a tiny subset of the MassBank data which is stored as a SQLite database
+within this package.
+
+## Pre-requisites
+
+At present it is not possible to directly connect to the main MassBank
+*production* MySQL server, thus we need to download the MassBank data, modify
+the connection settings and run the server locally.
+
+First we have to download the data and server from github:
+
+```
+git clone git@github.com:MassBank/MassBank-web.git
+
+```
+
+
+- download.
+- modify.
+
+## Direct access to the MassBank database
+
+- connect to the database.
+- list all spectra variables.
+- get ms level.
+- get peaks data.
+
 
 # Session information
 

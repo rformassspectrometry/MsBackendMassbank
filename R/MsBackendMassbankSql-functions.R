@@ -16,7 +16,7 @@ MsBackendMassbankSql <- function() {
         if (!inherits(x, "DBIConnection"))
             return("'dbcon' is expected to be a connection to a database")
         tables <- dbListTables(x)
-        if (!all(c("spectra_data", "peaks") %in% tables))
+        if (!all(c("msms_spectrum", "msms_spectrum_peak") %in% tables))
             return(paste0("Database lacks some required tables. Is 'dbcon' a",
                           " connection to a MassBank database?"))
     }
@@ -64,20 +64,24 @@ MsBackendMassbankSql <- function() {
     ## Get m/z and intensity values
     if (length(mz_cols)) {
         pks <- .fetch_peaks_sql(x, columns = mz_cols)
-        f <- factor(pks$spectrum_id, levels = x@spectraIds)
+        f <- factor(pks$spectrum_id)
         if (any(mz_cols == "mz")) {
+            mzs <- split(pks$mz, f)
             if (length(res))
-                res$mz <- NumericList(split(pks$mz, f), compress = FALSE)
-            else res <- DataFrame(mz = NumericList(split(pks$mz, f),
-                                                   compress = FALSE))
+                res$mz <- NumericList(mzs[as.character(x@spectraIds)],
+                                      compress = FALSE)
+            else res <- DataFrame(
+                     mz = NumericList(mzs[as.character(x@spectraIds)],
+                                      compress = FALSE))
         }
         if (any(mz_cols == "intensity")) {
+            ints <- split(pks$intensity, f)
             if (length(res))
-                res$intensity <- NumericList(split(pks$intensity, f),
-                                             compress = FALSE)
-            else res <- DataFrame(intensity = NumericList(
-                                      split(pks$intensity, f),
-                                      compress = FALSE))
+                res$intensity <- NumericList(
+                    ints[as.character(x@spectraIds)], compress = FALSE)
+            else res <- DataFrame(
+                     intensity = NumericList(
+                         ints[as.character(x@spectraIds)], compress = FALSE))
         }
     }
     ## Get local data
@@ -108,10 +112,11 @@ MsBackendMassbankSql <- function() {
 #' @noRd
 .fetch_peaks_sql <- function(x, columns = c("mz", "intensity")) {
     if (length(x@dbcon)) {
-        qry <- dbSendQuery(x@dbcon, paste0("select spectrum_id,",
-                                           paste(columns, collapse = ","),
-                                           " from peaks where spectrum_id = ?"))
-        qry <- dbBind(qry, list(x@spectraIds))
+        qry <- dbSendQuery(
+            x@dbcon, paste0("select spectrum_id,",
+                            paste(columns, collapse = ","),
+                            " from msms_spectrum_peak where spectrum_id = ?"))
+        qry <- dbBind(qry, list(unique(x@spectraIds)))
         res <- dbFetch(qry)
         dbClearResult(qry)
         res
@@ -121,15 +126,37 @@ MsBackendMassbankSql <- function() {
     }
 }
 
+.columns_sql <- c(
+    precursorIntensity = "precursor_intensity",
+    precursorMz = "precursor_mz_text",
+    msLevel = "ms_level"
+)
+
+.map_spectraVariables_to_sql <- function(x) {
+    for (i in seq_along(.columns_sql))
+        x <- sub(names(.columns_sql)[i], .columns_sql[i], x, fixed = TRUE)
+    x
+}
+
+.map_sql_to_spectraVariables <- function(x) {
+    for (i in seq_along(.columns_sql))
+        x <- sub(.columns_sql[i], names(.columns_sql[i]), x, fixed = TRUE)
+    x
+}
+
 .fetch_spectra_data_sql <- function(x, columns = c("spectrum_id")) {
     qry <- dbSendQuery(
-        x@dbcon, paste0("select ", paste(columns, collapse = ","),
-                        " from spectra_data where spectrum_id = ?"))
+        x@dbcon,
+        paste0("select ",
+               paste(.map_spectraVariables_to_sql(columns), collapse = ","),
+               " from msms_spectrum where spectrum_id = ?"))
     qry <- dbBind(qry, list(x@spectraIds))
     res <- dbFetch(qry)
     dbClearResult(qry)
-    if (any(columns == "msLevel"))
-        res$msLevel <- as.integer(sub("MS", "", res$msLevel))
+    if (any(columns == "msLevel")) {
+        res$msLevel <- as.integer(sub("MS", "", res$ms_level))
+        res$ms_level <- NULL
+    }
     if (any(columns == "polarity")) {
         pol <- rep(NA_integer_, nrow(res))
         pol[res$polarity == "POSITIVE"] <- 1L
@@ -138,11 +165,32 @@ MsBackendMassbankSql <- function() {
     }
     if (any(columns == "publication"))
         res$dataOrigin <- res$publication
-    if (any(columns == "precursorIntensity"))
-        res$precursorIntensity <- as.numeric(res$precursorIntensity)
+    if (any(columns == "precursorIntensity")) {
+        res$precursorIntensity <- as.numeric(res$precursor_intensity)
+        res$precursor_intensity <- NULL
+    }
     ## So far we're not dealing with multiple precursor m/z here!
-    if (any(columns == "precursorMz"))
+    if (any(columns == "precursorMz")) {
         suppressWarnings(
-            res$precursorMz <- as.numeric(res$precursorMz))
+            res$precursorMz <- as.numeric(res$precursor_mz_text))
+        if (!any(columns == "precursor_mz_text"))
+            res$precursor_intensity_text <- NULL
+    }
+    if (any(columns == "collisionEnergy")) {
+        suppressWarnings(
+            res$collisionEnergy <- as.numeric(res$collision_energy_test))
+        res$collision_energy_text <- NULL
+    }
     res
+}
+
+.compounds_sql <- function(x, id) {
+    id <- force(id)
+    qry <- dbSendQuery(x, paste0("select * from compound join synonym on (",
+                                 "compound.compound_id=synonym.compound_id)",
+                                 " where compound.compound_id = ?"))
+    qry <- dbBind(qry, list(id))
+    res <- dbFetch(qry)
+    dbClearResult(qry)
+    res[, -which(colnames(res) == "compound_id")[2]]
 }

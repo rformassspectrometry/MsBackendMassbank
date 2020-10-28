@@ -4,6 +4,7 @@
 \name{MsBackendMassbankSql}
 \alias{MsBackendMassbankSql}
 \alias{MsBackendMassbankSql-class}
+\alias{compounds}
 \alias{show,MsBackendMassbankSql-method}
 \alias{backendInitialize,MsBackendMassbankSql-method}
 \alias{acquisitionNum,MsBackendMassbankSql-method}
@@ -51,6 +52,8 @@
 \alias{[,MsBackendMassbankSql-method}
 \alias{$,MsBackendMassbankSql-method}
 \alias{$<-,MsBackendMassbankSql-method}
+\alias{compounds,Spectra-method}
+\alias{compounds,MsBackendMassbankSql-method}
 \title{MS backend accessing the MassBank MySQL database}
 \usage{
 MsBackendMassbankSql()
@@ -148,6 +151,10 @@ MsBackendMassbankSql()
 \S4method{$}{MsBackendMassbankSql}(x, name)
 
 \S4method{$}{MsBackendMassbankSql}(x, name) <- value
+
+\S4method{compounds}{Spectra}(object, ...)
+
+\S4method{compounds}{MsBackendMassbankSql}(object, ...)
 }
 \arguments{
 \item{object}{Object extending \code{MsBackendMassbankSql}.}
@@ -202,7 +209,11 @@ MassBank database since direct database access is not supported for the
 Also, some of the fields in the MassBank database are not directly compatible
 with \code{Spectra}, such as the \emph{collision energy} which is not available as a
 numeric value. The collision energy as available in MassBank is reported as
-spectra variable \code{"collisionEnergyText"}.
+spectra variable \code{"collision_energy_text"}. Also, precursor m/z values
+reported for some spectra can not be converted to a \code{numeric} and hence \code{NA}
+is reported with the spectra variable \code{precursorMz} for these spectra. The
+variable \code{"precursor_mz_text"} can be used to get the \emph{original} precursor
+m/z reported in MassBank.
 }
 \section{Supported Backend functions}{
 

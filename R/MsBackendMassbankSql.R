@@ -1,6 +1,6 @@
 #' @title MS backend accessing the MassBank MySQL database
 #'
-#' @aliases MsBackendMassbankSql-class
+#' @aliases MsBackendMassbankSql-class compounds
 #'
 #' @description
 #'
@@ -17,7 +17,11 @@
 #' Also, some of the fields in the MassBank database are not directly compatible
 #' with `Spectra`, such as the *collision energy* which is not available as a
 #' numeric value. The collision energy as available in MassBank is reported as
-#' spectra variable `"collisionEnergyText"`.
+#' spectra variable `"collision_energy_text"`. Also, precursor m/z values
+#' reported for some spectra can not be converted to a `numeric` and hence `NA`
+#' is reported with the spectra variable `precursorMz` for these spectra. The
+#' variable `"precursor_mz_text"` can be used to get the *original* precursor
+#' m/z reported in MassBank.
 #'
 #' @param dbcon For `backendInitialize,MsBackendMassbankSql`: SQL database
 #'     connection to the MassBank (MariaDb) database.
@@ -328,10 +332,11 @@ setMethod("backendInitialize", "MsBackendMassbankSql", function(object, dbcon,
     object@dbcon <- dbcon
     if (length(msg))
         stop(msg)
-    res <- dbGetQuery(dbcon, "select spectrum_id from spectra_data")
+    res <- dbGetQuery(dbcon, "select spectrum_id from msms_spectrum")
     object@spectraIds <- res[, 1]
-    res <- dbGetQuery(dbcon, "select * from spectra_data limit 1")
-    object@spectraVariables <- colnames(res)
+    res <- dbGetQuery(dbcon, "select * from msms_spectrum limit 1")
+    object@spectraVariables <- c(.map_sql_to_spectraVariables(colnames(res)),
+                                 "precursor_mz_text")
     validObject(object)
     object
 })
@@ -874,4 +879,34 @@ setReplaceMethod("$", "MsBackendMassbankSql", function(x, name, value) {
     }
     validObject(x)
     x
+})
+
+setGeneric("compounds", function(object, ...)
+    standardGeneric("compounds"))
+
+#' @rdname MsBackendMassbankSql
+#'
+#' @export
+setMethod("compounds", "Spectra", function(object, ...) {
+    compounds(object@backend, ...)
+})
+
+#' @rdname MsBackendMassbankSql
+#'
+#' @importFrom IRanges CharacterList
+#'
+#' @export
+setMethod("compounds", "MsBackendMassbankSql", function(object, ...) {
+    if (!length(object))
+        return(DataFrame())
+    if (!any(spectraVariables(object) == "compound_id"))
+        stop("Spectra variable 'compound_id' not present.")
+    res <- .compounds_sql(object@dbcon, object$compound_id)
+    syns <- res$synonym
+    syns <- split(
+        syns, f = factor(res$compound_id, levels = unique(res$compound_id)))
+    res <- DataFrame(unique(res[, colnames(res) != "synonym"]))
+    res$synonym <- CharacterList(syns, compress = FALSE)
+    res$name <- vapply(syns, function(z) z[1], character(1))
+    res[match(object$compound_id, res$compound_id), ]
 })
