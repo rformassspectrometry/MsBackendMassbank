@@ -601,11 +601,11 @@ metaDataBlocks <- function() {
 
         if(entry == "AC$MASS_SPECTROMETRY: ION_MODE") {
 
-          if(value == 0) {
+          if(value == 0L) {
 
             value <- "NEGATIVE"
 
-          } else if(value == 1) {
+          } else if(value == 1L) {
 
             value <- "POSTIVE"
 
