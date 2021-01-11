@@ -881,10 +881,9 @@ setReplaceMethod("$", "MsBackendMassbankSql", function(x, name, value) {
     x
 })
 
-setGeneric("compounds", function(object, ...)
-    standardGeneric("compounds"))
-
 #' @rdname MsBackendMassbankSql
+#'
+#' @importFrom ProtGenerics compounds
 #'
 #' @export
 setMethod("compounds", "Spectra", function(object, ...) {

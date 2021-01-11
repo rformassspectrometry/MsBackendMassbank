@@ -1,6 +1,6 @@
 Package: MsBackendMassbank
 Title: Mass Spectrometry Data Backend for MassBank record Files
-Version: 0.3.1
+Version: 0.3.2
 Authors@R:
     c(person(given = "Michael", family = "Witting",
              role = c("aut", "cre"),
