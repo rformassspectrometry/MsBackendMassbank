@@ -60,6 +60,8 @@ parameter nonStop." />
 
 
 
+
+
 <!-- mathjax -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script>
@@ -87,7 +89,7 @@ parameter nonStop." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MsBackendMassbank</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
       </span>
     </div>
 
@@ -103,7 +105,7 @@ parameter nonStop." />
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/michaelwitting/MsBackendMassbank/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -226,7 +228,7 @@ vector the field names in the Massbank file. See output of
 <span class='va'>fls</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>dir</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"extdata"</span>, package <span class='op'>=</span> <span class='st'>"MsBackendMassbank"</span><span class='op'>)</span>,
     full.names <span class='op'>=</span> <span class='cn'>TRUE</span>, pattern <span class='op'>=</span> <span class='st'>"txt$"</span><span class='op'>)</span>
 <span class='va'>be</span> <span class='op'>&lt;-</span> <span class='fu'>backendInitialize</span><span class='op'>(</span><span class='fu'>MsBackendMassbank</span><span class='op'>(</span><span class='op'>)</span>, <span class='va'>fls</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Start data import from 8 files ... </span></div><div class='output co'>#&gt; <span class='message'>done</span></div><div class='input'><span class='va'>be</span>
+</div><div class='output co'>#&gt; <span class='message'>Start data import from 8 files ... </span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='message'>done</span></div><div class='input'><span class='va'>be</span>
 </div><div class='output co'>#&gt; MsBackendMassbank with 10 spectra
 #&gt;      msLevel     rtime scanIndex
 #&gt;    &lt;integer&gt; &lt;numeric&gt; &lt;integer&gt;

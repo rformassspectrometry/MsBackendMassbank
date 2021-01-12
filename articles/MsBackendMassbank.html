@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MsBackendMassbank</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
       </span>
     </div>
 
@@ -47,7 +47,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/michaelwitting/MsBackendMassbank/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -85,7 +85,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (links[i].hostname != window.location.hostname)
       links[i].target = '_blank';
 });
-</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.12/MsBackendMassbank">MsBackendMassbank</a></em><br><strong>Authors</strong>: Michael Witting [aut, cre] (<a href="https://orcid.org/0000-0002-1462-4426" class="uri">https://orcid.org/0000-0002-1462-4426</a>), Johannes Rainer [aut] (<a href="https://orcid.org/0000-0002-6977-7147" class="uri">https://orcid.org/0000-0002-6977-7147</a>)<br><strong>Last modified:</strong> 2020-10-28 17:39:50<br><strong>Compiled</strong>: Wed Oct 28 17:48:48 2020</p>
+</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.13/MsBackendMassbank">MsBackendMassbank</a></em><br><strong>Authors</strong>: Michael Witting [aut, cre] (<a href="https://orcid.org/0000-0002-1462-4426" class="uri">https://orcid.org/0000-0002-1462-4426</a>), Johannes Rainer [aut] (<a href="https://orcid.org/0000-0002-6977-7147" class="uri">https://orcid.org/0000-0002-6977-7147</a>)<br><strong>Last modified:</strong> 2021-01-12 07:07:44<br><strong>Compiled</strong>: Tue Jan 12 07:21:48 2021</p>
 <div id="introduction" class="section level1">
 <h1 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h1>
@@ -95,12 +95,12 @@ document.addEventListener("DOMContentLoaded", function() {
 <h1 class="hasAnchor">
 <a href="#importing-msms-data-from-massbank-files" class="anchor"></a>Importing MS/MS data from MassBank files</h1>
 <p>MassBank files (as provided by the <a href="https://github.com/MassBank/MassBank-data">Massbank github repository</a>) store normally one library spectrum per file, typically centroided and of MS level 2. In our short example below, we load data from a file containing multiple library spectra per file or from files with each a single spectrum provided with this package. Below we first load all required packages and define the paths to the Massbank files.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/RforMassSpectrometry/Spectra">Spectra</a></span><span class="op">)</span>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/RforMassSpectrometry/Spectra">Spectra</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/michaelwitting/MsBackendMassbank">MsBackendMassbank</a></span><span class="op">)</span>
 <span class="va">fls</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html">dir</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, package <span class="op">=</span> <span class="st">"MsBackendMassbank"</span><span class="op">)</span>,
            full.names <span class="op">=</span> <span class="cn">TRUE</span>, pattern <span class="op">=</span> <span class="st">"txt$"</span><span class="op">)</span>
-<span class="va">fls</span></pre></div>
+<span class="va">fls</span></code></pre></div>
 <pre><code>## [1] "/usr/local/lib/R/host-site-library/MsBackendMassbank/extdata/BSU00001.txt"       
 ## [2] "/usr/local/lib/R/host-site-library/MsBackendMassbank/extdata/MassBankRecords.txt"
 ## [3] "/usr/local/lib/R/host-site-library/MsBackendMassbank/extdata/RP000501.txt"       
@@ -110,13 +110,21 @@ document.addEventListener("DOMContentLoaded", function() {
 ## [7] "/usr/local/lib/R/host-site-library/MsBackendMassbank/extdata/RP000512.txt"       
 ## [8] "/usr/local/lib/R/host-site-library/MsBackendMassbank/extdata/RP000513.txt"</code></pre>
 <p>MS data can be accessed and analyzed through <code>Spectra</code> objects. Below we create a <code>Spectra</code> with the data from these mgf files. To this end we provide the file names and specify to use a <code><a href="../reference/MsBackendMassbank.html">MsBackendMassbank()</a></code> backend as <em>source</em> to enable data import. First we import from a single file with multiple library spectra.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="va">sps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html">Spectra</a></span><span class="op">(</span><span class="va">fls</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">sps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html">Spectra</a></span><span class="op">(</span><span class="va">fls</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,
                source <span class="op">=</span> <span class="fu"><a href="../reference/MsBackendMassbank.html">MsBackendMassbank</a></span><span class="op">(</span><span class="op">)</span>,
-               backend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/MsBackend.html">MsBackendDataFrame</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></pre></div>
+               backend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/MsBackend.html">MsBackendDataFrame</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<pre><code>## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE</code></pre>
 <p>With that we have now full access to all imported spectra variables that we list below.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit">
-<span class="fu">spectraVariables</span><span class="op">(</span><span class="va">sps</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">spectraVariables</span><span class="op">(</span><span class="va">sps</span><span class="op">)</span></code></pre></div>
 <pre><code>##  [1] "msLevel"                 "rtime"                  
 ##  [3] "acquisitionNum"          "scanIndex"              
 ##  [5] "dataStorage"             "dataOrigin"             
@@ -133,12 +141,92 @@ document.addEventListener("DOMContentLoaded", function() {
 ## [27] "adduct"                  "splash"                 
 ## [29] "title"</code></pre>
 <p>The same is possible with multiple files, each containing a library spectrum.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit">
-<span class="va">sps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html">Spectra</a></span><span class="op">(</span><span class="va">fls</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span>,
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">sps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html">Spectra</a></span><span class="op">(</span><span class="va">fls</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span>,
                source <span class="op">=</span> <span class="fu"><a href="../reference/MsBackendMassbank.html">MsBackendMassbank</a></span><span class="op">(</span><span class="op">)</span>,
-               backend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/MsBackend.html">MsBackendDataFrame</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
+               backend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/MsBackend.html">MsBackendDataFrame</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<pre><code>## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
 
-<span class="fu">spectraVariables</span><span class="op">(</span><span class="va">sps</span><span class="op">)</span></pre></div>
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE</code></pre>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">spectraVariables</span><span class="op">(</span><span class="va">sps</span><span class="op">)</span></code></pre></div>
 <pre><code>##  [1] "msLevel"                 "rtime"                  
 ##  [3] "acquisitionNum"          "scanIndex"              
 ##  [5] "dataStorage"             "dataOrigin"             
@@ -155,8 +243,8 @@ document.addEventListener("DOMContentLoaded", function() {
 ## [27] "adduct"                  "splash"                 
 ## [29] "title"</code></pre>
 <p>By default the complete metadata is read together with the spectra. This can increase loading time. The different metadata blocks can be skipped which reduces import time. This requires to define an additional <code>data.frame</code> indicating what shall be read.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit">
-<span class="co"># create data frame to indicate with metadata blocks shall be read.</span>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># create data frame to indicate with metadata blocks shall be read.</span>
 <span class="va">metaDataBlocks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>metadata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"ac"</span>, <span class="st">"ch"</span>, <span class="st">"sp"</span>, <span class="st">"ms"</span>,
                                           <span class="st">"record"</span>, <span class="st">"pk"</span>, <span class="st">"comment"</span><span class="op">)</span>,
                              read <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="fl">7</span><span class="op">)</span><span class="op">)</span>
@@ -164,10 +252,90 @@ document.addEventListener("DOMContentLoaded", function() {
 <span class="va">sps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html">Spectra</a></span><span class="op">(</span><span class="va">fls</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span>,
                source <span class="op">=</span> <span class="fu"><a href="../reference/MsBackendMassbank.html">MsBackendMassbank</a></span><span class="op">(</span><span class="op">)</span>,
                backeend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/MsBackend.html">MsBackendDataFrame</a></span><span class="op">(</span><span class="op">)</span>,
-               metaBlock <span class="op">=</span> <span class="va">metaDataBlocks</span><span class="op">)</span>
+               metaBlock <span class="op">=</span> <span class="va">metaDataBlocks</span><span class="op">)</span></code></pre></div>
+<pre><code>## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
 
-<span class="co"># all spectraVariables possible in MassBank are read</span>
-<span class="fu">spectraVariables</span><span class="op">(</span><span class="va">sps</span><span class="op">)</span></pre></div>
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE
+
+## Warning in type.convert.default(X[[i]], ...): 'as.is' should be specified by the
+## caller; using TRUE</code></pre>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># all spectraVariables possible in MassBank are read</span>
+<span class="fu">spectraVariables</span><span class="op">(</span><span class="va">sps</span><span class="op">)</span></code></pre></div>
 <pre><code>##   [1] "msLevel"                     "rtime"                      
 ##   [3] "acquisitionNum"              "scanIndex"                  
 ##   [5] "dataStorage"                 "dataOrigin"                 
@@ -220,9 +388,9 @@ document.addEventListener("DOMContentLoaded", function() {
 ##  [99] "authors"                     "license"                    
 ## [101] "copyright"                   "publication"                
 ## [103] "project"                     "pknum"</code></pre>
-<div class="sourceCode" id="cb10"><pre class="downlit">
-<span class="co"># all NA columns can be dropped</span>
-<span class="fu">spectraVariables</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/hidden_aliases.html">dropNaSpectraVariables</a></span><span class="op">(</span><span class="va">sps</span><span class="op">)</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># all NA columns can be dropped</span>
+<span class="fu">spectraVariables</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/hidden_aliases.html">dropNaSpectraVariables</a></span><span class="op">(</span><span class="va">sps</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>##  [1] "msLevel"                   "rtime"                    
 ##  [3] "acquisitionNum"            "scanIndex"                
 ##  [5] "dataStorage"               "dataOrigin"               
@@ -251,12 +419,12 @@ document.addEventListener("DOMContentLoaded", function() {
 ## [51] "license"                   "copyright"                
 ## [53] "pknum"</code></pre>
 <p>Besides default spectra variables, such as <code>msLevel</code>, <code>rtime</code>, <code>precursorMz</code>, we also have additional spectra variables such as the <code>title</code> of each spectrum in the mgf file.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit">
-<span class="va">sps</span><span class="op">$</span><span class="va">rtime</span></pre></div>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">sps</span><span class="op">$</span><span class="va">rtime</span></code></pre></div>
 <pre><code>##                       rtime  rtime  rtime  rtime  rtime  rtime 
 ## 142.14 142.14 142.14 142.14 142.14 142.14 143.94 143.94 143.94</code></pre>
-<div class="sourceCode" id="cb14"><pre class="downlit">
-<span class="va">sps</span><span class="op">$</span><span class="va">title</span></pre></div>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">sps</span><span class="op">$</span><span class="va">title</span></code></pre></div>
 <pre><code>##                                                      
 ## "L-Tryptophan; LC-ESI-QTOF; MS2; CE: 10; R=; [M+H]+" 
 ##                                                      
@@ -276,8 +444,8 @@ document.addEventListener("DOMContentLoaded", function() {
 ##                                                title 
 ## "L-Tryptophan; LC-ESI-QTOF; MS2; CE: 40; R=; [M-H]-"</code></pre>
 <p>In addition we can also access the m/z and intensity values of each spectrum.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit">
-<span class="fu">mz</span><span class="op">(</span><span class="va">sps</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">mz</span><span class="op">(</span><span class="va">sps</span><span class="op">)</span></code></pre></div>
 <pre><code>## NumericList of length 9
 ## [[""]] 74.0233 132.0807 144.0805 146.0598 ... 170.0597 188.0699 205.0965
 ## [[""]] 74.0232 77.0381 86.0027 91.0539 ... 160.0947 170.0596 171.0625 188.07
@@ -288,8 +456,8 @@ document.addEventListener("DOMContentLoaded", function() {
 ## [["mz"]] 72.0095 116.0517 117.0554 159.0935 186.0558 203.0826
 ## [["mz"]] 72.0094 74.0253 116.0511 117.0539 ... 162.0307 186.0548 203.0818
 ## [["mz"]] 74.0253 116.0508</code></pre>
-<div class="sourceCode" id="cb18"><pre class="downlit">
-<span class="fu">intensity</span><span class="op">(</span><span class="va">sps</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">intensity</span><span class="op">(</span><span class="va">sps</span><span class="op">)</span></code></pre></div>
 <pre><code>## NumericList of length 9
 ## [[""]] 646 980 2114 20052 1248 7628 2036 494048 75708
 ## [[""]] 10186 142 142 750 138 490 126 ... 14266 1478 1600 16504 1446 109762
@@ -301,8 +469,8 @@ document.addEventListener("DOMContentLoaded", function() {
 ## [["intensity"]] 460 3630 658 74 28 190 44 142 50 52 634
 ## [["intensity"]] 282 424</code></pre>
 <p>When importing a large number of mgf files, setting <code>nonStop = TRUE</code> prevents the call to stop whenever problematic mgf files are encountered.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit">
-<span class="va">sps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html">Spectra</a></span><span class="op">(</span><span class="va">fls</span>, source <span class="op">=</span> <span class="fu"><a href="../reference/MsBackendMassbank.html">MsBackendMassbank</a></span><span class="op">(</span><span class="op">)</span>, nonStop <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">sps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html">Spectra</a></span><span class="op">(</span><span class="va">fls</span>, source <span class="op">=</span> <span class="fu"><a href="../reference/MsBackendMassbank.html">MsBackendMassbank</a></span><span class="op">(</span><span class="op">)</span>, nonStop <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="accessing-the-massbank-mysql-database" class="section level1">
 <h1 class="hasAnchor">
@@ -317,20 +485,19 @@ document.addEventListener("DOMContentLoaded", function() {
 <h2 class="hasAnchor">
 <a href="#direct-access-to-the-massbank-database" class="anchor"></a>Direct access to the MassBank database</h2>
 <p>To use the <code>MsBackendMassbankSql</code> it is required to first connect to a <em>MassBank</em> database. Below we show the R code which could be used for that - but the actual settings (user name, password, database name, or host) will depend on where and how the MassBank database was installed.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">RMariaDB</span><span class="op">)</span>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">RMariaDB</span><span class="op">)</span>
 <span class="va">con</span> <span class="op">&lt;-</span> <span class="fu">dbConnect</span><span class="op">(</span><span class="fu">MariaDB</span><span class="op">(</span><span class="op">)</span>, host <span class="op">=</span> <span class="st">"localhost"</span>, user <span class="op">=</span> <span class="st">"massbank"</span>,
-                 dbname <span class="op">=</span> <span class="st">"MassBank"</span><span class="op">)</span></pre></div>
+                 dbname <span class="op">=</span> <span class="st">"MassBank"</span><span class="op">)</span></code></pre></div>
 <p>To illustrate the general functionality of this backend we use a tiny subset of the MassBank (release 2020.10) which is provided as an small SQLite database within this package. Below we connect to this database.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://rsqlite.r-dbi.org">RSQLite</a></span><span class="op">)</span>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://rsqlite.r-dbi.org">RSQLite</a></span><span class="op">)</span>
 <span class="va">con</span> <span class="op">&lt;-</span> <span class="fu">dbConnect</span><span class="op">(</span><span class="fu"><a href="https://rsqlite.r-dbi.org/reference/SQLite.html">SQLite</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"sql/minimassbank.sql"</span>,
-                                       package <span class="op">=</span> <span class="st">"MsBackendMassbank"</span><span class="op">)</span><span class="op">)</span></pre></div>
+                                       package <span class="op">=</span> <span class="st">"MsBackendMassbank"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p>We next <em>initialize</em> the <code>MsBackendMassbankSql</code> backend which supports direct access to the MassBank in a SQL database and create a <code>Spectra</code> object from that.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit">
-<span class="va">be</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/hidden_aliases.html">backendInitialize</a></span><span class="op">(</span><span class="fu"><a href="../reference/MsBackendMassbankSql.html">MsBackendMassbankSql</a></span><span class="op">(</span><span class="op">)</span>, dbcon <span class="op">=</span> <span class="va">con</span><span class="op">)</span>
-<span class="va">mb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html">Spectra</a></span><span class="op">(</span><span class="va">be</span><span class="op">)</span>
-<span class="va">mb</span></pre></div>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">mb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html">Spectra</a></span><span class="op">(</span><span class="va">con</span>, source <span class="op">=</span> <span class="fu"><a href="../reference/MsBackendMassbankSql.html">MsBackendMassbankSql</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
+<span class="va">mb</span></code></pre></div>
 <pre><code>## MSn data (Spectra) with 70 spectra in a MsBackendMassbankSql backend:
 ##      msLevel precursorMz  polarity
 ##    &lt;integer&gt;   &lt;numeric&gt; &lt;integer&gt;
@@ -348,8 +515,8 @@ document.addEventListener("DOMContentLoaded", function() {
 ##  Use  'spectraVariables' to list all of them.</code></pre>
 <p>We can now use this <code>Spectra</code> object to access and use the MassBank data for our analysis. Note that the <code>Spectra</code> object itself does not contain any data from MassBank. Any data will be fetched on demand from the database backend.</p>
 <p>To get a listing of all available annotations for each spectrum (the so-called <em>spectra variables</em>) we can use the <code>spectraVariables</code> function.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit">
-<span class="fu">spectraVariables</span><span class="op">(</span><span class="va">mb</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">spectraVariables</span><span class="op">(</span><span class="va">mb</span><span class="op">)</span></code></pre></div>
 <pre><code>##  [1] "msLevel"                 "rtime"                  
 ##  [3] "acquisitionNum"          "scanIndex"              
 ##  [5] "dataStorage"             "dataOrigin"             
@@ -368,16 +535,16 @@ document.addEventListener("DOMContentLoaded", function() {
 ## [31] "collision_energy_text"   "instrument"             
 ## [33] "instrument_type"         "precursor_mz_text"</code></pre>
 <p>We can access <em>core</em> spectra variables, such as the MS level with the corresponding function <code>msLevel</code>.</p>
-<div class="sourceCode" id="cb27"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fu">msLevel</span><span class="op">(</span><span class="va">mb</span><span class="op">)</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fu">msLevel</span><span class="op">(</span><span class="va">mb</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1]  2 NA NA NA NA  2</code></pre>
 <p>Spectra variables can also be accessed with <code><a href="https://rdrr.io/r/base/Extract.html">$</a></code> and the name of the variable. Thus, MS levels can also be accessed with <code>$msLevel</code>:</p>
-<div class="sourceCode" id="cb29"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">mb</span><span class="op">$</span><span class="va">msLevel</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">mb</span><span class="op">$</span><span class="va">msLevel</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1]  2 NA NA NA NA  2</code></pre>
 <p>In addition to spectra variables, we can also get the actual peaks (i.e. m/z and intensity values) with the <code>mz</code> and <code>intensity</code> functions:</p>
-<div class="sourceCode" id="cb31"><pre class="downlit">
-<span class="fu">mz</span><span class="op">(</span><span class="va">mb</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">mz</span><span class="op">(</span><span class="va">mb</span><span class="op">)</span></code></pre></div>
 <pre><code>## NumericList of length 70
 ## [["MCH00020"]] 146.760803 158.863541 174.988785 ... 487.989319 585.88446
 ## [["MCH00002"]] 22.99 23.07 23.19 38.98 53.15 ... 413.22 414.22 429.16 495.2
@@ -392,51 +559,51 @@ document.addEventListener("DOMContentLoaded", function() {
 ## ...
 ## &lt;60 more elements&gt;</code></pre>
 <p>Note that not all spectra from the database were generated using the same instrumentation. Below we list the number of spectra for each type of instrument.</p>
-<div class="sourceCode" id="cb33"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">mb</span><span class="op">$</span><span class="va">instrument_type</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">mb</span><span class="op">$</span><span class="va">instrument_type</span><span class="op">)</span></code></pre></div>
 <pre><code>## 
 ## LC-ESI-ITFT  LC-ESI-QFT   MALDI-TOF 
 ##           3          50          17</code></pre>
 <p>We next subset the data to all spectra from ions generated by electro spray ionization (ESI).</p>
-<div class="sourceCode" id="cb35"><pre class="downlit">
-<span class="va">mb</span> <span class="op">&lt;-</span> <span class="va">mb</span><span class="op">[</span><span class="va">mb</span><span class="op">$</span><span class="va">ionization</span> <span class="op">==</span> <span class="st">"ESI"</span><span class="op">]</span>
-<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">mb</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">mb</span> <span class="op">&lt;-</span> <span class="va">mb</span><span class="op">[</span><span class="va">mb</span><span class="op">$</span><span class="va">ionization</span> <span class="op">==</span> <span class="st">"ESI"</span><span class="op">]</span>
+<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">mb</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] 50</code></pre>
 <p>As a simple example to illustrate the <code>Spectra</code> functionality we next calculate spectra similarity between one spectrum against all other spectra in the database. To this end we use the <code>compareSpectra</code> function with the normalized dot product as similarity function and allowing 20 ppm difference in m/z between matching peaks</p>
-<div class="sourceCode" id="cb37"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/RforMassSpectrometry/MsCoreUtils">MsCoreUtils</a></span><span class="op">)</span>
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/RforMassSpectrometry/MsCoreUtils">MsCoreUtils</a></span><span class="op">)</span>
 <span class="va">sims</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/hidden_aliases.html">compareSpectra</a></span><span class="op">(</span><span class="va">mb</span><span class="op">[</span><span class="fl">11</span><span class="op">]</span>, <span class="va">mb</span><span class="op">[</span><span class="op">-</span><span class="fl">11</span><span class="op">]</span>, FUN <span class="op">=</span> <span class="va">ndotproduct</span>, ppm <span class="op">=</span> <span class="fl">40</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">sims</span><span class="op">)</span></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">sims</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] 0.7507467</code></pre>
 <p>We plot next a mirror plot for the two best matching spectra.</p>
-<div class="sourceCode" id="cb39"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/spectra-plotting.html">plotSpectraMirror</a></span><span class="op">(</span><span class="va">mb</span><span class="op">[</span><span class="fl">11</span><span class="op">]</span>, <span class="va">mb</span><span class="op">[</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/which.min.html">which.max</a></span><span class="op">(</span><span class="va">sims</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span><span class="op">]</span>, ppm <span class="op">=</span> <span class="fl">40</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/spectra-plotting.html">plotSpectraMirror</a></span><span class="op">(</span><span class="va">mb</span><span class="op">[</span><span class="fl">11</span><span class="op">]</span>, <span class="va">mb</span><span class="op">[</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/which.min.html">which.max</a></span><span class="op">(</span><span class="va">sims</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span><span class="op">]</span>, ppm <span class="op">=</span> <span class="fl">40</span><span class="op">)</span></code></pre></div>
 <p><img src="MsBackendMassbank_files/figure-html/unnamed-chunk-10-1.png" width="700"></p>
 <p>We can also retrieve the <em>compound</em> information for these two best matching spectra. Note that this <code>compounds</code> function works only with the <code>MsBackendMassbankSql</code> backend as it retrieves the corresponding information from the database’s compound annotation table.</p>
-<div class="sourceCode" id="cb40"><pre class="downlit">
-<span class="va">mb_match</span> <span class="op">&lt;-</span> <span class="va">mb</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">11</span>, <span class="fu"><a href="https://rdrr.io/r/base/which.min.html">which.max</a></span><span class="op">(</span><span class="va">sims</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span><span class="op">]</span>
-<span class="fu"><a href="../reference/MsBackendMassbankSql.html">compounds</a></span><span class="op">(</span><span class="va">mb_match</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">mb_match</span> <span class="op">&lt;-</span> <span class="va">mb</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">11</span>, <span class="fu"><a href="https://rdrr.io/r/base/which.min.html">which.max</a></span><span class="op">(</span><span class="va">sims</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span><span class="op">]</span>
+<span class="fu"><a href="../reference/MsBackendMassbankSql.html">compounds</a></span><span class="op">(</span><span class="va">mb_match</span><span class="op">)</span></code></pre></div>
 <pre><code>## DataFrame with 2 rows and 10 columns
-##    compound_id     formula exactmass                 smiles
-##      &lt;integer&gt; &lt;character&gt; &lt;numeric&gt;            &lt;character&gt;
-## 31          31    C12H10O2   186.068 COC1=C(C=O)C2=CC=CC=..
-## 45          45    C12H10O2   186.068 COC1=CC=C(C=O)C2=CC=..
-##                     inchi               inchikey         cas     pubchem
-##               &lt;character&gt;            &lt;character&gt; &lt;character&gt; &lt;character&gt;
-## 31 InChI=1S/C12H10O2/c1.. YIQGLTKAOHRZOL-UHFFF..   1/12/5392   CID:79352
-## 45 InChI=1S/C12H10O2/c1.. MVXMNHYVCLMLDD-UHFFF..  15971-29-6   CID:85217
-##                                          synonym                   name
-##                                  &lt;CharacterList&gt;            &lt;character&gt;
-## 31 2-Methoxy-1-naphthal..,2-methoxynaphthalene.. 2-Methoxy-1-naphthal..
-## 45 4-Methoxy-1-Naphthal..,4-methoxynaphthalene.. 4-Methoxy-1-Naphthal..</code></pre>
+##   compound_id     formula exactmass                 smiles
+##     &lt;integer&gt; &lt;character&gt; &lt;numeric&gt;            &lt;character&gt;
+## 1          31    C12H10O2   186.068 COC1=C(C=O)C2=CC=CC=..
+## 2          45    C12H10O2   186.068 COC1=CC=C(C=O)C2=CC=..
+##                    inchi               inchikey         cas     pubchem
+##              &lt;character&gt;            &lt;character&gt; &lt;character&gt; &lt;character&gt;
+## 1 InChI=1S/C12H10O2/c1.. YIQGLTKAOHRZOL-UHFFF..   1/12/5392   CID:79352
+## 2 InChI=1S/C12H10O2/c1.. MVXMNHYVCLMLDD-UHFFF..  15971-29-6   CID:85217
+##                                         synonym                   name
+##                                 &lt;CharacterList&gt;            &lt;character&gt;
+## 1 2-Methoxy-1-naphthal..,2-methoxynaphthalene.. 2-Methoxy-1-naphthal..
+## 2 4-Methoxy-1-Naphthal..,4-methoxynaphthalene.. 4-Methoxy-1-Naphthal..</code></pre>
 </div>
 </div>
 <div id="session-information" class="section level1">
 <h1 class="hasAnchor">
 <a href="#session-information" class="anchor"></a>Session information</h1>
-<div class="sourceCode" id="cb42"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></pre></div>
-<pre><code>## R version 4.0.3 Patched (2020-10-21 r79360)
+<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<pre><code>## R Under development (unstable) (2021-01-07 r79806)
 ## Platform: x86_64-pc-linux-gnu (64-bit)
 ## Running under: Ubuntu 20.04.1 LTS
 ## 
@@ -456,23 +623,23 @@ document.addEventListener("DOMContentLoaded", function() {
 ## [8] methods   base     
 ## 
 ## other attached packages:
-## [1] MsCoreUtils_1.1.7       RSQLite_2.2.1           MsBackendMassbank_0.3.1
-## [4] Spectra_1.1.0           ProtGenerics_1.21.0     BiocParallel_1.23.3    
-## [7] S4Vectors_0.27.14       BiocGenerics_0.35.4     BiocStyle_2.17.2       
+## [1] MsCoreUtils_1.3.2       RSQLite_2.2.2           MsBackendMassbank_0.3.2
+## [4] Spectra_1.1.12          ProtGenerics_1.23.6     BiocParallel_1.25.2    
+## [7] S4Vectors_0.29.6        BiocGenerics_0.37.0     BiocStyle_2.19.1       
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_1.0.5          compiler_4.0.3      BiocManager_1.30.10
-##  [4] tools_4.0.3         digest_0.6.25       bit_4.0.4          
+##  [1] Rcpp_1.0.5          compiler_4.1.0      BiocManager_1.30.10
+##  [4] tools_4.1.0         digest_0.6.27       bit_4.0.4          
 ##  [7] evaluate_0.14       memoise_1.1.0       pkgconfig_2.0.3    
-## [10] rlang_0.4.8         DBI_1.1.0           yaml_2.2.1         
-## [13] pkgdown_1.6.1.9000  xfun_0.18           stringr_1.4.0      
-## [16] knitr_1.30          vctrs_0.3.4         desc_1.2.0         
-## [19] fs_1.5.0            systemfonts_0.3.2   IRanges_2.23.10    
-## [22] rprojroot_1.3-2     bit64_4.0.5         R6_2.4.1           
-## [25] textshaping_0.1.2   rmarkdown_2.4       bookdown_0.20      
-## [28] blob_1.2.1          magrittr_1.5        backports_1.1.10   
-## [31] htmltools_0.5.0     MASS_7.3-53         assertthat_0.2.1   
-## [34] ragg_0.4.0          stringi_1.5.3       crayon_1.3.4</code></pre>
+## [10] rlang_0.4.10        DBI_1.1.0           yaml_2.2.1         
+## [13] pkgdown_1.6.1.9000  xfun_0.20           stringr_1.4.0      
+## [16] knitr_1.30          vctrs_0.3.6         desc_1.2.0         
+## [19] fs_1.5.0            systemfonts_0.3.2   IRanges_2.25.6     
+## [22] rprojroot_2.0.2     bit64_4.0.5         R6_2.5.0           
+## [25] textshaping_0.2.1   rmarkdown_2.6       bookdown_0.21      
+## [28] blob_1.2.1          magrittr_2.0.1      htmltools_0.5.0    
+## [31] MASS_7.3-53         assertthat_0.2.1    ragg_0.4.1         
+## [34] stringi_1.5.3       crayon_1.3.4</code></pre>
 </div>
   </div>
 
