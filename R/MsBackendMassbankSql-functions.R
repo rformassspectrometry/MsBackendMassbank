@@ -186,9 +186,9 @@ MsBackendMassbankSql <- function() {
 
 .compounds_sql <- function(x, id) {
     id <- force(id)
-    qry <- dbSendQuery(x, paste0("select * from compound join synonym on (",
-                                 "compound.compound_id=synonym.compound_id)",
-                                 " where compound.compound_id = ?"))
+    qry <- dbSendQuery(x, paste0("select * from ms_compound join synonym on (",
+                                 "ms_compound.compound_id=synonym.compound_id)",
+                                 " where ms_compound.compound_id = ?"))
     qry <- dbBind(qry, list(id))
     res <- dbFetch(qry)
     dbClearResult(qry)

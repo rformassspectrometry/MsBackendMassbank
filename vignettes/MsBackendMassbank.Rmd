@@ -179,8 +179,7 @@ access to the MassBank in a SQL database and create a `Spectra` object from
 that.
 
 ```{r}
-be <- backendInitialize(MsBackendMassbankSql(), dbcon = con)
-mb <- Spectra(be)
+mb <- Spectra(con, source = MsBackendMassbankSql())
 mb
 ```
 
