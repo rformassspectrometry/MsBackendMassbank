@@ -7,7 +7,7 @@
 #' The `MsBackendMassbankSql` provides access to mass spectrometry data from
 #' [MassBank](https://massbank.eu/MassBank/) by directly accessing its
 #' MySQL/MariaDb database. In addition it supports adding new spectra variables
-#' or *locally* changing spectra variables provided by MassBank (withoug
+#' or *locally* changing spectra variables provided by MassBank (without
 #' changing the original values in the database).
 #'
 #' Note that `MsBackendMassbankSql` requires a local installation of the
@@ -218,6 +218,13 @@
 #' `peaksData<-`, `filterAcquisitionNum`, `intensity<-`, `mz<-`, `precScanNum`,
 #' `spectraData<-`, `spectraNames<-`.
 #'
+#' @section Retrieving compound annotations for spectra:
+#'
+#' While compound annotations are also provided *via* the `spectraVariables` of
+#' the backend, it would also be possible to use the `compounds` function on
+#' a `Spectra` object (that uses a `MsBackendMassbankSql` backend) to retrieve
+#' compound annotations for the specific spectra.
+#'
 #' @name MsBackendMassbankSql
 #'
 #' @return See documentation of respective function.
@@ -236,7 +243,8 @@
 #' ## vignette for more information on how to install MassBank locally and
 #' ## enable MySQL database connections
 #' library(RSQLite)
-#' con <- dbConnect(SQLite(), system.file("sql/minimassbank.sql", package = "MsBackendMassbank"))
+#' con <- dbConnect(SQLite(), system.file("sql/minimassbank.sql",
+#'     package = "MsBackendMassbank"))
 #'
 #' ## Given that we have the connection to a MassBank databas we can
 #' ## initialize the backend:
@@ -277,13 +285,15 @@ setClass(
         spectraIds = "character",
         spectraVariables = "character",
         coreSpectraVariables = "character",
-        localData = "DataFrame"),
+        localData = "DataFrame",
+        .tables = "list"),
     prototype = prototype(
         dbcon = NULL,
         spectraIds = character(),
         spectraVariables = character(),
         coreSpectraVariables = names(Spectra:::.SPECTRA_DATA_COLUMNS),
         localData = DataFrame(),
+        .tables = list(),
         readonly = TRUE, version = "0.1"))
 
 #' @importFrom methods .valueClassTest is new validObject
@@ -334,9 +344,14 @@ setMethod("backendInitialize", "MsBackendMassbankSql", function(object, dbcon,
         stop(msg)
     res <- dbGetQuery(dbcon, "select spectrum_id from msms_spectrum")
     object@spectraIds <- as.character(res[, 1])
-    res <- dbGetQuery(dbcon, "select * from msms_spectrum limit 1")
-    object@spectraVariables <- c(.map_sql_to_spectraVariables(colnames(res)),
-                                 "precursor_mz_text")
+    object@.tables <- list(
+        msms_spectrum = colnames(
+            dbGetQuery(dbcon, "select * from msms_spectrum limit 0")),
+        ms_compound = colnames(
+            dbGetQuery(dbcon, "select * from ms_compound limit 0")))
+    object@spectraVariables <- c(.map_sql_to_spectraVariables(
+        unique(unlist(object@.tables))),
+        "precursor_mz_text")
     validObject(object)
     object
 })

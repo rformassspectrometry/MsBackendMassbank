@@ -127,3 +127,18 @@ test_that(".map_sql_to_spectraVariables works", {
     res <- .map_sql_to_spectraVariables(c("precursor_mz_text", "intensity"))
     expect_equal(res, c("precursorMz", "intensity"))
 })
+
+test_that(".join_query works", {
+    ## Without any tables.
+    be <- MsBackendMassbankSql()
+    res <- .join_query(be, c("compound_id", "spectrum_id", "cas", "inchi"))
+    expect_equal(res, "msms_spectrum")
+
+    be <- backendInitialize(MsBackendMassbankSql(), dbc)
+    res <- .join_query(be, c("compound_id", "spectrum_id", "cas", "inchi"))
+    expect_equal(res, paste0("msms_spectrum join ms_compound on (msms_spectrum",
+                             ".compound_id=ms_compound.compound_id)"))
+
+    res <- .join_query(be, c("spectrum_id", "spectrum_name"))
+    expect_equal(res, "msms_spectrum")
+})

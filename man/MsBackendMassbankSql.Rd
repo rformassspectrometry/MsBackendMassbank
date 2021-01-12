@@ -199,7 +199,7 @@ See documentation of respective function.
 The \code{MsBackendMassbankSql} provides access to mass spectrometry data from
 \href{https://massbank.eu/MassBank/}{MassBank} by directly accessing its
 MySQL/MariaDb database. In addition it supports adding new spectra variables
-or \emph{locally} changing spectra variables provided by MassBank (withoug
+or \emph{locally} changing spectra variables provided by MassBank (without
 changing the original values in the database).
 
 Note that \code{MsBackendMassbankSql} requires a local installation of the
@@ -348,6 +348,15 @@ the original data can not be changed.
 \verb{spectraData<-}, \verb{spectraNames<-}.
 }
 
+\section{Retrieving compound annotations for spectra}{
+
+
+While compound annotations are also provided \emph{via} the \code{spectraVariables} of
+the backend, it would also be possible to use the \code{compounds} function on
+a \code{Spectra} object (that uses a \code{MsBackendMassbankSql} backend) to retrieve
+compound annotations for the specific spectra.
+}
+
 \examples{
 
 ## Create a connection to a database with MassBank data - in the present
@@ -356,7 +365,8 @@ the original data can not be changed.
 ## vignette for more information on how to install MassBank locally and
 ## enable MySQL database connections
 library(RSQLite)
-con <- dbConnect(SQLite(), system.file("sql/minimassbank.sql", package = "MsBackendMassbank"))
+con <- dbConnect(SQLite(), system.file("sql/minimassbank.sql",
+    package = "MsBackendMassbank"))
 
 ## Given that we have the connection to a MassBank databas we can
 ## initialize the backend:

@@ -194,6 +194,9 @@ To get a listing of all available annotations for each spectrum (the so-called
 spectraVariables(mb)
 ```
 
+Through the `MsBackendMassbankSql` we can thus access spectra information as
+well as its annotation.
+
 We can access *core* spectra variables, such as the MS level with the
 corresponding function `msLevel`.
 
