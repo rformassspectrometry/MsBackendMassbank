@@ -177,6 +177,7 @@ jobs:
 
           ## Manually install packages that seem to be skipped.
           message(paste('****', Sys.time(), 'force installation of selected packages  ****'))
+          BiocManager::install(c("BiocStyle", "rmarkdown"))
 
           ## For running the checks
           message(paste('****', Sys.time(), 'installing rcmdcheck and BiocCheck ****'))
