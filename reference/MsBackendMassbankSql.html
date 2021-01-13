@@ -43,7 +43,7 @@
 <meta property="og:description" content="The MsBackendMassbankSql provides access to mass spectrometry data from
 MassBank by directly accessing its
 MySQL/MariaDb database. In addition it supports adding new spectra variables
-or locally changing spectra variables provided by MassBank (withoug
+or locally changing spectra variables provided by MassBank (without
 changing the original values in the database).
 Note that MsBackendMassbankSql requires a local installation of the
 MassBank database since direct database access is not supported for the
@@ -89,7 +89,7 @@ m/z reported in MassBank." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MsBackendMassbank</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.3</span>
       </span>
     </div>
 
@@ -131,7 +131,7 @@ m/z reported in MassBank." />
     <p>The <code>MsBackendMassbankSql</code> provides access to mass spectrometry data from
 <a href='https://massbank.eu/MassBank/'>MassBank</a> by directly accessing its
 MySQL/MariaDb database. In addition it supports adding new spectra variables
-or <em>locally</em> changing spectra variables provided by MassBank (withoug
+or <em>locally</em> changing spectra variables provided by MassBank (without
 changing the original values in the database).</p>
 <p>Note that <code>MsBackendMassbankSql</code> requires a local installation of the
 MassBank database since direct database access is not supported for the
@@ -496,6 +496,15 @@ the original data can not be changed.</p>
 <p><code>backendMerge</code>, <code>export</code>, <code>filterDataStorage</code>, <code>filterPrecursorScan</code>,
 <code>peaksData&lt;-</code>, <code>filterAcquisitionNum</code>, <code>intensity&lt;-</code>, <code>mz&lt;-</code>, <code>precScanNum</code>,
 <code>spectraData&lt;-</code>, <code>spectraNames&lt;-</code>.</p>
+    <h2 class="hasAnchor" id="retrieving-compound-annotations-for-spectra"><a class="anchor" href="#retrieving-compound-annotations-for-spectra"></a>Retrieving compound annotations for spectra</h2>
+
+    
+
+
+<p>While compound annotations are also provided <em>via</em> the <code>spectraVariables</code> of
+the backend, it would also be possible to use the <code>compounds</code> function on
+a <code>Spectra</code> object (that uses a <code>MsBackendMassbankSql</code> backend) to retrieve
+compound annotations for the specific spectra.</p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Johannes Rainer</p>
@@ -508,7 +517,8 @@ the original data can not be changed.</p>
 <span class='co'>## vignette for more information on how to install MassBank locally and</span>
 <span class='co'>## enable MySQL database connections</span>
 <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://rsqlite.r-dbi.org'>RSQLite</a></span><span class='op'>)</span>
-<span class='va'>con</span> <span class='op'>&lt;-</span> <span class='fu'>dbConnect</span><span class='op'>(</span><span class='fu'><a href='https://rsqlite.r-dbi.org/reference/SQLite.html'>SQLite</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"sql/minimassbank.sql"</span>, package <span class='op'>=</span> <span class='st'>"MsBackendMassbank"</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>con</span> <span class='op'>&lt;-</span> <span class='fu'>dbConnect</span><span class='op'>(</span><span class='fu'><a href='https://rsqlite.r-dbi.org/reference/SQLite.html'>SQLite</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"sql/minimassbank.sql"</span>,
+    package <span class='op'>=</span> <span class='st'>"MsBackendMassbank"</span><span class='op'>)</span><span class='op'>)</span>
 
 <span class='co'>## Given that we have the connection to a MassBank databas we can</span>
 <span class='co'>## initialize the backend:</span>
@@ -527,7 +537,7 @@ the original data can not be changed.</p>
 #&gt; 8          2     253.051         0
 #&gt; 9          2     358.238         1
 #&gt; 10         2     256.170         1
-#&gt;  ... 33 more variables/columns.
+#&gt;  ... 42 more variables/columns.
 #&gt;  Use  'spectraVariables' to list all of them.</div><div class='input'>
 <span class='co'>## Access MS level</span>
 <span class='fu'>msLevel</span><span class='op'>(</span><span class='va'>be</span><span class='op'>)</span>
@@ -554,7 +564,7 @@ the original data can not be changed.</p>
 #&gt; &lt;60 more elements&gt;</div><div class='input'>
 <span class='co'>## Access the full spectra data (including m/z and intensity values)</span>
 <span class='fu'>spectraData</span><span class='op'>(</span><span class='va'>be</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; DataFrame with 70 rows and 36 columns
+</div><div class='output co'>#&gt; DataFrame with 70 rows and 45 columns
 #&gt;       msLevel     rtime acquisitionNum scanIndex                             mz
 #&gt;     &lt;integer&gt; &lt;numeric&gt;      &lt;integer&gt; &lt;integer&gt;                  &lt;NumericList&gt;
 #&gt; 1           2        NA             NA        NA    146.761,158.864,174.989,...
@@ -568,32 +578,32 @@ the original data can not be changed.</p>
 #&gt; 68          2        NA             NA        NA    132.021,133.029,135.009,...
 #&gt; 69          2        NA             NA        NA    53.0388,54.0340,55.0544,...
 #&gt; 70          2        NA             NA        NA  88.0757,151.0540,152.0620,...
-#&gt;                                intensity dataStorage             dataOrigin
-#&gt;                            &lt;NumericList&gt; &lt;character&gt;            &lt;character&gt;
-#&gt; 1     0.980184,938.145447, 56.718353,...  &lt;MassBank&gt;                     NA
-#&gt; 2                     3173,2266, 880,...  &lt;MassBank&gt;                     NA
-#&gt; 3                 2809,119550, 91935,...  &lt;MassBank&gt;                     NA
-#&gt; 4               157703, 23566,  5190,...  &lt;MassBank&gt;                     NA
-#&gt; 5                     5686, 927, 756,...  &lt;MassBank&gt;                     NA
-#&gt; ...                                  ...         ...                    ...
-#&gt; 66                              34967548  &lt;MassBank&gt; Schymanski, E. L.; R..
-#&gt; 67           9143284, 341391,5278218,...  &lt;MassBank&gt; Schymanski, E. L.; R..
-#&gt; 68         82825.8,290504.6,301494.3,...  &lt;MassBank&gt; Schymanski, E. L.; R..
-#&gt; 69         1568742,19224644, 4676170,...  &lt;MassBank&gt; Schymanski, E. L.; R..
-#&gt; 70          678846,  403851,11111366,...  &lt;MassBank&gt; Schymanski, E. L.; R..
-#&gt;     centroided  smoothed  polarity precScanNum precursorMz precursorIntensity
-#&gt;      &lt;logical&gt; &lt;logical&gt; &lt;integer&gt;   &lt;integer&gt;   &lt;numeric&gt;          &lt;numeric&gt;
-#&gt; 1           NA        NA         0          NA         506                408
-#&gt; 2           NA        NA         1          NA          NA                 NA
-#&gt; 3           NA        NA         0          NA          NA                 NA
-#&gt; 4           NA        NA         1          NA          NA                 NA
-#&gt; 5           NA        NA         0          NA          NA                 NA
-#&gt; ...        ...       ...       ...         ...         ...                ...
-#&gt; 66          NA        NA         0          NA     185.028            185.028
-#&gt; 67          NA        NA         1          NA     455.290            455.290
-#&gt; 68          NA        NA         0          NA     253.051            253.051
-#&gt; 69          NA        NA         1          NA     358.238            358.237
-#&gt; 70          NA        NA         1          NA     256.170            256.169
+#&gt;                                intensity dataStorage  dataOrigin centroided
+#&gt;                            &lt;NumericList&gt; &lt;character&gt; &lt;character&gt;  &lt;logical&gt;
+#&gt; 1     0.980184,938.145447, 56.718353,...  &lt;MassBank&gt;          NA         NA
+#&gt; 2                     3173,2266, 880,...  &lt;MassBank&gt;          NA         NA
+#&gt; 3                 2809,119550, 91935,...  &lt;MassBank&gt;          NA         NA
+#&gt; 4               157703, 23566,  5190,...  &lt;MassBank&gt;          NA         NA
+#&gt; 5                     5686, 927, 756,...  &lt;MassBank&gt;          NA         NA
+#&gt; ...                                  ...         ...         ...        ...
+#&gt; 66                              34967548  &lt;MassBank&gt;          NA         NA
+#&gt; 67           9143284, 341391,5278218,...  &lt;MassBank&gt;          NA         NA
+#&gt; 68         82825.8,290504.6,301494.3,...  &lt;MassBank&gt;          NA         NA
+#&gt; 69         1568742,19224644, 4676170,...  &lt;MassBank&gt;          NA         NA
+#&gt; 70          678846,  403851,11111366,...  &lt;MassBank&gt;          NA         NA
+#&gt;      smoothed  polarity precScanNum precursorMz precursorIntensity
+#&gt;     &lt;logical&gt; &lt;integer&gt;   &lt;integer&gt;   &lt;numeric&gt;          &lt;numeric&gt;
+#&gt; 1          NA         0          NA         506                408
+#&gt; 2          NA         1          NA          NA                 NA
+#&gt; 3          NA         0          NA          NA                 NA
+#&gt; 4          NA         1          NA          NA                 NA
+#&gt; 5          NA         0          NA          NA                 NA
+#&gt; ...       ...       ...         ...         ...                ...
+#&gt; 66         NA         0          NA     185.028            185.028
+#&gt; 67         NA         1          NA     455.290            455.290
+#&gt; 68         NA         0          NA     253.051            253.051
+#&gt; 69         NA         1          NA     358.238            358.237
+#&gt; 70         NA         1          NA     256.170            256.169
 #&gt;     precursorCharge collisionEnergy isolationWindowLowerMz
 #&gt;           &lt;integer&gt;       &lt;numeric&gt;              &lt;numeric&gt;
 #&gt; 1                NA              NA                     NA
@@ -672,19 +682,71 @@ the original data can not be changed.</p>
 #&gt; 68                  NA                HCD         35  (nominal)
 #&gt; 69                  NA                HCD         35  (nominal)
 #&gt; 70                  NA                HCD         35  (nominal)
-#&gt;                 instrument instrument_type precursor_mz_text
-#&gt;                &lt;character&gt;     &lt;character&gt;       &lt;character&gt;
-#&gt; 1   LTQ Orbitrap XL, The..     LC-ESI-ITFT        506.000000
-#&gt; 2   Voyager DE-PRO, Appl..       MALDI-TOF                NA
-#&gt; 3   Voyager DE-PRO, Appl..       MALDI-TOF                NA
-#&gt; 4   Voyager DE-PRO, Appl..       MALDI-TOF                NA
-#&gt; 5   Voyager DE-PRO, Appl..       MALDI-TOF                NA
-#&gt; ...                    ...             ...               ...
-#&gt; 66  Q Exactive Plus Orbi..      LC-ESI-QFT          185.0278
-#&gt; 67  Q Exactive Plus Orbi..      LC-ESI-QFT          455.2904
-#&gt; 68  Q Exactive Plus Orbi..      LC-ESI-QFT          253.0506
-#&gt; 69  Q Exactive Plus Orbi..      LC-ESI-QFT          358.2377
-#&gt; 70  Q Exactive Plus Orbi..      LC-ESI-QFT          256.1696</div><div class='input'>
+#&gt;                 instrument instrument_type       formula exactmass
+#&gt;                &lt;character&gt;     &lt;character&gt;   &lt;character&gt; &lt;numeric&gt;
+#&gt; 1   LTQ Orbitrap XL, The..     LC-ESI-ITFT C10H16N5O13P3   506.996
+#&gt; 2   Voyager DE-PRO, Appl..       MALDI-TOF        C7H6O4   154.027
+#&gt; 3   Voyager DE-PRO, Appl..       MALDI-TOF        C7H6O4   154.027
+#&gt; 4   Voyager DE-PRO, Appl..       MALDI-TOF        C8H8O4   168.042
+#&gt; 5   Voyager DE-PRO, Appl..       MALDI-TOF      C11H12O5   224.068
+#&gt; ...                    ...             ...           ...       ...
+#&gt; 66  Q Exactive Plus Orbi..      LC-ESI-QFT      C8H10O3S   186.035
+#&gt; 67  Q Exactive Plus Orbi..      LC-ESI-QFT    C27H38N2O4   454.283
+#&gt; 68  Q Exactive Plus Orbi..      LC-ESI-QFT      C15H10O4   254.058
+#&gt; 69  Q Exactive Plus Orbi..      LC-ESI-QFT     C22H31NO3   357.230
+#&gt; 70  Q Exactive Plus Orbi..      LC-ESI-QFT      C17H21NO   255.162
+#&gt;                     smiles                  inchi               inchikey
+#&gt;                &lt;character&gt;            &lt;character&gt;            &lt;character&gt;
+#&gt; 1   Nc(n3)c(n2)c(nc3)n(c.. InChI=1S/C10H16N5O13.. ZKHQWZAMYRWXGA-KQYNX..
+#&gt; 2   Oc(c1)cc(C(O)=O)c(O)c1 InChI=1S/C7H6O4/c8-4.. WXTMDXOMEHJXQO-UHFFF..
+#&gt; 3   Oc(c1)cc(C(O)=O)c(O)c1 InChI=1S/C7H6O4/c8-4.. WXTMDXOMEHJXQO-UHFFF..
+#&gt; 4   COc(c1)cc(C(O)=O)c(O.. InChI=1S/C8H8O4/c1-1.. IZZIWIAOVZOBLF-UHFFF..
+#&gt; 5   COC1=CC(=CC(=C1O)OC).. InChI=1S/C11H12O5/c1.. PCMORTLOPMLEFB-ONEGZ..
+#&gt; ...                    ...                    ...                    ...
+#&gt; 66  Cc1ccc(c(c1)C)S(=O)(.. InChI=1S/C8H10O3S/c1.. CHZLVSBMXZSPNN-UHFFF..
+#&gt; 67  COc1ccc(CCN(C)CCCC(C.. InChI=1S/C27H38N2O4/.. SGTNSNPWRIOYBX-UHFFF..
+#&gt; 68  OC1=CC=C(C=C1)C1=COC.. InChI=1S/C15H10O4/c1.. ZQSIJRDFPHDXIC-UHFFF..
+#&gt; 69  CCN(CC)CC#CCOC(=O)C(.. InChI=1S/C22H31NO3/c.. XIQVNETUBQGFHX-UHFFF..
+#&gt; 70  CN(C)CCOC(c1ccccc1)c.. InChI=1S/C17H21NO/c1.. ZZVUWRFHKOJYTH-UHFFF..
+#&gt;             cas     pubchem
+#&gt;     &lt;character&gt; &lt;character&gt;
+#&gt; 1       56-65-5    CID:5957
+#&gt; 2            NA    CID:3469
+#&gt; 3            NA    CID:3469
+#&gt; 4            NA   CID:75787
+#&gt; 5      530-59-6  CID:637775
+#&gt; ...         ...         ...
+#&gt; 66      88-61-9    CID:6938
+#&gt; 67      52-53-9    CID:2520
+#&gt; 68     486-66-8 CID:5281708
+#&gt; 69    5633-20-5    CID:4634
+#&gt; 70      58-73-1    CID:3100
+#&gt;                                                        synonym
+#&gt;                                                &lt;CharacterList&gt;
+#&gt; 1                                   Adenosine 5'-triphos..,ATP
+#&gt; 2                         2,5-Dihydroxybenzoic..,Gentisic acid
+#&gt; 3                     2,5-Dihydroxybenzoic..,DHB,Gentisic acid
+#&gt; 4                      5-Methoxysalicylic a..,DHBs (Super DHB)
+#&gt; 5   Sinapic acid,3,5-dimethoxy-4-hydr..,3-(4-hydroxy-3,5-dim..
+#&gt; ...                                                        ...
+#&gt; 66               m-Xylene-4-sulfonic ..,2,4-dimethylbenzenes..
+#&gt; 67                            Verapamil,2-(3,4-dimethoxyphen..
+#&gt; 68                             Daidzein,7-hydroxy-3-(4-hydro..
+#&gt; 69                           Oxybutynin,4-(diethylamino)but-..
+#&gt; 70                      Diphenhydramine,2-benzhydryloxy-N,N-..
+#&gt;     precursor_mz_text          compound_name
+#&gt;           &lt;character&gt;            &lt;character&gt;
+#&gt; 1          506.000000 Adenosine 5'-triphos..
+#&gt; 2                  NA 2,5-Dihydroxybenzoic..
+#&gt; 3                  NA 2,5-Dihydroxybenzoic..
+#&gt; 4                  NA 5-Methoxysalicylic a..
+#&gt; 5                  NA           Sinapic acid
+#&gt; ...               ...                    ...
+#&gt; 66           185.0278 m-Xylene-4-sulfonic ..
+#&gt; 67           455.2904              Verapamil
+#&gt; 68           253.0506               Daidzein
+#&gt; 69           358.2377             Oxybutynin
+#&gt; 70           256.1696        Diphenhydramine</div><div class='input'>
 <span class='co'>## Add a new spectra variable</span>
 <span class='va'>be</span><span class='op'>$</span><span class='va'>new_variable</span> <span class='op'>&lt;-</span> <span class='st'>"b"</span>
 <span class='va'>be</span><span class='op'>$</span><span class='va'>new_variable</span>
