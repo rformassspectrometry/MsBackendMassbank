@@ -39,6 +39,38 @@ test_that(".fetch_spectra_data_sql works", {
 
     res <- .fetch_spectra_data_sql(be, columns = "polarity")
     expect_true(all(res$polarity %in% c(1L, 0L)))
+
+    ## synonym and compound_name
+    res <- .fetch_spectra_data_sql(
+        be, columns = c("spectrum_name", "inchi",
+                        "compound_name", "synonym"))
+    expect_equal(colnames(res),
+                 c("spectrum_name", "inchi", "compound_name", "synonym"))
+    expect_true(is.list(res$synonym))
+    expect_true(is.character(res$compound_name))
+
+    res <- .fetch_spectra_data_sql(
+        be, columns = c("spectrum_name",
+                        "compound_name", "synonym"))
+    expect_equal(colnames(res),
+                 c("spectrum_name", "compound_name", "synonym"))
+    expect_true(is.list(res$synonym))
+    expect_true(is.character(res$compound_name))
+
+    res <- .fetch_spectra_data_sql(
+        be, columns = c("inchi",
+                        "compound_name", "synonym"))
+    expect_equal(colnames(res),
+                 c("inchi", "compound_name", "synonym"))
+
+    res <- .fetch_spectra_data_sql(be, columns = c("synonym"))
+    expect_equal(colnames(res), "synonym")
+    expect_true(is.list(res$synonym))
+
+    res <- .fetch_spectra_data_sql(
+        be, columns = c("spectrum_name", "compound_name"))
+    expect_equal(colnames(res), c("spectrum_name", "compound_name"))
+    expect_true(is.character(res$compound_name))
 })
 
 test_that(".spectra_data_massbank_sql works", {
@@ -126,4 +158,19 @@ test_that(".map_sql_to_spectraVariables works", {
     expect_equal(res, "msLevel")
     res <- .map_sql_to_spectraVariables(c("precursor_mz_text", "intensity"))
     expect_equal(res, c("precursorMz", "intensity"))
+})
+
+test_that(".join_query works", {
+    ## Without any tables.
+    be <- MsBackendMassbankSql()
+    res <- .join_query(be, c("compound_id", "spectrum_id", "cas", "inchi"))
+    expect_equal(res, "msms_spectrum")
+
+    be <- backendInitialize(MsBackendMassbankSql(), dbc)
+    res <- .join_query(be, c("compound_id", "spectrum_id", "cas", "inchi"))
+    expect_equal(res, paste0("msms_spectrum join ms_compound on (msms_spectrum",
+                             ".compound_id=ms_compound.compound_id)"))
+
+    res <- .join_query(be, c("spectrum_id", "spectrum_name"))
+    expect_equal(res, "msms_spectrum")
 })

@@ -40,7 +40,7 @@ MsBackendMassbankSql <- function() {
 #'
 #' @return a `data.frame` - always, even if only with a single column.
 #'
-#' @importFrom IRanges NumericList
+#' @importFrom IRanges NumericList CharacterList
 #'
 #' @importFrom S4Vectors extractCOLS
 #'
@@ -60,6 +60,8 @@ MsBackendMassbankSql <- function() {
     ## Get data from database
     if (length(db_cols)) {
         res <- DataFrame(.fetch_spectra_data_sql(x, columns = db_cols))
+        if (any(colnames(res) == "synonym"))
+            res$synonym <- CharacterList(res$synonym, compress = FALSE)
     }
     ## Get m/z and intensity values
     if (length(mz_cols)) {
@@ -129,7 +131,8 @@ MsBackendMassbankSql <- function() {
 .columns_sql <- c(
     precursorIntensity = "precursor_intensity",
     precursorMz = "precursor_mz_text",
-    msLevel = "ms_level"
+    msLevel = "ms_level",
+    compound_id = "msms_spectrum.compound_id"
 )
 
 .map_spectraVariables_to_sql <- function(x) {
@@ -144,12 +147,32 @@ MsBackendMassbankSql <- function() {
     x
 }
 
+#' Simple helper that creates a join query depending on the provided columns.
+#'
+#' @param x `Spectra`.
+#'
+#' @param columns `character` with the column names.
+#'
+#' @noRd
+.join_query <- function(x, columns) {
+    res <- "msms_spectrum"
+    if (any(columns %in% x@.tables$ms_compound))
+        res <- paste0(res, " join ms_compound on (msms_spectrum.compound_id",
+                      "=ms_compound.compound_id)")
+    res
+}
+
 .fetch_spectra_data_sql <- function(x, columns = c("spectrum_id")) {
+    orig_columns <- columns
+    if (any(columns %in% c("compound_name", "synonym"))) {
+        columns <- columns[!columns %in% c("compound_name", "synonym")]
+        columns <- unique(c(columns, "compound_id"))
+    }
+    sql_columns <- .map_spectraVariables_to_sql(columns)
     qry <- dbSendQuery(
         x@dbcon,
-        paste0("select ",
-               paste(.map_spectraVariables_to_sql(columns), collapse = ","),
-               " from msms_spectrum where spectrum_id = ?"))
+        paste0("select ", paste(sql_columns, collapse = ","), " from ",
+               .join_query(x, sql_columns), " where spectrum_id = ?"))
     qry <- dbBind(qry, list(x@spectraIds))
     res <- dbFetch(qry)
     dbClearResult(qry)
@@ -181,14 +204,30 @@ MsBackendMassbankSql <- function() {
             res$collisionEnergy <- as.numeric(res$collision_energy_test))
         res$collision_energy_text <- NULL
     }
-    res
+    ## manage synonym and compound_name. Need a second query for that.
+    if (any(orig_columns %in% c("synonym", "compound_name"))) {
+        qry <- dbSendQuery(
+            x@dbcon, paste0("select * from synonym where compound_id = ?"))
+        qry <- dbBind(qry, list(unique(res$compound_id)))
+        cmps <- dbFetch(qry)
+        dbClearResult(qry)
+        cmpl <- split(
+            cmps$synonym,
+            as.factor(cmps$compound_id))[as.character(res$compound_id)]
+        if (any(orig_columns == "compound_name"))
+            res$compound_name <- vapply(cmpl, function(z) z[1], character(1))
+        if (any(orig_columns == "synonym"))
+            res$synonym <- cmpl
+    }
+    res[, orig_columns, drop = FALSE]
 }
 
-.compounds_sql <- function(x, id) {
+.compounds_sql <- function(x, id, columns = "*") {
     id <- force(id)
-    qry <- dbSendQuery(x, paste0("select * from ms_compound join synonym on (",
-                                 "ms_compound.compound_id=synonym.compound_id)",
-                                 " where ms_compound.compound_id = ?"))
+    qry <- dbSendQuery(
+        x, paste0("select ", columns, " from ms_compound join synonym on (",
+                  "ms_compound.compound_id=synonym.compound_id)",
+                  " where ms_compound.compound_id = ?"))
     qry <- dbBind(qry, list(id))
     res <- dbFetch(qry)
     dbClearResult(qry)
