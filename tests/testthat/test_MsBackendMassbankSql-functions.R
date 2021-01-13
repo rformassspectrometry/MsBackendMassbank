@@ -39,6 +39,38 @@ test_that(".fetch_spectra_data_sql works", {
 
     res <- .fetch_spectra_data_sql(be, columns = "polarity")
     expect_true(all(res$polarity %in% c(1L, 0L)))
+
+    ## synonym and compound_name
+    res <- .fetch_spectra_data_sql(
+        be, columns = c("spectrum_name", "inchi",
+                        "compound_name", "synonym"))
+    expect_equal(colnames(res),
+                 c("spectrum_name", "inchi", "compound_name", "synonym"))
+    expect_true(is.list(res$synonym))
+    expect_true(is.character(res$compound_name))
+
+    res <- .fetch_spectra_data_sql(
+        be, columns = c("spectrum_name",
+                        "compound_name", "synonym"))
+    expect_equal(colnames(res),
+                 c("spectrum_name", "compound_name", "synonym"))
+    expect_true(is.list(res$synonym))
+    expect_true(is.character(res$compound_name))
+
+    res <- .fetch_spectra_data_sql(
+        be, columns = c("inchi",
+                        "compound_name", "synonym"))
+    expect_equal(colnames(res),
+                 c("inchi", "compound_name", "synonym"))
+
+    res <- .fetch_spectra_data_sql(be, columns = c("synonym"))
+    expect_equal(colnames(res), "synonym")
+    expect_true(is.list(res$synonym))
+
+    res <- .fetch_spectra_data_sql(
+        be, columns = c("spectrum_name", "compound_name"))
+    expect_equal(colnames(res), c("spectrum_name", "compound_name"))
+    expect_true(is.character(res$compound_name))
 })
 
 test_that(".spectra_data_massbank_sql works", {

@@ -348,10 +348,12 @@ setMethod("backendInitialize", "MsBackendMassbankSql", function(object, dbcon,
         msms_spectrum = colnames(
             dbGetQuery(dbcon, "select * from msms_spectrum limit 0")),
         ms_compound = colnames(
-            dbGetQuery(dbcon, "select * from ms_compound limit 0")))
+            dbGetQuery(dbcon, "select * from ms_compound limit 0")),
+        synonym = colnames(
+            dbGetQuery(dbcon, "select * from synonym")))
     object@spectraVariables <- c(.map_sql_to_spectraVariables(
         unique(unlist(object@.tables))),
-        "precursor_mz_text")
+        "precursor_mz_text", "compound_name")
     validObject(object)
     object
 })
