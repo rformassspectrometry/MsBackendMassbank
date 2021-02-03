@@ -184,7 +184,7 @@
   # convert rtime
   if(!is.na(meta$rtime_string)) {
 
-    rtime <- as.numeric(regmatches(meta$rtime_string, regexpr("[[:digit:]]+\\.[[:digit:]]+", meta$rtime_string)))
+    rtime <- as.numeric(regmatches(meta$rtime_string, regexpr("[[:digit:]]+\\.*[[:digit:]]*", meta$rtime_string)))
     if(grepl("min", meta$rtime_string)) rtime <- rtime * 60
 
   } else {
