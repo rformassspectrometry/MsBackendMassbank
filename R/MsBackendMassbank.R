@@ -208,6 +208,12 @@ spectraVariableMapping <- function(format = c("Massbank")) {
            ms_source_temp = "AC$MASS_SPECTROMETRY: SOURCE_TEMPERATURE",
            ms_frag_mode = "AC$MASS_SPECTROMETRY: FRAGMENTATION_MODE",
 
+           # ims information
+           ims_instrument_type = "AC$ION_MOBILITY: INSTRUMENT_TYPE",
+           ims_drift_gas = "AC$ION_MOBILITY: DRIFT_GAS",
+           ims_drift_time = "AC$ION_MOBILITY: DRIFT_TIME",
+           ims_ccs = "AC$ION_MOBILITY: CCS",
+
            # ms information part II
            focus_base_peak = "MS$FOCUSED_ION: BASE_PEAK",
            focus_derivative_form = "MS$FOCUSED_ION: DERIVATIVE_FORM",

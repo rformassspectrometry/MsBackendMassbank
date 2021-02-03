@@ -184,7 +184,7 @@
   # convert rtime
   if(!is.na(meta$rtime_string)) {
 
-    rtime <- as.numeric(regmatches(meta$rtime_string, regexpr("[[:digit:]]+\\.[[:digit:]]+", meta$rtime_string)))
+    rtime <- as.numeric(regmatches(meta$rtime_string, regexpr("[[:digit:]]+\\.*[[:digit:]]*", meta$rtime_string)))
     if(grepl("min", meta$rtime_string)) rtime <- rtime * 60
 
   } else {
@@ -301,12 +301,12 @@
   ac$chrom_solvent <- as.list(substring(grep("AC$CHROMATOGRAPHY: SOLVENT", mb, value = TRUE, fixed = TRUE), 28))
   ac$chrom_transfer_temp <- substring(grep("AC$CHROMATOGRAPHY: TRANSFERLINE_TEMPERATURE", mb, value = TRUE, fixed = TRUE), 45)
 
-  # # analytical chemistry information, ion mobility
-  # # preparation for IMS update of MassBank format
-  # ac$ims_instrument_type <- substring(grep("AC$ION_MOBILITY: INSTRUMENT_TYPE", mb, value = TRUE, fixed = TRUE), 34)
-  # ac$ims_drift_gas <- substring(grep("AC$ION_MOBILITY: DRIFT_GAS", mb, value = TRUE, fixed = TRUE), 28)
-  # ac$ims_drift_time <- substring(grep("AC$ION_MOBILITY: DRIFT_TIME", mb, value = TRUE, fixed = TRUE), 29)
-  # ac$ims_ccs <- substring(grep("AC$ION_MOBILITY: CCS", mb, value = TRUE, fixed = TRUE), 22)
+  # analytical chemistry information, ion mobility
+  # preparation for IMS update of MassBank format
+  ac$ims_instrument_type <- substring(grep("AC$ION_MOBILITY: INSTRUMENT_TYPE", mb, value = TRUE, fixed = TRUE), 34)
+  ac$ims_drift_gas <- substring(grep("AC$ION_MOBILITY: DRIFT_GAS", mb, value = TRUE, fixed = TRUE), 28)
+  ac$ims_drift_time <- substring(grep("AC$ION_MOBILITY: DRIFT_TIME", mb, value = TRUE, fixed = TRUE), 29)
+  ac$ims_ccs <- substring(grep("AC$ION_MOBILITY: CCS", mb, value = TRUE, fixed = TRUE), 22)
 
   # analytical chemistry information, general ----------------------------------
   ac$general_conc <- substring(grep("AC$GENERAL: CONCENTRATION", mb, value = TRUE, fixed = TRUE), 27)
@@ -601,11 +601,11 @@ metaDataBlocks <- function() {
 
         if(entry == "AC$MASS_SPECTROMETRY: ION_MODE") {
 
-          if(value == 0) {
+          if(value == 0L) {
 
             value <- "NEGATIVE"
 
-          } else if(value == 1) {
+          } else if(value == 1L) {
 
             value <- "POSTIVE"
 
@@ -732,6 +732,10 @@ metaDataBlocks <- function() {
     "AC$CHROMATOGRAPHY: UOA_PREDICTED_RETENTION_TIME",
     "AC$CHROMATOGRAPHY: SOLVENT",
     "AC$CHROMATOGRAPHY: TRANSFERLINE_TEMPERATURE",
+    "AC$ION_MOBILITY: INSTRUMENT_TYPE",
+    "AC$ION_MOBILITY: DRIFT_GAS",
+    "AC$ION_MOBILITY: DRIFT_TIME",
+    "AC$ION_MOBILITY: CCS",
     "MS$FOCUSED_ION: BASE_PEAK",
     "MS$FOCUSED_ION: DERIVATIVE_FORM",
     "MS$FOCUSED_ION: DERIVATIVE_MASS",
