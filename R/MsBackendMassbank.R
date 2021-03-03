@@ -1,4 +1,3 @@
-
 #' @include hidden_aliases.R
 NULL
 
@@ -9,29 +8,28 @@ NULL
 #' @description
 #'
 #' The `MsBackendMassbank` class supports import of MS/MS spectra data from
-#' MS/MS spectrum data from [Massbank](https://github.com/MassBank/MassBank-data)
+#' MS/MS spectrum data from
+#' [Massbank](https://github.com/MassBank/MassBank-data)
 #' files. After initial import, the full MS data is kept in
 #' memory. `MsBackendMassbank` extends the [MsBackendDataFrame()] backend
 #' directly and supports thus the [applyProcessing()] function to make
-#' data manipulations persistent. The backend does however not
-#' support export to mgf files yet.
+#' data manipulations persistent.
 #'
 #' New objects are created with the `MsBackendMassbank` function. The
 #' `backendInitialize` method has to be subsequently called to
-#' initialize the object and import MS/MS data from (one or more) mgf
-#' files.  Optional parameter `nonStop` allows to specify whether the
-#' import returns with an error if one of the xml files lacks required
+#' initialize the object and import MS/MS data from (one or more) MassBank
+#' files. Optional parameter `nonStop` allows to specify whether the
+#' import returns with an error if one of the text files lacks required
 #' data, such as `mz` and `intensity` values (default `nonStop =
 #' FALSE`), or whether only affected file(s) is(are) skipped and a
 #' warning is shown (`nonStop = TRUE`). Note that any other error
-#' (such as xml import error) will abort import regardless of
-#' parameter `nonStop`.
+#' will abort import regardless of parameter `nonStop`.
 #'
 #' @param object Instance of `MsBackendMassbank` class.
 #'
 #' @param file for `export`: `character(1)` defining the output file.
 #'
-#' @param files `character` with the (full) file name(s) of the mgf file(s)
+#' @param files `character` with the (full) file name(s) of the MassBank file(s)
 #'     from which MS/MS data should be imported.
 #'
 #' @param format for `spectraVariableMapping`: `character(1)` defining the
@@ -43,8 +41,8 @@ NULL
 #'     vector the field names in the Massbank file. See output of
 #'     `spectraVariableMapping()` for the expected format.
 #'
-#' @param metaBlocks `data.frame` data frame indicating which metadata shall
-#'     be read Default is [metaDataBlocks()].
+#' @param metaBlocks `data.frame` indicating which metadata shall
+#'     be imported. Default is [metaDataBlocks()].
 #'
 #' @param nonStop `logical(1)` whether import should be stopped if an
 #'     xml file does not contain all required fields. Defaults to
@@ -66,9 +64,12 @@ NULL
 #'
 #' @name MsBackendMassbank
 #'
+#' @return `backendInitialize` and `MsBackendMassbank` return an instance of
+#'     `MsBackendMassbank-class`.
+#'
 #' @examples
 #'
-#' ## Create an MsBackendMassbank backend and import data from test xml files.
+#' ## Create an MsBackendMassbank backend and import data from a test file.
 #' fls <- dir(system.file("extdata", package = "MsBackendMassbank"),
 #'     full.names = TRUE, pattern = "txt$")
 #' be <- backendInitialize(MsBackendMassbank(), fls)
@@ -77,6 +78,15 @@ NULL
 #' be$msLevel
 #' be$intensity
 #' be$mz
+#'
+#' ## Initializing a backend reading additional metadata columns/information
+#' mb <- metaDataBlocks()
+#' mb
+#' mb[1, 2] <- TRUE
+#'
+#' be <- backendInitialize(MsBackendMassbank(), fls, metaBlocks = mb)
+#' spectraVariables(be)
+#' be$instrument
 NULL
 
 setClass("MsBackendMassbank",
@@ -89,6 +99,8 @@ setClass("MsBackendMassbank",
 #'
 #' @importFrom BiocParallel bpparam
 #'
+#' @importFrom S4Vectors bindROWS
+#'
 #' @importMethodsFrom BiocParallel bplapply
 #'
 #' @importFrom methods validObject
@@ -99,56 +111,35 @@ setClass("MsBackendMassbank",
 setMethod("backendInitialize", signature = "MsBackendMassbank",
           function(object, files, metaBlocks = metaDataBlocks(),
                    nonStop = FALSE, ..., BPPARAM = bpparam()) {
-
-            if (missing(files) || !length(files)) {
-
-              stop("Parameter 'files' is mandatory for ", class(object))
-
-            }
-
-            if (!is.character(files)) {
-
-              stop("Parameter 'files' is expected to be a character vector",
-                   " with the files names from where data should be",
-                   " imported")
-
-            }
-
-            files <- normalizePath(files)
-
-            if (any(!file.exists(files))) {
-
-              stop("file(s) ",
-                   paste(files[!file.exists(files)], collapse = ", "),
-                   " not found")
-
-            }
-
-            ## Import data and rbind.
-            message("Start data import from ", length(files), " files ... ",
-                    appendLF = FALSE)
-
-            res <- bplapply(files, FUN = .read_massbank, metaBlocks = metaBlocks,
-                            nonStop = nonStop, BPPARAM = BPPARAM)
-
-            message("done")
-
-            res <- do.call(rbind, res)
-
-            if (nonStop && length(files) > nrow(res)) {
-
-              warning("Import failed for ", length(files) - nrow(res),
-                      " files")
-
-            }
-
-            spectraData(object) <- res
-            object$dataStorage <- "<memory>"
-            #object$centroided <- TRUE
-            validObject(object)
-
-            object
-
+              if (missing(files) || !length(files))
+                  stop("Parameter 'files' is mandatory for ", class(object))
+              if (!is.character(files))
+                  stop("Parameter 'files' is expected to be a character vector",
+                       " with the files names from where data should be",
+                       " imported")
+              suppressWarnings(files <- normalizePath(files))
+              if (any(!file.exists(files))) {
+                  stop("file(s) ",
+                       paste(files[!file.exists(files)], collapse = ", "),
+                       " not found")
+              }
+              ## Import data and rbind.
+              message("Start data import from ", length(files), " files ... ",
+                      appendLF = FALSE)
+              res <- bplapply(files, FUN = .read_massbank,
+                              metaBlocks = metaBlocks,
+                              nonStop = nonStop, BPPARAM = BPPARAM)
+              message("done")
+              res <- bindROWS(DataFrame(), objects = res, use.names = FALSE,
+                              ignore.mcols = TRUE, check = FALSE)
+              if (nonStop && length(files) > nrow(res)) {
+                  warning("Import failed for ", length(files) - nrow(res),
+                          " files")
+              }
+              spectraData(object) <- res
+              object$dataStorage <- "<memory>"
+              validObject(object)
+              object
           })
 
 #' @rdname MsBackendMassbank
@@ -233,11 +224,13 @@ spectraVariableMapping <- function(format = c("Massbank")) {
            chrom_carrier_gas = "AC$CHROMATOGRAPHY: CARRIER_GAS",
            chrom_column = "AC$CHROMATOGRAPHY: COLUMN_NAME",
            chrom_column_temp = "AC$CHROMATOGRAPHY: COLUMN_TEMPERATURE",
-           chrom_column_temp_gradient = "AC$CHROMATOGRAPHY: COLUMN_TEMPERATURE_GRADIENT",
+           chrom_column_temp_gradient =
+               "AC$CHROMATOGRAPHY: COLUMN_TEMPERATURE_GRADIENT",
            chrom_flow_gradient = "AC$CHROMATOGRAPHY: FLOW_GRADIENT",
            chrom_flow_rate = "AC$CHROMATOGRAPHY: FLOW_RATE",
            chrom_inj_temp = "AC$CHROMATOGRAPHY: INJECTION_TEMPERATURE",
-           chrom_inj_temp_gradient = "AC$CHROMATOGRAPHY: INJECTION_TEMPERATURE_GRADIENT",
+           chrom_inj_temp_gradient =
+               "AC$CHROMATOGRAPHY: INJECTION_TEMPERATURE_GRADIENT",
            chrom_rti_kovats = "AC$CHROMATOGRAPHY: KOVATS_RTI",
            chrom_rti_lee = "AC$CHROMATOGRAPHY: LEE_RTI",
            chrom_rti_naps = "AC$CHROMATOGRAPHY: NAPS_RTI",
@@ -291,8 +284,8 @@ spectraVariableMapping <- function(format = c("Massbank")) {
 #' @exportMethod export
 #'
 #' @rdname MsBackendMassbank
-setMethod("export", "MsBackendMassbank", function(object, x, file = tempfile(),
-                                                  mapping = spectraVariableMapping(),
-                                             ...) {
-  .export_massbank(x = x, con = file, mapping = mapping)
-})
+setMethod("export", "MsBackendMassbank",
+          function(object, x, file = tempfile(),
+                   mapping = spectraVariableMapping(), ...) {
+              .export_massbank(x = x, con = file, mapping = mapping)
+          })

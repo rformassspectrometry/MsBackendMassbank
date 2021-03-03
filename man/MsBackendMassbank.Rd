@@ -26,11 +26,11 @@ spectraVariableMapping(format = c("Massbank"))
 \arguments{
 \item{object}{Instance of \code{MsBackendMassbank} class.}
 
-\item{files}{\code{character} with the (full) file name(s) of the mgf file(s)
+\item{files}{\code{character} with the (full) file name(s) of the MassBank file(s)
 from which MS/MS data should be imported.}
 
-\item{metaBlocks}{\code{data.frame} data frame indicating which metadata shall
-be read Default is \code{\link[=metaDataBlocks]{metaDataBlocks()}}.}
+\item{metaBlocks}{\code{data.frame} indicating which metadata shall
+be imported. Default is \code{\link[=metaDataBlocks]{metaDataBlocks()}}.}
 
 \item{nonStop}{\code{logical(1)} whether import should be stopped if an
 xml file does not contain all required fields. Defaults to
@@ -54,28 +54,31 @@ Names are supposed to be the spectra variable name and values of the
 vector the field names in the Massbank file. See output of
 \code{spectraVariableMapping()} for the expected format.}
 }
+\value{
+\code{backendInitialize} and \code{MsBackendMassbank} return an instance of
+\code{MsBackendMassbank-class}.
+}
 \description{
 The \code{MsBackendMassbank} class supports import of MS/MS spectra data from
-MS/MS spectrum data from \href{https://github.com/MassBank/MassBank-data}{Massbank}
+MS/MS spectrum data from
+\href{https://github.com/MassBank/MassBank-data}{Massbank}
 files. After initial import, the full MS data is kept in
 memory. \code{MsBackendMassbank} extends the \code{\link[=MsBackendDataFrame]{MsBackendDataFrame()}} backend
 directly and supports thus the \code{\link[=applyProcessing]{applyProcessing()}} function to make
-data manipulations persistent. The backend does however not
-support export to mgf files yet.
+data manipulations persistent.
 
 New objects are created with the \code{MsBackendMassbank} function. The
 \code{backendInitialize} method has to be subsequently called to
-initialize the object and import MS/MS data from (one or more) mgf
-files.  Optional parameter \code{nonStop} allows to specify whether the
-import returns with an error if one of the xml files lacks required
+initialize the object and import MS/MS data from (one or more) MassBank
+files. Optional parameter \code{nonStop} allows to specify whether the
+import returns with an error if one of the text files lacks required
 data, such as \code{mz} and \code{intensity} values (default \code{nonStop = FALSE}), or whether only affected file(s) is(are) skipped and a
 warning is shown (\code{nonStop = TRUE}). Note that any other error
-(such as xml import error) will abort import regardless of
-parameter \code{nonStop}.
+will abort import regardless of parameter \code{nonStop}.
 }
 \examples{
 
-## Create an MsBackendMassbank backend and import data from test xml files.
+## Create an MsBackendMassbank backend and import data from a test file.
 fls <- dir(system.file("extdata", package = "MsBackendMassbank"),
     full.names = TRUE, pattern = "txt$")
 be <- backendInitialize(MsBackendMassbank(), fls)
@@ -84,6 +87,15 @@ be
 be$msLevel
 be$intensity
 be$mz
+
+## Initializing a backend reading additional metadata columns/information
+mb <- metaDataBlocks()
+mb
+mb[1, 2] <- TRUE
+
+be <- backendInitialize(MsBackendMassbank(), fls, metaBlocks = mb)
+spectraVariables(be)
+be$instrument
 }
 \author{
 Michael Witting

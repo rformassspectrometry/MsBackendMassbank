@@ -37,6 +37,13 @@ of the `MsBackendMassbank` package to include MassBank data into MS data
 analysis workflow with the `Spectra` package in R.
 
 
+# Installation
+
+The package can be installed with the `BiocManager` package. To
+install `BiocManager` use `install.packages("BiocManager")` and, after that,
+`BiocManager::install("MsBackendMassbank")` to install this package.
+
+
 # Importing MS/MS data from MassBank files
 
 MassBank files (as provided by the [Massbank github
