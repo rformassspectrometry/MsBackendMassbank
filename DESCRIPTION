@@ -1,20 +1,28 @@
 Package: MsBackendMassbank
 Title: Mass Spectrometry Data Backend for MassBank record Files
-Version: 0.3.3
+Version: 0.99.0
 Authors@R:
-    c(person(given = "Michael", family = "Witting",
-             role = c("aut", "cre"),
+    c(person(given = "RforMassSpectrometry Package Maintainer",
+             email = "maintainer@rformassspectrometry.org",
+             role = "cre"),
+      person(given = "Michael", family = "Witting",
+             role = c("aut"),
              email = "michael.witting@helmholtz-muenchen.de",
              comment = c(ORCID = "0000-0002-1462-4426")),
-	     person(given = "Johannes", family = "Rainer",
-		    email = "Johannes.Rainer@eurac.edu",
-		    role = "aut",
-		    comment = c(ORCID = "0000-0002-6977-7147")))
+      person(given = "Johannes", family = "Rainer",
+             email = "Johannes.Rainer@eurac.edu",
+             role = "aut",
+             comment = c(ORCID = "0000-0002-6977-7147")))
 Description: Mass spectrometry (MS) data backend supporting import and
-	     handling of MS/MS library spectra from MassBank record files.
+             export of MS/MS library spectra from MassBank record files.
+             Different backends are available that allow handling of data in
+	     plain MassBank text file format or allow also to interact directly
+	     with MassBank SQL databases. Objects from this package are supposed
+	     to be used with the Spectra Bioconductor package. This package thus
+	     adds MassBank support to the Spectra package.
 Depends:
-    R (>= 3.5.0),
-    Spectra (>= 0.99.1)
+    R (>= 4.1),
+    Spectra (>= 1.0)
 Imports:
     BiocParallel,
     S4Vectors,
@@ -22,7 +30,8 @@ Imports:
     methods,
     ProtGenerics,
     MsCoreUtils,
-    DBI
+    DBI,
+    utils
 Suggests:
     testthat,
     knitr (>= 1.1.0),
@@ -30,16 +39,13 @@ Suggests:
     BiocStyle (>= 2.5.19),
     RSQLite,
     rmarkdown
-Remotes:
-   RforMassSpectrometry/Spectra,
-   RforMassSpectrometry/MsCoreUtils
 License: Artistic-2.0
 LazyData: yes
 Encoding: UTF-8
 VignetteBuilder: knitr
-BugReports: https://github.com/michaelwitting/MsBackendMassbank/issues
-URL: https://github.com/michaelwitting/MsBackendMassbank
-biocViews: Infrastructure, MassSpectrometry, Metabolomics
+BugReports: https://github.com/RforMassSpectrometry/MsBackendMassbank/issues
+URL: https://github.com/RforMassSpectrometry/MsBackendMassbank
+biocViews: Infrastructure, MassSpectrometry, Metabolomics, DataImport
 Roxygen: list(markdown=TRUE)
 RoxygenNote: 7.1.1
 Collate:

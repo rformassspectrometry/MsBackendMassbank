@@ -10,9 +10,11 @@ metaDataBlocks()
 A \code{data.frame} with metadata blocks.
 }
 \description{
-It is possible to
+\code{metaDataBlocks} returns a \code{data.frame} with the MassBank metadata blocks
+and whether they should be imported by default from the MassBank text files.
 }
 \examples{
+
 metaDataBlocks()
 }
 \author{
