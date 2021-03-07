@@ -21,7 +21,7 @@ Description: Mass spectrometry (MS) data backend supporting import and
 	     to be used with the Spectra Bioconductor package. This package thus
 	     adds MassBank support to the Spectra package.
 Depends:
-    R (>= 4.1),
+    R (>= 4.0),
     Spectra (>= 1.0)
 Imports:
     BiocParallel,
