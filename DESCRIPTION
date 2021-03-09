@@ -1,6 +1,6 @@
 Package: MsBackendMassbank
 Title: Mass Spectrometry Data Backend for MassBank record Files
-Version: 0.99.0
+Version: 0.99.1
 Authors@R:
     c(person(given = "RforMassSpectrometry Package Maintainer",
              email = "maintainer@rformassspectrometry.org",

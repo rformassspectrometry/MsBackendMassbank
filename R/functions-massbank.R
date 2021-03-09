@@ -40,21 +40,23 @@
     cmt <- vector("list", length = n)
 
     for (i in seq(along = spec)) {
-        spec[[i]] <- .extract_mb_spectrum(mb[begin[i]:end[i]])
+        mb_sub <- mb[begin[i]:end[i]]
+        spec[[i]] <- MsBackendMassbank:::.extract_mb_spectrum(mb_sub)
         if (metaBlocks$read[which(metaBlocks$metadata == "ac")])
-            ac[[i]] <- .extract_mb_ac(mb[begin[i]:end[i]])
+            ac[[i]] <- MsBackendMassbank:::.extract_mb_ac(mb_sub)
         if (metaBlocks$read[which(metaBlocks$metadata == "ch")])
-            ch[[i]] <- .extract_mb_ch(mb[begin[i]:end[i]])
+            ch[[i]] <- MsBackendMassbank:::.extract_mb_ch(mb_sub)
         if (metaBlocks$read[which(metaBlocks$metadata == "sp")])
-            sp[[i]] <- .extract_mb_sp(mb[begin[i]:end[i]])
+            sp[[i]] <- MsBackendMassbank:::.extract_mb_sp(mb_sub)
         if (metaBlocks$read[which(metaBlocks$metadata == "ms")])
-            ms[[i]] <- .extract_mb_ms(mb[begin[i]:end[i]])
+            ms[[i]] <- MsBackendMassbank:::.extract_mb_ms(mb_sub)
         if (metaBlocks$read[which(metaBlocks$metadata == "record")])
-            record[[i]] <- .extract_mb_record(mb[begin[i]:end[i]])
+            record[[i]] <- MsBackendMassbank:::.extract_mb_record(mb_sub)
         if (metaBlocks$read[which(metaBlocks$metadata == "pk")])
-            pk[[i]] <- .extract_mb_pk(mb[begin[i]:end[i]])
+            pk[[i]] <- MsBackendMassbank:::.extract_mb_pk(mb_sub)
         if (metaBlocks$read[which(metaBlocks$metadata == "comment")])
-            cmt[[i]] <- list(comment = .extract_mb_comment(mb[begin[i]:end[i]]))
+            cmt[[i]] <- list(
+                comment = MsBackendMassbank:::.extract_mb_comment(mb_sub))
     }
 
     res <- DataFrame(do.call(rbind, spec))
