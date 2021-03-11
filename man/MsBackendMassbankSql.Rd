@@ -365,7 +365,7 @@ compound annotations for the specific spectra.
 ## vignette for more information on how to install MassBank locally and
 ## enable MySQL database connections
 library(RSQLite)
-con <- dbConnect(SQLite(), system.file("sql/minimassbank.sql",
+con <- dbConnect(SQLite(), system.file("sql", "minimassbank.sqlite",
     package = "MsBackendMassbank"))
 
 ## Given that we have the connection to a MassBank databas we can

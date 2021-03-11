@@ -19,6 +19,7 @@
 ##' @noRd
 .read_massbank <- function(f, msLevel = 2L, metaBlocks = metaDataBlocks(),
                            nonStop = FALSE, ...) {
+    requireNamespace("MsBackendMassbank", quietly = TRUE)
     if (length(f) != 1L)
         stop("Please provide a single Massbank file.")
     mb <- scan(file = f, what = "", sep = "\n", quote = "",
@@ -41,22 +42,22 @@
 
     for (i in seq(along = spec)) {
         mb_sub <- mb[begin[i]:end[i]]
-        spec[[i]] <- MsBackendMassbank:::.extract_mb_spectrum(mb_sub)
+        spec[[i]] <- .extract_mb_spectrum(mb_sub)
         if (metaBlocks$read[which(metaBlocks$metadata == "ac")])
-            ac[[i]] <- MsBackendMassbank:::.extract_mb_ac(mb_sub)
+            ac[[i]] <- .extract_mb_ac(mb_sub)
         if (metaBlocks$read[which(metaBlocks$metadata == "ch")])
-            ch[[i]] <- MsBackendMassbank:::.extract_mb_ch(mb_sub)
+            ch[[i]] <- .extract_mb_ch(mb_sub)
         if (metaBlocks$read[which(metaBlocks$metadata == "sp")])
-            sp[[i]] <- MsBackendMassbank:::.extract_mb_sp(mb_sub)
+            sp[[i]] <- .extract_mb_sp(mb_sub)
         if (metaBlocks$read[which(metaBlocks$metadata == "ms")])
-            ms[[i]] <- MsBackendMassbank:::.extract_mb_ms(mb_sub)
+            ms[[i]] <- .extract_mb_ms(mb_sub)
         if (metaBlocks$read[which(metaBlocks$metadata == "record")])
-            record[[i]] <- MsBackendMassbank:::.extract_mb_record(mb_sub)
+            record[[i]] <- .extract_mb_record(mb_sub)
         if (metaBlocks$read[which(metaBlocks$metadata == "pk")])
-            pk[[i]] <- MsBackendMassbank:::.extract_mb_pk(mb_sub)
+            pk[[i]] <- .extract_mb_pk(mb_sub)
         if (metaBlocks$read[which(metaBlocks$metadata == "comment")])
             cmt[[i]] <- list(
-                comment = MsBackendMassbank:::.extract_mb_comment(mb_sub))
+                comment = .extract_mb_comment(mb_sub))
     }
 
     res <- DataFrame(do.call(rbind, spec))

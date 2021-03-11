@@ -1,5 +1,9 @@
 # MsBackendMassbank 0.99
 
+## Changes in 0.99.2
+
+- Minor updates and changes as requested during package review process.
+
 ## Changes in 0.99.1
 
 - Directly call package internal functions using `:::` if used within `bplapply`

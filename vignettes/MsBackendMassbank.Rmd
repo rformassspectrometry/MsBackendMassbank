@@ -17,7 +17,6 @@ BiocStyle::markdown()
 
 **Package**: `r Biocpkg("MsBackendMassbank")`<br />
 **Authors**: `r packageDescription("MsBackendMassbank")[["Author"]] `<br />
-**Last modified:** `r file.info("MsBackendMassbank.Rmd")$mtime`<br />
 **Compiled**: `r date()`
 
 ```{r, echo = FALSE, message = FALSE}
@@ -177,7 +176,7 @@ within this package. Below we connect to this database.
 
 ```{r sqlite}
 library(RSQLite)
-con <- dbConnect(SQLite(), system.file("sql/minimassbank.sql",
+con <- dbConnect(SQLite(), system.file("sql", "minimassbank.sqlite",
                                        package = "MsBackendMassbank"))
 ```
 
