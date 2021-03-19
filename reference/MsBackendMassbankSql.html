@@ -73,9 +73,15 @@ m/z reported in MassBank." />
 
 
 
+  
+
+  
+
   </head>
 
   <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -89,7 +95,7 @@ m/z reported in MassBank." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MsBackendMassbank</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.2</span>
       </span>
     </div>
 
@@ -101,10 +107,13 @@ m/z reported in MassBank." />
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/michaelwitting/MsBackendMassbank/">
+  <a href="https://github.com/RforMassSpectrometry/MsBackendMassbank/">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -123,7 +132,7 @@ m/z reported in MassBank." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>MS backend accessing the MassBank MySQL database</h1>
-    <small class="dont-index">Source: <a href='https://github.com/michaelwitting/MsBackendMassbank/blob/master/R/MsBackendMassbankSql-functions.R'><code>R/MsBackendMassbankSql-functions.R</code></a>, <a href='https://github.com/michaelwitting/MsBackendMassbank/blob/master/R/MsBackendMassbankSql.R'><code>R/MsBackendMassbankSql.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/RforMassSpectrometry/MsBackendMassbank/blob/master/R/MsBackendMassbankSql-functions.R'><code>R/MsBackendMassbankSql-functions.R</code></a>, <a href='https://github.com/RforMassSpectrometry/MsBackendMassbank/blob/master/R/MsBackendMassbankSql.R'><code>R/MsBackendMassbankSql.R</code></a></small>
     <div class="hidden name"><code>MsBackendMassbankSql.Rd</code></div>
     </div>
 
@@ -517,7 +526,7 @@ compound annotations for the specific spectra.</p>
 <span class='co'>## vignette for more information on how to install MassBank locally and</span>
 <span class='co'>## enable MySQL database connections</span>
 <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://rsqlite.r-dbi.org'>RSQLite</a></span><span class='op'>)</span>
-<span class='va'>con</span> <span class='op'>&lt;-</span> <span class='fu'>dbConnect</span><span class='op'>(</span><span class='fu'><a href='https://rsqlite.r-dbi.org/reference/SQLite.html'>SQLite</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"sql/minimassbank.sql"</span>,
+<span class='va'>con</span> <span class='op'>&lt;-</span> <span class='fu'>dbConnect</span><span class='op'>(</span><span class='fu'><a href='https://rsqlite.r-dbi.org/reference/SQLite.html'>SQLite</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"sql"</span>, <span class='st'>"minimassbank.sqlite"</span>,
     package <span class='op'>=</span> <span class='st'>"MsBackendMassbank"</span><span class='op'>)</span><span class='op'>)</span>
 
 <span class='co'>## Given that we have the connection to a MassBank databas we can</span>
@@ -782,11 +791,11 @@ compound annotations for the specific spectra.</p>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Michael Witting, Johannes Rainer.</p>
+  <p><p>Developed by RforMassSpectrometry Package Maintainer, Michael Witting, Johannes Rainer.</p></p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9000.</p></p>
 </div>
 
       </footer>
@@ -794,6 +803,8 @@ compound annotations for the specific spectra.</p>
 
   
 
+
+  
 
   </body>
 </html>

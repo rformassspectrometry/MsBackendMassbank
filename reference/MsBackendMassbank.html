@@ -41,21 +41,20 @@
 
 <meta property="og:title" content="MS data backend for mgf files — MsBackendMassbank" />
 <meta property="og:description" content="The MsBackendMassbank class supports import of MS/MS spectra data from
-MS/MS spectrum data from Massbank
+MS/MS spectrum data from
+Massbank
 files. After initial import, the full MS data is kept in
 memory. MsBackendMassbank extends the MsBackendDataFrame() backend
 directly and supports thus the applyProcessing() function to make
-data manipulations persistent. The backend does however not
-support export to mgf files yet.
+data manipulations persistent.
 New objects are created with the MsBackendMassbank function. The
 backendInitialize method has to be subsequently called to
-initialize the object and import MS/MS data from (one or more) mgf
-files.  Optional parameter nonStop allows to specify whether the
-import returns with an error if one of the xml files lacks required
+initialize the object and import MS/MS data from (one or more) MassBank
+files. Optional parameter nonStop allows to specify whether the
+import returns with an error if one of the text files lacks required
 data, such as mz and intensity values (default nonStop = FALSE), or whether only affected file(s) is(are) skipped and a
 warning is shown (nonStop = TRUE). Note that any other error
-(such as xml import error) will abort import regardless of
-parameter nonStop." />
+will abort import regardless of parameter nonStop." />
 
 
 
@@ -73,9 +72,15 @@ parameter nonStop." />
 
 
 
+  
+
+  
+
   </head>
 
   <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -89,7 +94,7 @@ parameter nonStop." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MsBackendMassbank</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.2</span>
       </span>
     </div>
 
@@ -101,10 +106,13 @@ parameter nonStop." />
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/michaelwitting/MsBackendMassbank/">
+  <a href="https://github.com/RforMassSpectrometry/MsBackendMassbank/">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -123,27 +131,26 @@ parameter nonStop." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>MS data backend for mgf files</h1>
-    <small class="dont-index">Source: <a href='https://github.com/michaelwitting/MsBackendMassbank/blob/master/R/MsBackendMassbank.R'><code>R/MsBackendMassbank.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/RforMassSpectrometry/MsBackendMassbank/blob/master/R/MsBackendMassbank.R'><code>R/MsBackendMassbank.R</code></a></small>
     <div class="hidden name"><code>MsBackendMassbank.Rd</code></div>
     </div>
 
     <div class="ref-description">
     <p>The <code>MsBackendMassbank</code> class supports import of MS/MS spectra data from
-MS/MS spectrum data from <a href='https://github.com/MassBank/MassBank-data'>Massbank</a>
+MS/MS spectrum data from
+<a href='https://github.com/MassBank/MassBank-data'>Massbank</a>
 files. After initial import, the full MS data is kept in
 memory. <code>MsBackendMassbank</code> extends the <code>MsBackendDataFrame()</code> backend
 directly and supports thus the <code>applyProcessing()</code> function to make
-data manipulations persistent. The backend does however not
-support export to mgf files yet.</p>
+data manipulations persistent.</p>
 <p>New objects are created with the <code>MsBackendMassbank</code> function. The
 <code>backendInitialize</code> method has to be subsequently called to
-initialize the object and import MS/MS data from (one or more) mgf
-files.  Optional parameter <code>nonStop</code> allows to specify whether the
-import returns with an error if one of the xml files lacks required
+initialize the object and import MS/MS data from (one or more) MassBank
+files. Optional parameter <code>nonStop</code> allows to specify whether the
+import returns with an error if one of the text files lacks required
 data, such as <code>mz</code> and <code>intensity</code> values (default <code>nonStop = FALSE</code>), or whether only affected file(s) is(are) skipped and a
 warning is shown (<code>nonStop = TRUE</code>). Note that any other error
-(such as xml import error) will abort import regardless of
-parameter <code>nonStop</code>.</p>
+will abort import regardless of parameter <code>nonStop</code>.</p>
     </div>
 
     <pre class="usage"><span class='co'># S4 method for MsBackendMassbank</span>
@@ -172,13 +179,13 @@ parameter <code>nonStop</code>.</p>
     </tr>
     <tr>
       <th>files</th>
-      <td><p><code>character</code> with the (full) file name(s) of the mgf file(s)
+      <td><p><code>character</code> with the (full) file name(s) of the MassBank file(s)
 from which MS/MS data should be imported.</p></td>
     </tr>
     <tr>
       <th>metaBlocks</th>
-      <td><p><code>data.frame</code> data frame indicating which metadata shall
-be read Default is <code><a href='metaDataBlocks.html'>metaDataBlocks()</a></code>.</p></td>
+      <td><p><code>data.frame</code> indicating which metadata shall
+be imported. Default is <code><a href='metaDataBlocks.html'>metaDataBlocks()</a></code>.</p></td>
     </tr>
     <tr>
       <th>nonStop</th>
@@ -218,17 +225,21 @@ vector the field names in the Massbank file. See output of
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p><code>backendInitialize</code> and <code>MsBackendMassbank</code> return an instance of
+<code>MsBackendMassbank-class</code>.</p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Michael Witting</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='co'>## Create an MsBackendMassbank backend and import data from test xml files.</span>
+<span class='co'>## Create an MsBackendMassbank backend and import data from a test file.</span>
 <span class='va'>fls</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>dir</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"extdata"</span>, package <span class='op'>=</span> <span class='st'>"MsBackendMassbank"</span><span class='op'>)</span>,
     full.names <span class='op'>=</span> <span class='cn'>TRUE</span>, pattern <span class='op'>=</span> <span class='st'>"txt$"</span><span class='op'>)</span>
 <span class='va'>be</span> <span class='op'>&lt;-</span> <span class='fu'>backendInitialize</span><span class='op'>(</span><span class='fu'>MsBackendMassbank</span><span class='op'>(</span><span class='op'>)</span>, <span class='va'>fls</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Start data import from 8 files ... </span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 'as.is' should be specified by the caller; using TRUE</span></div><div class='output co'>#&gt; <span class='message'>done</span></div><div class='input'><span class='va'>be</span>
+</div><div class='output co'>#&gt; <span class='message'>Start data import from 8 files ... </span></div><div class='output co'>#&gt; <span class='message'>done</span></div><div class='input'><span class='va'>be</span>
 </div><div class='output co'>#&gt; MsBackendMassbank with 10 spectra
 #&gt;      msLevel     rtime scanIndex
 #&gt;    &lt;integer&gt; &lt;numeric&gt; &lt;integer&gt;
@@ -266,7 +277,77 @@ vector the field names in the Massbank file. See output of
 #&gt; [["mz"]] 53.0019 53.0383 63.0225 65.0381 ... 158.0817 159.0921 160.0755 170.06
 #&gt; [["mz"]] 72.0095 116.0517 117.0554 159.0935 186.0558 203.0826
 #&gt; [["mz"]] 72.0094 74.0253 116.0511 117.0539 ... 162.0307 186.0548 203.0818
-#&gt; [["mz"]] 74.0253 116.0508</div></pre>
+#&gt; [["mz"]] 74.0253 116.0508</div><div class='input'>
+<span class='co'>## Initializing a backend reading additional metadata columns/information</span>
+<span class='va'>mb</span> <span class='op'>&lt;-</span> <span class='fu'><a href='metaDataBlocks.html'>metaDataBlocks</a></span><span class='op'>(</span><span class='op'>)</span>
+<span class='va'>mb</span>
+</div><div class='output co'>#&gt;   metadata  read
+#&gt; 1       ac FALSE
+#&gt; 2       ch FALSE
+#&gt; 3       sp FALSE
+#&gt; 4       ms FALSE
+#&gt; 5   record FALSE
+#&gt; 6       pk FALSE
+#&gt; 7  comment FALSE</div><div class='input'><span class='va'>mb</span><span class='op'>[</span><span class='fl'>1</span>, <span class='fl'>2</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='cn'>TRUE</span>
+
+<span class='va'>be</span> <span class='op'>&lt;-</span> <span class='fu'>backendInitialize</span><span class='op'>(</span><span class='fu'>MsBackendMassbank</span><span class='op'>(</span><span class='op'>)</span>, <span class='va'>fls</span>, metaBlocks <span class='op'>=</span> <span class='va'>mb</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'>Start data import from 8 files ... </span></div><div class='output co'>#&gt; <span class='message'>done</span></div><div class='input'><span class='fu'>spectraVariables</span><span class='op'>(</span><span class='va'>be</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;  [1] "msLevel"                    "rtime"                     
+#&gt;  [3] "acquisitionNum"             "scanIndex"                 
+#&gt;  [5] "mz"                         "intensity"                 
+#&gt;  [7] "dataStorage"                "dataOrigin"                
+#&gt;  [9] "centroided"                 "smoothed"                  
+#&gt; [11] "polarity"                   "precScanNum"               
+#&gt; [13] "precursorMz"                "precursorIntensity"        
+#&gt; [15] "precursorCharge"            "collisionEnergy"           
+#&gt; [17] "isolationWindowLowerMz"     "isolationWindowTargetMz"   
+#&gt; [19] "isolationWindowUpperMz"     "acquistionNum"             
+#&gt; [21] "accession"                  "name"                      
+#&gt; [23] "smiles"                     "exactmass"                 
+#&gt; [25] "formula"                    "inchi"                     
+#&gt; [27] "cas"                        "inchikey"                  
+#&gt; [29] "adduct"                     "splash"                    
+#&gt; [31] "title"                      "instrument"                
+#&gt; [33] "instrument_type"            "ms_ms_type"                
+#&gt; [35] "ms_cap_voltage"             "ms_col_gas"                
+#&gt; [37] "ms_desolv_gas_flow"         "ms_desolv_temp"            
+#&gt; [39] "ms_frag_mode"               "ms_ionization"             
+#&gt; [41] "ms_ionization_energy"       "ms_laser"                  
+#&gt; [43] "ms_matrix"                  "ms_mass_accuracy"          
+#&gt; [45] "ms_mass_range"              "ms_reagent_gas"            
+#&gt; [47] "ms_resolution"              "ms_scan_setting"           
+#&gt; [49] "ms_source_temp"             "chrom_carrier_gas"         
+#&gt; [51] "chrom_column"               "chrom_column_temp"         
+#&gt; [53] "chrom_column_temp_gradient" "chrom_flow_gradient"       
+#&gt; [55] "chrom_flow_rate"            "chrom_inj_temp"            
+#&gt; [57] "chrom_inj_temp_gradient"    "chrom_rti_kovats"          
+#&gt; [59] "chrom_rti_lee"              "chrom_rti_naps"            
+#&gt; [61] "chrom_rti_uoa"              "chrom_rti_uoa_pred"        
+#&gt; [63] "chrom_rt"                   "chrom_rt_uoa_pred"         
+#&gt; [65] "chrom_solvent"              "chrom_transfer_temp"       
+#&gt; [67] "ims_instrument_type"        "ims_drift_gas"             
+#&gt; [69] "ims_drift_time"             "ims_ccs"                   
+#&gt; [71] "general_conc"              </div><div class='input'><span class='va'>be</span><span class='op'>$</span><span class='va'>instrument</span>
+</div><div class='output co'>#&gt;                                instrument 
+#&gt;                   "Bruker maXis ESI-QTOF" 
+#&gt;                                           
+#&gt; "maXis plus UHR-ToF-MS, Bruker Daltonics" 
+#&gt;                                           
+#&gt; "maXis plus UHR-ToF-MS, Bruker Daltonics" 
+#&gt;                                           
+#&gt; "maXis plus UHR-ToF-MS, Bruker Daltonics" 
+#&gt;                                instrument 
+#&gt; "maXis plus UHR-ToF-MS, Bruker Daltonics" 
+#&gt;                                instrument 
+#&gt; "maXis plus UHR-ToF-MS, Bruker Daltonics" 
+#&gt;                                instrument 
+#&gt; "maXis plus UHR-ToF-MS, Bruker Daltonics" 
+#&gt;                                instrument 
+#&gt; "maXis plus UHR-ToF-MS, Bruker Daltonics" 
+#&gt;                                instrument 
+#&gt; "maXis plus UHR-ToF-MS, Bruker Daltonics" 
+#&gt;                                instrument 
+#&gt; "maXis plus UHR-ToF-MS, Bruker Daltonics" </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -278,11 +359,11 @@ vector the field names in the Massbank file. See output of
 
       <footer>
       <div class="copyright">
-  <p>Developed by Michael Witting, Johannes Rainer.</p>
+  <p><p>Developed by RforMassSpectrometry Package Maintainer, Michael Witting, Johannes Rainer.</p></p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9000.</p></p>
 </div>
 
       </footer>
@@ -290,6 +371,8 @@ vector the field names in the Massbank file. See output of
 
   
 
+
+  
 
   </body>
 </html>

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Metadata blocks to be read — metaDataBlocks • MsBackendMassbank</title>
+<title>Changelog • MsBackendMassbank</title>
 
 
 <!-- jquery -->
@@ -39,9 +39,7 @@
 
 
 
-<meta property="og:title" content="Metadata blocks to be read — metaDataBlocks" />
-<meta property="og:description" content="metaDataBlocks returns a data.frame with the MassBank metadata blocks
-and whether they should be imported by default from the MassBank text files." />
+<meta property="og:title" content="Changelog" />
 
 
 
@@ -68,7 +66,7 @@ and whether they should be imported by default from the MassBank text files." />
   <body data-spy="scroll" data-target="#toc">
     
 
-    <div class="container template-reference-topic">
+    <div class="container template-news">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -117,43 +115,43 @@ and whether they should be imported by default from the MassBank text files." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Metadata blocks to be read</h1>
-    <small class="dont-index">Source: <a href='https://github.com/RforMassSpectrometry/MsBackendMassbank/blob/master/R/functions-massbank.R'><code>R/functions-massbank.R</code></a></small>
-    <div class="hidden name"><code>metaDataBlocks.Rd</code></div>
+      <h1 data-toc-skip>Changelog <small></small></h1>
+      <small>Source: <a href='https://github.com/RforMassSpectrometry/MsBackendMassbank/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div class="ref-description">
-    <p><code>metaDataBlocks</code> returns a <code>data.frame</code> with the MassBank metadata blocks
-and whether they should be imported by default from the MassBank text files.</p>
-    </div>
-
-    <pre class="usage"><span class='fu'>metaDataBlocks</span><span class='op'>(</span><span class='op'>)</span></pre>
-
-
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>A <code>data.frame</code> with metadata blocks.</p>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
-    <p>Michael Witting</p>
-
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
-<span class='fu'>metaDataBlocks</span><span class='op'>(</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;   metadata  read
-#&gt; 1       ac FALSE
-#&gt; 2       ch FALSE
-#&gt; 3       sp FALSE
-#&gt; 4       ms FALSE
-#&gt; 5   record FALSE
-#&gt; 6       pk FALSE
-#&gt; 7  comment FALSE</div></pre>
+    <div id="msbackendmassbank-099" class="section level1">
+<h1 class="page-header" data-toc-text="0.99">
+<a href="#msbackendmassbank-099" class="anchor"></a>MsBackendMassbank 0.99</h1>
+<div id="changes-in-0992" class="section level2">
+<h2 class="hasAnchor">
+<a href="#changes-in-0992" class="anchor"></a>Changes in 0.99.2</h2>
+<ul>
+<li>Minor updates and changes as requested during package review process.</li>
+</ul>
+</div>
+<div id="changes-in-0991" class="section level2">
+<h2 class="hasAnchor">
+<a href="#changes-in-0991" class="anchor"></a>Changes in 0.99.1</h2>
+<ul>
+<li>Directly call package internal functions using <code><a href="https://rdrr.io/r/base/ns-dblcolon.html" class="external-link">:::</a></code> if used within <code>bplapply</code> to avoid errors on Windows.</li>
+</ul>
+</div>
+<div id="changes-in-0990" class="section level2">
+<h2 class="hasAnchor">
+<a href="#changes-in-0990" class="anchor"></a>Changes in 0.99.0</h2>
+<ul>
+<li>Prepare for Bioconductor submission.</li>
+</ul>
+</div>
+</div>
   </div>
+
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
       <h2 data-toc-skip>Contents</h2>
     </nav>
   </div>
+
 </div>
 
 
