@@ -377,7 +377,7 @@ setMethod("acquisitionNum", "MsBackendMassbankSql", function(object) {
 setMethod("peaksData", "MsBackendMassbankSql", function(object) {
     pks <- .fetch_peaks_sql(object)
     f <- factor(pks$spectrum_id, levels = object@spectraIds)
-    pks <- split.data.frame(pks, f)
+    pks <- unname(split.data.frame(pks, f))
     lapply(pks, function(z) {
         if (nrow(z))
             as.matrix(z[, 2:3], rownames.force = FALSE)
