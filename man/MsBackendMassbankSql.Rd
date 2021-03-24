@@ -54,6 +54,7 @@
 \alias{$<-,MsBackendMassbankSql-method}
 \alias{compounds,Spectra-method}
 \alias{compounds,MsBackendMassbankSql-method}
+\alias{filterPrecursorMz,MsBackendMassbankSql-method}
 \title{MS backend accessing the MassBank MySQL database}
 \usage{
 MsBackendMassbankSql()
@@ -155,6 +156,8 @@ MsBackendMassbankSql()
 \S4method{compounds}{Spectra}(object, ...)
 
 \S4method{compounds}{MsBackendMassbankSql}(object, ...)
+
+\S4method{filterPrecursorMz}{MsBackendMassbankSql}(object, mz = numeric())
 }
 \arguments{
 \item{object}{Object extending \code{MsBackendMassbankSql}.}

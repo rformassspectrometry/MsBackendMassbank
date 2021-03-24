@@ -286,12 +286,15 @@ setClass(
         spectraVariables = "character",
         coreSpectraVariables = "character",
         localData = "DataFrame",
+        precursorCache = "DataFrame",
         .tables = "list"),
     prototype = prototype(
         dbcon = NULL,
         spectraIds = character(),
         spectraVariables = character(),
         coreSpectraVariables = names(Spectra:::.SPECTRA_DATA_COLUMNS),
+        precursorCache = DataFrame(spectrum_id = character(), 
+                                   precursor_mz = numeric()),
         localData = DataFrame(),
         .tables = list(),
         readonly = TRUE, version = "0.1"))
@@ -334,8 +337,9 @@ setMethod("show", "MsBackendMassbankSql", function(object) {
 #' @importFrom DBI dbGetQuery
 #'
 #' @rdname MsBackendMassbankSql
-setMethod("backendInitialize", "MsBackendMassbankSql", function(object, dbcon,
-                                                               ...) {
+setMethod("backendInitialize", "MsBackendMassbankSql", 
+          function(object, dbcon, cachePrecursors = FALSE,
+                   ...) {
     if (missing(dbcon))
         stop("Parameter 'dbcon' is required for 'MsBackendMassbankSql'")
     msg <- .valid_dbcon(dbcon)
@@ -344,6 +348,11 @@ setMethod("backendInitialize", "MsBackendMassbankSql", function(object, dbcon,
         stop(msg)
     res <- dbGetQuery(dbcon, "select spectrum_id from msms_spectrum")
     object@spectraIds <- as.character(res[, 1])
+    if(cachePrecursors) {
+        object@precursorCache <- as(
+            dbGetQuery(object@dbcon, "SELECT * FROM msms_precursor"),
+            "DataFrame")
+    }
     object@.tables <- list(
         msms_spectrum = colnames(
             dbGetQuery(dbcon, "select * from msms_spectrum limit 0")),
@@ -858,6 +867,9 @@ setMethod("[", "MsBackendMassbankSql", function(x, i, j, ..., drop = FALSE) {
     slot(x, "spectraIds", check = FALSE) <- x@spectraIds[i]
     if (length(x@localData))
         slot(x, "localData", check = FALSE) <- extractROWS(x@localData, i)
+    if(nrow(x@precursorCache) > 0)
+        x@precursorCache <- x@precursorCache[
+            x@precursorCache[,"spectrum_id"] %in% x@spectraIds,,drop=FALSE]
     x
 })
 
@@ -926,3 +938,22 @@ setMethod("compounds", "MsBackendMassbankSql", function(object, ...) {
     res$name <- vapply(syns, function(z) z[1], character(1))
     res[match(object$compound_id, res$compound_id), ]
 })
+
+
+#' @exportMethod filterPrecursorMz
+#'
+#' @importMethodsFrom Spectra filterPrecursorMz
+#'
+#' @rdname MsBackendMassbankSql
+setMethod("filterPrecursorMz", "MsBackendMassbankSql", function(object, mz = numeric()) {
+    if (length(mz)) {
+        mz <- range(mz)
+        if(nrow(object@precursorCache) > 0)
+            keep <- .precursor_mz_cache(object, mz)
+        else
+            keep <- .precursor_mz_sql(object, mz)
+        object[keep]
+    } else object
+})
+    
+  

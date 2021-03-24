@@ -236,3 +236,34 @@ MsBackendMassbankSql <- function() {
         res <- res[, -idx[-1]]
     res
 }
+
+
+.precursor_mz_sql <- function(x, range) {
+    spectrum_ids <- dbGetQuery(
+        x@dbcon,
+        "SELECT spectrum_id FROM msms_precursor WHERE precursor_mz BETWEEN ? and ?",
+        range)
+    spectraIds <- intersect(x@spectraIds,
+                              spectrum_ids$spectrum_id)
+    # i <- i2index(i, length(x), x@spectraIds)
+    # 
+    # x@spectraIds <- x@spectraIds[i]
+    # 
+    # if (length(x@localData))
+    #   slot(x, "localData", check = FALSE) <- extractROWS(x@localData, i)
+    # 
+    return(spectraIds)
+}
+
+
+.precursor_mz_cache <- function(x, range) {
+    
+    candidates <- x@precursorCache[
+        between(x@precursorCache$precursor_mz, range[[1]], range[[2]]),
+        ,drop=FALSE]
+    spectraIds <- intersect(candidates$spectrum_id, x@spectraIds)
+    return(spectraIds)
+}
+
+
+
