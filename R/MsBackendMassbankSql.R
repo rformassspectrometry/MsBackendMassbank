@@ -345,14 +345,15 @@ setMethod("backendInitialize", "MsBackendMassbankSql",
     object@dbcon <- dbcon
     if (length(msg))
         stop(msg)
-    res <- dbGetQuery(dbcon, "select spectrum_id from msms_spectrum")
-    object@spectraIds <- as.character(res[, 1])
+    
+    res <- dbGetQuery(dbcon, "select spectrum_id, precursor_mz_text from msms_spectrum")
+    object@spectraIds <- as.character(res[, "spectrum_id"])
     object@localData <- make_zero_col_DFrame(length(object@spectraIds)) 
     
     #precursorCache <- dbGetQuery(object@dbcon, "SELECT * FROM msms_precursor")
-    precursorCache <- dbGetQuery(con, "SELECT spectrum_id, CAST(precursor_mz_text AS DOUBLE) AS precursor_mz FROM msms_spectrum")
-    object@localData$precursorMz <- 
-        precursorCache$precursor_mz[match(object@spectraIds, precursorCache$spectrum_id)]
+    #precursorCache <- dbGetQuery(con, "SELECT spectrum_id, CAST(precursor_mz_text AS DOUBLE) AS precursor_mz FROM msms_spectrum")
+    suppressWarnings(object@localData$precursorMz <- as.numeric(res[, "precursor_mz_text"]))
+    # precursorCache$precursor_mz[match(object@spectraIds, precursorCache$spectrum_id)]
 
     object@.tables <- list(
         msms_spectrum = colnames(
