@@ -752,7 +752,7 @@ setMethod(
         object@coreSpectraVariables <- intersect(object@coreSpectraVariables,
                                                  spectraVariables)
         object@localData <- object@localData[, colnames(object@localData) %in%
-                                               spectraVariables]
+                                               spectraVariables, drop = FALSE]
         validObject(object)
         object
     })

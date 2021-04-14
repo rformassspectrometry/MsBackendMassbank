@@ -180,6 +180,8 @@ test_that("selectSpectraVariables,MsBackendMassbankSql works", {
     res$new_col <- "b"
     expect_equal(spectraVariables(res),
                  c("rtime", "mz", "intensity", "new_col", "authors"))
+    res_2 <- selectSpectraVariables(res, spectraVariables(res))
+    expect_equal(spectraVariables(res), spectraVariables(res_2))
     res <- selectSpectraVariables(res, c("rtime"))
     expect_equal(spectraVariables(res), "rtime")
 })
