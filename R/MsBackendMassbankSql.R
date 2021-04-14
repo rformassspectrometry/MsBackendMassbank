@@ -286,15 +286,12 @@ setClass(
         spectraVariables = "character",
         coreSpectraVariables = "character",
         localData = "DataFrame",
-        precursorCache = "DataFrame",
         .tables = "list"),
     prototype = prototype(
         dbcon = NULL,
         spectraIds = character(),
         spectraVariables = character(),
         coreSpectraVariables = names(Spectra:::.SPECTRA_DATA_COLUMNS),
-        precursorCache = DataFrame(spectrum_id = character(), 
-                                   precursor_mz = numeric()),
         localData = DataFrame(),
         .tables = list(),
         readonly = TRUE, version = "0.1"))
@@ -350,10 +347,9 @@ setMethod("backendInitialize", "MsBackendMassbankSql",
     object@spectraIds <- as.character(res[, "spectrum_id"])
     object@localData <- make_zero_col_DFrame(length(object@spectraIds)) 
     
-    #precursorCache <- dbGetQuery(object@dbcon, "SELECT * FROM msms_precursor")
-    #precursorCache <- dbGetQuery(con, "SELECT spectrum_id, CAST(precursor_mz_text AS DOUBLE) AS precursor_mz FROM msms_spectrum")
+    # precursorCache <- dbGetQuery(object@dbcon, "SELECT * FROM msms_precursor")
+    # precursorCache <- dbGetQuery(con, "SELECT spectrum_id, CAST(precursor_mz_text AS DOUBLE) AS precursor_mz FROM msms_spectrum")
     suppressWarnings(object@localData$precursorMz <- as.numeric(res[, "precursor_mz_text"]))
-    # precursorCache$precursor_mz[match(object@spectraIds, precursorCache$spectrum_id)]
 
     object@.tables <- list(
         msms_spectrum = colnames(
@@ -869,9 +865,6 @@ setMethod("[", "MsBackendMassbankSql", function(x, i, j, ..., drop = FALSE) {
     slot(x, "spectraIds", check = FALSE) <- x@spectraIds[i]
     if (length(x@localData))
         slot(x, "localData", check = FALSE) <- extractROWS(x@localData, i)
-    if(nrow(x@precursorCache) > 0)
-        x@precursorCache <- x@precursorCache[
-            x@precursorCache[,"spectrum_id"] %in% x@spectraIds,,drop=FALSE]
     x
 })
 
