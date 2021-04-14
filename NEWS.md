@@ -1,5 +1,11 @@
 # MsBackendMassbank 0.99
 
+## Changes in 0.99.4
+
+- Fix an issue in which `selectSpectraVariables,MsBackendMassbankSql` would fail
+  if subsetted to a single variable/column in `@localData` [issue
+  #29](https://github.com/rformassspectrometry/MsBackendMassbank/issues/29)
+
 ## Changes in 0.99.3
 
 - Drop names on the `peaksData`.
