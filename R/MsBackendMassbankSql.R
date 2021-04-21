@@ -332,6 +332,7 @@ setMethod("show", "MsBackendMassbankSql", function(object) {
 #' @exportMethod backendInitialize
 #'
 #' @importFrom DBI dbGetQuery
+#' @importFrom S4Vectors make_zero_col_DFrame
 #'
 #' @rdname MsBackendMassbankSql
 setMethod("backendInitialize", "MsBackendMassbankSql", 
