@@ -527,3 +527,12 @@ test_that("compounds,Spectra works", {
     sps <- Spectra(backendInitialize(MsBackendMassbankSql(), dbc))
     res <- compounds(sps)
 })
+
+test_that("precursorMz,Spectra works", {
+    sps <- Spectra(backendInitialize(MsBackendMassbankSql(), dbc))
+    precursors_cached <- precursorMz(sps)
+    sps@backend@localData$precursorMz <- NULL
+    precursors_direct <- precursorMz(sps)
+    expect_equal(precursors_cached, precursors_direct)
+})
+

@@ -332,18 +332,26 @@ setMethod("show", "MsBackendMassbankSql", function(object) {
 #' @exportMethod backendInitialize
 #'
 #' @importFrom DBI dbGetQuery
+#' @importFrom S4Vectors make_zero_col_DFrame
 #'
 #' @rdname MsBackendMassbankSql
-setMethod("backendInitialize", "MsBackendMassbankSql", function(object, dbcon,
-                                                               ...) {
+setMethod("backendInitialize", "MsBackendMassbankSql", 
+          function(object, dbcon, ...) {
     if (missing(dbcon))
         stop("Parameter 'dbcon' is required for 'MsBackendMassbankSql'")
     msg <- .valid_dbcon(dbcon)
     object@dbcon <- dbcon
     if (length(msg))
         stop(msg)
-    res <- dbGetQuery(dbcon, "select spectrum_id from msms_spectrum")
-    object@spectraIds <- as.character(res[, 1])
+    
+    res <- dbGetQuery(dbcon, "select spectrum_id, precursor_mz_text from msms_spectrum")
+    object@spectraIds <- as.character(res[, "spectrum_id"])
+    object@localData <- make_zero_col_DFrame(length(object@spectraIds)) 
+    
+    # precursorCache <- dbGetQuery(object@dbcon, "SELECT * FROM msms_precursor")
+    # precursorCache <- dbGetQuery(con, "SELECT spectrum_id, CAST(precursor_mz_text AS DOUBLE) AS precursor_mz FROM msms_spectrum")
+    suppressWarnings(object@localData$precursorMz <- as.numeric(res[, "precursor_mz_text"]))
+
     object@.tables <- list(
         msms_spectrum = colnames(
             dbGetQuery(dbcon, "select * from msms_spectrum limit 0")),
@@ -926,3 +934,5 @@ setMethod("compounds", "MsBackendMassbankSql", function(object, ...) {
     res$name <- vapply(syns, function(z) z[1], character(1))
     res[match(object$compound_id, res$compound_id), ]
 })
+
+  
