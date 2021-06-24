@@ -1,3 +1,9 @@
+# MsBackendMassbank 1.1
+
+## Changes in 1.1.1
+
+- Cache precursor m/z to allow faster queries for spectral matching.
+
 # MsBackendMassbank 0.99
 
 ## Changes in 0.99.4

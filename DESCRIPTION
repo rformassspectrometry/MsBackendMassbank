@@ -1,6 +1,6 @@
 Package: MsBackendMassbank
 Title: Mass Spectrometry Data Backend for MassBank record Files
-Version: 1.1.0
+Version: 1.1.1
 Authors@R:
     c(person(given = "RforMassSpectrometry Package Maintainer",
              email = "maintainer@rformassspectrometry.org",
@@ -12,7 +12,10 @@ Authors@R:
       person(given = "Johannes", family = "Rainer",
              email = "Johannes.Rainer@eurac.edu",
              role = "aut",
-             comment = c(ORCID = "0000-0002-6977-7147")))
+             comment = c(ORCID = "0000-0002-6977-7147")),
+      person(given = "Michael", family = "Stravs",
+             email = "stravs@imsb.biol.ethz.ch",
+	     role = "ctb"))
 Description: Mass spectrometry (MS) data backend supporting import and
              export of MS/MS library spectra from MassBank record files.
              Different backends are available that allow handling of data in
