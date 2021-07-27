@@ -315,12 +315,13 @@ setValidity("MsBackendMassbankSql", function(object) {
 #' @export
 setMethod("show", "MsBackendMassbankSql", function(object) {
     n <- length(object@spectraIds)
-    spids <- union(head(object@spectraIds, 5), tail(object@spectraIds, 5))
-    object_sub <- object
-    object_sub@spectraIds <- spids
-    spd <- spectraData(object_sub, c("msLevel", "precursorMz", "polarity"))
     cat(class(object), "with", n, "spectra\n")
-    if (nrow(spd)) {
+    if (n) {
+        idx <- union(1:min(6, n), max(1, n-5):n)
+        spd <- spectraData(object[idx, ],
+                           c("msLevel", "precursorMz", "polarity"))
+        if (!length(rownames(spd)))
+            rownames(spd) <- idx
         txt <- capture.output(print(spd))
         cat(txt[-1], sep = "\n")
         sp_cols <- spectraVariables(object)
