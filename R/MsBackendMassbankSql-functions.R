@@ -168,14 +168,18 @@ MsBackendMassbankSql <- function() {
         columns <- columns[!columns %in% c("compound_name", "synonym")]
         columns <- unique(c(columns, "compound_id"))
     }
-    sql_columns <- .map_spectraVariables_to_sql(columns)
-    qry <- dbSendQuery(
+    sql_columns <-
+        unique(c("spectrum_id", .map_spectraVariables_to_sql(columns)))
+    ## That turns out to be faster than dbBind if we use a field in the
+    ## database that is unique (such as spectrum_id).
+    res <- dbGetQuery(
         x@dbcon,
         paste0("select ", paste(sql_columns, collapse = ","), " from ",
-               .join_query(x, sql_columns), " where spectrum_id = ?"))
-    qry <- dbBind(qry, list(x@spectraIds))
-    res <- dbFetch(qry)
-    dbClearResult(qry)
+               .join_query(x, sql_columns), " where spectrum_id in (",
+               paste0("'", unique(x@spectraIds), "'", collapse = ", ") ,")"))
+    idx <- match(x@spectraIds, res$spectrum_id)
+    res <- res[idx[!is.na(idx)], , drop = FALSE]
+    rownames(res) <- NULL
     if (any(columns == "msLevel")) {
         res$msLevel <- as.integer(sub("MS", "", res$ms_level))
         res$ms_level <- NULL
@@ -206,11 +210,11 @@ MsBackendMassbankSql <- function() {
     }
     ## manage synonym and compound_name. Need a second query for that.
     if (any(orig_columns %in% c("synonym", "compound_name"))) {
-        qry <- dbSendQuery(
-            x@dbcon, paste0("select * from synonym where compound_id = ?"))
-        qry <- dbBind(qry, list(unique(res$compound_id)))
-        cmps <- dbFetch(qry)
-        dbClearResult(qry)
+        cmps <- dbGetQuery(
+            x@dbcon,
+            paste0("select * from synonym where compound_id in (",
+                   paste0("'", unique(res$compound_id), "'",
+                          collapse = ","), ")"))
         cmpl <- split(
             cmps$synonym,
             as.factor(cmps$compound_id))[as.character(res$compound_id)]
@@ -236,6 +240,3 @@ MsBackendMassbankSql <- function() {
         res <- res[, -idx[-1]]
     res
 }
-
-
-
