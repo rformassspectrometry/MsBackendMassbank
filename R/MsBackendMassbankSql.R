@@ -315,12 +315,13 @@ setValidity("MsBackendMassbankSql", function(object) {
 #' @export
 setMethod("show", "MsBackendMassbankSql", function(object) {
     n <- length(object@spectraIds)
-    spids <- union(head(object@spectraIds, 5), tail(object@spectraIds, 5))
-    object_sub <- object
-    object_sub@spectraIds <- spids
-    spd <- spectraData(object_sub, c("msLevel", "precursorMz", "polarity"))
     cat(class(object), "with", n, "spectra\n")
-    if (nrow(spd)) {
+    if (n) {
+        idx <- union(1:min(6, n), max(1, n-5):n)
+        spd <- spectraData(object[idx, ],
+                           c("msLevel", "precursorMz", "polarity"))
+        if (!length(rownames(spd)))
+            rownames(spd) <- idx
         txt <- capture.output(print(spd))
         cat(txt[-1], sep = "\n")
         sp_cols <- spectraVariables(object)
@@ -335,7 +336,7 @@ setMethod("show", "MsBackendMassbankSql", function(object) {
 #' @importFrom S4Vectors make_zero_col_DFrame
 #'
 #' @rdname MsBackendMassbankSql
-setMethod("backendInitialize", "MsBackendMassbankSql", 
+setMethod("backendInitialize", "MsBackendMassbankSql",
           function(object, dbcon, ...) {
     if (missing(dbcon))
         stop("Parameter 'dbcon' is required for 'MsBackendMassbankSql'")
@@ -343,14 +344,14 @@ setMethod("backendInitialize", "MsBackendMassbankSql",
     object@dbcon <- dbcon
     if (length(msg))
         stop(msg)
-    
-    res <- dbGetQuery(dbcon, "select spectrum_id, precursor_mz_text from msms_spectrum")
+
+    res <- dbGetQuery(
+        dbcon, "select spectrum_id, precursor_mz_text from msms_spectrum")
     object@spectraIds <- as.character(res[, "spectrum_id"])
-    object@localData <- make_zero_col_DFrame(length(object@spectraIds)) 
-    
-    # precursorCache <- dbGetQuery(object@dbcon, "SELECT * FROM msms_precursor")
-    # precursorCache <- dbGetQuery(con, "SELECT spectrum_id, CAST(precursor_mz_text AS DOUBLE) AS precursor_mz FROM msms_spectrum")
-    suppressWarnings(object@localData$precursorMz <- as.numeric(res[, "precursor_mz_text"]))
+    object@localData <- make_zero_col_DFrame(length(object@spectraIds))
+
+    suppressWarnings(object@localData$precursorMz <-
+                         as.numeric(res[, "precursor_mz_text"]))
 
     object@.tables <- list(
         msms_spectrum = colnames(
@@ -384,8 +385,8 @@ setMethod("acquisitionNum", "MsBackendMassbankSql", function(object) {
 #' @rdname MsBackendMassbankSql
 setMethod("peaksData", "MsBackendMassbankSql", function(object) {
     pks <- .fetch_peaks_sql(object)
-    f <- factor(pks$spectrum_id, levels = object@spectraIds)
-    pks <- unname(split.data.frame(pks, f))
+    f <- factor(pks$spectrum_id)
+    pks <- unname(split.data.frame(pks, f)[object@spectraIds])
     lapply(pks, function(z) {
         if (nrow(z))
             as.matrix(z[, 2:3], rownames.force = FALSE)
@@ -934,5 +935,3 @@ setMethod("compounds", "MsBackendMassbankSql", function(object, ...) {
     res$name <- vapply(syns, function(z) z[1], character(1))
     res[match(object$compound_id, res$compound_id), ]
 })
-
-  

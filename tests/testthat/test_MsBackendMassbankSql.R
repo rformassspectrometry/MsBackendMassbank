@@ -148,6 +148,18 @@ test_that("peaksData,MsBackendMassbankSql works", {
     expect_true(is.matrix(res[[1]]))
     expect_true(is.matrix(res[[2]]))
     expect_true(is.matrix(res[[3]]))
+
+    expect_equal(lapply(res, function(z) unname(z[, 1])),
+                 unname(as.list(be$mz)))
+
+    be2 <- be[c(3, 1, 1, 2)]
+    res2 <- peaksData(be2)
+    expect_equal(lapply(res2, function(z) unname(z[, 1])),
+                 unname(as.list(be2$mz)))
+    expect_equal(res2[[1]], res[[3]])
+    expect_equal(res2[[2]], res[[1]])
+    expect_equal(res2[[3]], res[[1]])
+    expect_equal(res2[[4]], res[[2]])
 })
 
 test_that("dataOrigin, dataOrigin<-,MsBackendMassbankSql works", {
@@ -535,4 +547,3 @@ test_that("precursorMz,Spectra works", {
     precursors_direct <- precursorMz(sps)
     expect_equal(precursors_cached, precursors_direct)
 })
-

@@ -30,7 +30,7 @@ test_that(".fetch_peaks_sql works", {
 
 test_that(".fetch_spectra_data_sql works", {
     be <- backendInitialize(MsBackendMassbankSql(), dbc)
-    res <- .fetch_spectra_data_sql(be)
+    res <- MsBackendMassbank:::.fetch_spectra_data_sql(be)
     expect_true(nrow(res) > 0)
     expect_true(colnames(res) == "spectrum_id")
 

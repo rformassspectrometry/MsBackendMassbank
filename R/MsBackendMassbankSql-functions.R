@@ -109,24 +109,97 @@ MsBackendMassbankSql <- function() {
     extractCOLS(res, columns)
 }
 
+## .spectra_data_massbank_sql <- function(x, columns = spectraVariables(x)) {
+##     local_cols <- intersect(columns, colnames(x@localData))
+##     db_cols <- intersect(x@spectraVariables, columns)
+##     db_cols <- db_cols[!db_cols %in% local_cols]
+##     mz_cols <- intersect(columns, c("mz", "intensity"))
+##     core_cols <- intersect(columns, names(Spectra:::.SPECTRA_DATA_COLUMNS))
+##     core_cols <- core_cols[!core_cols %in% c(db_cols, mz_cols, local_cols)]
+##     res <- NULL
+##     ## Get data from database
+##     if (length(db_cols)) {
+##         res <- DataFrame(.fetch_spectra_data_sql(x, columns = db_cols))
+##         if (any(colnames(res) == "synonym"))
+##             res$synonym <- CharacterList(res$synonym, compress = FALSE)
+##     }
+##     ## Get m/z and intensity values
+##     if (length(mz_cols)) {
+##         pks <- .fetch_peaks_sql(x, columns = mz_cols)
+##         f <- factor(pks$spectrum_id)
+##         if (any(mz_cols == "mz")) {
+##             mzs <- split(pks$mz, f)
+##             if (length(res))
+##                 res$mz <- NumericList(mzs[as.character(x@spectraIds)],
+##                                       compress = FALSE)
+##             else res <- DataFrame(
+##                      mz = NumericList(mzs[as.character(x@spectraIds)],
+##                                       compress = FALSE))
+##         }
+##         if (any(mz_cols == "intensity")) {
+##             ints <- split(pks$intensity, f)
+##             if (length(res))
+##                 res$intensity <- NumericList(
+##                     ints[as.character(x@spectraIds)], compress = FALSE)
+##             else res <- DataFrame(
+##                      intensity = NumericList(
+##                          ints[as.character(x@spectraIds)], compress = FALSE))
+##         }
+##     }
+##     ## Get local data
+##     if (length(local_cols)) {
+##         if (length(res))
+##             res <- cbind(res, extractCOLS(x@localData, local_cols))
+##         else res <- extractCOLS(x@localData, local_cols)
+##     }
+##     ## Create missing core variables
+##     if (length(core_cols)) {
+##         tmp <- DataFrame(lapply(Spectra:::.SPECTRA_DATA_COLUMNS[core_cols],
+##                                 function(z, n) rep(as(NA, z), n), length(x)))
+##         if (length(res))
+##             res <- cbind(res, tmp)
+##         else res <- tmp
+##         if (any(core_cols == "dataStorage"))
+##             res$dataStorage <- dataStorage(x)
+##     }
+##     if (!all(columns %in% colnames(res)))
+##         stop("Column(s) ", paste0(columns[!columns %in% names(res)],
+##                                   collapse = ", "), " not available.",
+##              call. = FALSE)
+##     extractCOLS(res, columns)
+## }
+
 #' @importFrom DBI dbSendQuery dbBind dbFetch dbClearResult
 #'
 #' @noRd
 .fetch_peaks_sql <- function(x, columns = c("mz", "intensity")) {
     if (length(x@dbcon)) {
-        qry <- dbSendQuery(
-            x@dbcon, paste0("select spectrum_id,",
-                            paste(columns, collapse = ","),
-                            " from msms_spectrum_peak where spectrum_id = ?"))
-        qry <- dbBind(qry, list(unique(x@spectraIds)))
-        res <- dbFetch(qry)
-        dbClearResult(qry)
-        res
+        dbGetQuery(
+            x@dbcon,
+            paste0("select spectrum_id,", paste(columns, collapse = ","),
+                   " from msms_spectrum_peak where spectrum_id in (",
+                   paste0("'", unique(x@spectraIds), "'", collapse = ","),")"))
     } else {
         data.frame(spectrum_id = character(), mz = numeric(),
                    intensity = numeric())
     }
 }
+
+## .fetch_peaks_sql <- function(x, columns = c("mz", "intensity")) {
+##     if (length(x@dbcon)) {
+##         qry <- dbSendQuery(
+##             x@dbcon, paste0("select spectrum_id,",
+##                             paste(columns, collapse = ","),
+##                             " from msms_spectrum_peak where spectrum_id = ?"))
+##         qry <- dbBind(qry, list(unique(x@spectraIds)))
+##         res <- dbFetch(qry)
+##         dbClearResult(qry)
+##         res
+##     } else {
+##         data.frame(spectrum_id = character(), mz = numeric(),
+##                    intensity = numeric())
+##     }
+## }
 
 .columns_sql <- c(
     precursorIntensity = "precursor_intensity",
@@ -168,14 +241,18 @@ MsBackendMassbankSql <- function() {
         columns <- columns[!columns %in% c("compound_name", "synonym")]
         columns <- unique(c(columns, "compound_id"))
     }
-    sql_columns <- .map_spectraVariables_to_sql(columns)
-    qry <- dbSendQuery(
+    sql_columns <-
+        unique(c("spectrum_id", .map_spectraVariables_to_sql(columns)))
+    ## That turns out to be faster than dbBind if we use a field in the
+    ## database that is unique (such as spectrum_id).
+    res <- dbGetQuery(
         x@dbcon,
         paste0("select ", paste(sql_columns, collapse = ","), " from ",
-               .join_query(x, sql_columns), " where spectrum_id = ?"))
-    qry <- dbBind(qry, list(x@spectraIds))
-    res <- dbFetch(qry)
-    dbClearResult(qry)
+               .join_query(x, sql_columns), " where spectrum_id in (",
+               paste0("'", unique(x@spectraIds), "'", collapse = ", ") ,")"))
+    idx <- match(x@spectraIds, res$spectrum_id)
+    res <- res[idx[!is.na(idx)], , drop = FALSE]
+    rownames(res) <- NULL
     if (any(columns == "msLevel")) {
         res$msLevel <- as.integer(sub("MS", "", res$ms_level))
         res$ms_level <- NULL
@@ -206,11 +283,11 @@ MsBackendMassbankSql <- function() {
     }
     ## manage synonym and compound_name. Need a second query for that.
     if (any(orig_columns %in% c("synonym", "compound_name"))) {
-        qry <- dbSendQuery(
-            x@dbcon, paste0("select * from synonym where compound_id = ?"))
-        qry <- dbBind(qry, list(unique(res$compound_id)))
-        cmps <- dbFetch(qry)
-        dbClearResult(qry)
+        cmps <- dbGetQuery(
+            x@dbcon,
+            paste0("select * from synonym where compound_id in (",
+                   paste0("'", unique(res$compound_id), "'",
+                          collapse = ","), ")"))
         cmpl <- split(
             cmps$synonym,
             as.factor(cmps$compound_id))[as.character(res$compound_id)]
@@ -236,6 +313,3 @@ MsBackendMassbankSql <- function() {
         res <- res[, -idx[-1]]
     res
 }
-
-
-

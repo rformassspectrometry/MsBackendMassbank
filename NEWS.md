@@ -1,5 +1,13 @@
 # MsBackendMassbank 1.1
 
+## Changes in 1.1.3
+
+- Change SQL queries to increase performance.
+
+## Changes in 1.1.2
+
+- Fix bug in `show,MsBackendMassbankSql`.
+
 ## Changes in 1.1.1
 
 - Cache precursor m/z to allow faster queries for spectral matching.
