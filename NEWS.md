@@ -1,5 +1,9 @@
 # MsBackendMassbank 1.1
 
+## Changes in 1.1.4
+
+- Fix wrong database column name for collision energy.
+
 ## Changes in 1.1.3
 
 - Change SQL queries to increase performance.

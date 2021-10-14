@@ -278,7 +278,7 @@ MsBackendMassbankSql <- function() {
     }
     if (any(columns == "collisionEnergy")) {
         suppressWarnings(
-            res$collisionEnergy <- as.numeric(res$collision_energy_test))
+            res$collisionEnergy <- as.numeric(res$collision_energy_text))
         res$collision_energy_text <- NULL
     }
     ## manage synonym and compound_name. Need a second query for that.
