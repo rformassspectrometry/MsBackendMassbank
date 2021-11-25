@@ -36,6 +36,7 @@
 \alias{precursorCharge,MsBackendMassbankSql-method}
 \alias{precursorIntensity,MsBackendMassbankSql-method}
 \alias{precursorMz,MsBackendMassbankSql-method}
+\alias{precScanNum,MsBackendMassbankSql-method}
 \alias{reset,MsBackendMassbankSql-method}
 \alias{rtime,MsBackendMassbankSql-method}
 \alias{rtime<-,MsBackendMassbankSql-method}
@@ -119,6 +120,8 @@ MsBackendMassbankSql()
 \S4method{precursorIntensity}{MsBackendMassbankSql}(object)
 
 \S4method{precursorMz}{MsBackendMassbankSql}(object)
+
+\S4method{precScanNum}{MsBackendMassbankSql}(object)
 
 \S4method{reset}{MsBackendMassbankSql}(object)
 

@@ -694,6 +694,17 @@ setMethod("precursorMz", "MsBackendMassbankSql", function(object) {
     else numeric()
 })
 
+#' @exportMethod precScanNum
+#'
+#' @importMethodsFrom ProtGenerics precScanNum
+#'
+#' @rdname MsBackendMassbankSql
+setMethod("precScanNum", "MsBackendMassbankSql", function(object) {
+    if (length(object))
+        .spectra_data_massbank_sql(object, "precScanNum")[, 1]
+    else integer()
+})
+
 #' @exportMethod reset
 #'
 #' @importMethodsFrom Spectra reset

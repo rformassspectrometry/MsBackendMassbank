@@ -1,3 +1,9 @@
+# MsBackendMassbank 1.3
+
+## Changes in 1.3.1
+
+- Use in addition unit tests from the `Spectra` package.
+
 # MsBackendMassbank 1.1
 
 ## Changes in 1.1.4
