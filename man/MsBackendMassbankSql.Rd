@@ -5,152 +5,44 @@
 \alias{MsBackendMassbankSql}
 \alias{MsBackendMassbankSql-class}
 \alias{compounds}
-\alias{show,MsBackendMassbankSql-method}
 \alias{backendInitialize,MsBackendMassbankSql-method}
-\alias{acquisitionNum,MsBackendMassbankSql-method}
 \alias{peaksData,MsBackendMassbankSql-method}
-\alias{centroided,MsBackendMassbankSql-method}
-\alias{centroided<-,MsBackendMassbankSql-method}
-\alias{collisionEnergy,MsBackendMassbankSql-method}
-\alias{collisionEnergy<-,MsBackendMassbankSql-method}
-\alias{dataOrigin,MsBackendMassbankSql-method}
-\alias{dataOrigin<-,MsBackendMassbankSql-method}
 \alias{dataStorage,MsBackendMassbankSql-method}
-\alias{intensity,MsBackendMassbankSql-method}
 \alias{intensity<-,MsBackendMassbankSql-method}
-\alias{ionCount,MsBackendMassbankSql-method}
-\alias{isEmpty,MsBackendMassbankSql-method}
-\alias{isolationWindowLowerMz,MsBackendMassbankSql-method}
-\alias{isolationWindowLowerMz<-,MsBackendMassbankSql-method}
-\alias{isolationWindowTargetMz,MsBackendMassbankSql-method}
-\alias{isolationWindowTargetMz<-,MsBackendMassbankSql-method}
-\alias{isolationWindowUpperMz,MsBackendMassbankSql-method}
-\alias{isolationWindowUpperMz<-,MsBackendMassbankSql-method}
-\alias{length,MsBackendMassbankSql-method}
-\alias{msLevel,MsBackendMassbankSql-method}
-\alias{mz,MsBackendMassbankSql-method}
 \alias{mz<-,MsBackendMassbankSql-method}
-\alias{lengths,MsBackendMassbankSql-method}
-\alias{polarity,MsBackendMassbankSql-method}
-\alias{polarity<-,MsBackendMassbankSql-method}
-\alias{precursorCharge,MsBackendMassbankSql-method}
-\alias{precursorIntensity,MsBackendMassbankSql-method}
-\alias{precursorMz,MsBackendMassbankSql-method}
 \alias{reset,MsBackendMassbankSql-method}
-\alias{rtime,MsBackendMassbankSql-method}
-\alias{rtime<-,MsBackendMassbankSql-method}
-\alias{scanIndex,MsBackendMassbankSql-method}
-\alias{selectSpectraVariables,MsBackendMassbankSql-method}
-\alias{smoothed,MsBackendMassbankSql-method}
-\alias{smoothed<-,MsBackendMassbankSql-method}
 \alias{spectraData,MsBackendMassbankSql-method}
-\alias{spectraData<-,MsBackendMassbankSql-method}
 \alias{spectraNames,MsBackendMassbankSql-method}
 \alias{spectraNames<-,MsBackendMassbankSql-method}
-\alias{spectraVariables,MsBackendMassbankSql-method}
 \alias{tic,MsBackendMassbankSql-method}
 \alias{[,MsBackendMassbankSql-method}
-\alias{$,MsBackendMassbankSql-method}
-\alias{$<-,MsBackendMassbankSql-method}
 \alias{compounds,Spectra-method}
 \alias{compounds,MsBackendMassbankSql-method}
 \title{MS backend accessing the MassBank MySQL database}
 \usage{
 MsBackendMassbankSql()
 
-\S4method{show}{MsBackendMassbankSql}(object)
-
 \S4method{backendInitialize}{MsBackendMassbankSql}(object, dbcon, ...)
-
-\S4method{acquisitionNum}{MsBackendMassbankSql}(object)
 
 \S4method{peaksData}{MsBackendMassbankSql}(object)
 
-\S4method{centroided}{MsBackendMassbankSql}(object)
-
-\S4method{centroided}{MsBackendMassbankSql}(object) <- value
-
-\S4method{collisionEnergy}{MsBackendMassbankSql}(object)
-
-\S4method{collisionEnergy}{MsBackendMassbankSql}(object) <- value
-
-\S4method{dataOrigin}{MsBackendMassbankSql}(object)
-
-\S4method{dataOrigin}{MsBackendMassbankSql}(object) <- value
-
 \S4method{dataStorage}{MsBackendMassbankSql}(object)
-
-\S4method{intensity}{MsBackendMassbankSql}(object)
 
 \S4method{intensity}{MsBackendMassbankSql}(object) <- value
 
-\S4method{ionCount}{MsBackendMassbankSql}(object)
-
-\S4method{isEmpty}{MsBackendMassbankSql}(x)
-
-\S4method{isolationWindowLowerMz}{MsBackendMassbankSql}(object)
-
-\S4method{isolationWindowLowerMz}{MsBackendMassbankSql}(object) <- value
-
-\S4method{isolationWindowTargetMz}{MsBackendMassbankSql}(object)
-
-\S4method{isolationWindowTargetMz}{MsBackendMassbankSql}(object) <- value
-
-\S4method{isolationWindowUpperMz}{MsBackendMassbankSql}(object)
-
-\S4method{isolationWindowUpperMz}{MsBackendMassbankSql}(object) <- value
-
-\S4method{length}{MsBackendMassbankSql}(x)
-
-\S4method{msLevel}{MsBackendMassbankSql}(object)
-
-\S4method{mz}{MsBackendMassbankSql}(object)
-
 \S4method{mz}{MsBackendMassbankSql}(object) <- value
-
-\S4method{lengths}{MsBackendMassbankSql}(x, use.names = FALSE)
-
-\S4method{polarity}{MsBackendMassbankSql}(object)
-
-\S4method{polarity}{MsBackendMassbankSql}(object) <- value
-
-\S4method{precursorCharge}{MsBackendMassbankSql}(object)
-
-\S4method{precursorIntensity}{MsBackendMassbankSql}(object)
-
-\S4method{precursorMz}{MsBackendMassbankSql}(object)
 
 \S4method{reset}{MsBackendMassbankSql}(object)
 
-\S4method{rtime}{MsBackendMassbankSql}(object)
-
-\S4method{rtime}{MsBackendMassbankSql}(object) <- value
-
-\S4method{scanIndex}{MsBackendMassbankSql}(object)
-
-\S4method{selectSpectraVariables}{MsBackendMassbankSql}(object, spectraVariables = spectraVariables(object))
-
-\S4method{smoothed}{MsBackendMassbankSql}(object)
-
-\S4method{smoothed}{MsBackendMassbankSql}(object) <- value
-
 \S4method{spectraData}{MsBackendMassbankSql}(object, columns = spectraVariables(object))
-
-\S4method{spectraData}{MsBackendMassbankSql}(object) <- value
 
 \S4method{spectraNames}{MsBackendMassbankSql}(object)
 
 \S4method{spectraNames}{MsBackendMassbankSql}(object) <- value
 
-\S4method{spectraVariables}{MsBackendMassbankSql}(object)
-
 \S4method{tic}{MsBackendMassbankSql}(object, initial = TRUE)
 
 \S4method{[}{MsBackendMassbankSql}(x, i, j, ..., drop = FALSE)
-
-\S4method{$}{MsBackendMassbankSql}(x, name)
-
-\S4method{$}{MsBackendMassbankSql}(x, name) <- value
 
 \S4method{compounds}{Spectra}(object, ...)
 
@@ -167,13 +59,6 @@ connection to the MassBank (MariaDb) database.}
 \item{value}{replacement value for \verb{<-} methods. See individual
 method description or expected data type.}
 
-\item{x}{Object extending \code{MsBackendMassbankSql}.}
-
-\item{use.names}{For \code{lengths}: whether spectrum names should be used.}
-
-\item{spectraVariables}{For \code{selectSpectraVariables}: \code{character} with the
-names of the spectra variables to which the backend should be subsetted.}
-
 \item{columns}{For \code{spectraData} accessor: optional \code{character} with column
 names (spectra variables) that should be included in the
 returned \code{DataFrame}. By default, all columns are returned.}
@@ -183,14 +68,16 @@ reported total ion current should be reported, or whether the
 total ion current should be (re)calculated on the actual data
 (\code{initial = FALSE}).}
 
+\item{x}{Object extending \code{MsBackendMassbankSql}.}
+
 \item{i}{For \code{[}: \code{integer}, \code{logical} or \code{character} to subset the object.}
 
 \item{j}{For \code{[}: not supported.}
 
 \item{drop}{For \code{[}: not considered.}
 
-\item{name}{For \code{$} and \verb{$<-}: the name of the spectra variable to return
-or set.}
+\item{spectraVariables}{For \code{selectSpectraVariables}: \code{character} with the
+names of the spectra variables to which the backend should be subsetted.}
 }
 \value{
 See documentation of respective function.
@@ -320,7 +207,7 @@ the selected spectra variables.
 \emph{smoothed}. \code{smoothed} returns a \code{logical} vector of length equal
 to the number of spectra. \verb{smoothed<-} takes a \code{logical} vector
 of length 1 or equal to the number of spectra in \code{object}.
-\item \code{spectraData}: gets general spectrummetadata (annotation, also called
+\item \code{spectraData}: gets general spectrum metadata (annotation, also called
 header).  \code{spectraData} returns a \code{DataFrame}. Note that replacing the
 spectra data with \verb{spectraData<-} is not supported.
 \item \code{spectraNames}: returns a \code{character} vector with the names of
