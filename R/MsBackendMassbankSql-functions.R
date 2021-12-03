@@ -56,7 +56,7 @@ MsBackendMassbankSql <- function() {
 
     if (length(db_cols)) {
         res <- cbind(
-            res, DataFrame(.fetch_spectra_data_sql(x, columns = db_cols)))
+            res, as(.fetch_spectra_data_sql(x, columns = db_cols), "DataFrame"))
         if (any(colnames(res) == "synonym"))
             res$synonym <- CharacterList(res$synonym, compress = FALSE)
     }

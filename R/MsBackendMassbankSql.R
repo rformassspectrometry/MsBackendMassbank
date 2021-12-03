@@ -41,6 +41,9 @@
 #'
 #' @param j For `[`: not supported.
 #'
+#' @param name name of the variable to replace for `<-` methods. See individual
+#'     method description or expected data type.
+#'
 #' @param object Object extending `MsBackendMassbankSql`.
 #'
 #' @param spectraVariables For `selectSpectraVariables`: `character` with the
@@ -480,4 +483,13 @@ setMethod("compounds", "MsBackendMassbankSql", function(object, ...) {
     res$synonym <- CharacterList(syns, compress = FALSE)
     res$name <- vapply(syns, function(z) z[1], character(1))
     res[match(object$compound_id, res$compound_id), ]
+})
+
+#' @rdname MsBackendMassbankSql
+#'
+#' @export
+setReplaceMethod("$", "MsBackendMassbankSql", function(x, name, value) {
+    if (name %in% c("spectrum_id"))
+        stop("Spectra IDs can not be changes.", call. = FALSE)
+    callNextMethod()
 })

@@ -18,6 +18,7 @@
 \alias{[,MsBackendMassbankSql-method}
 \alias{compounds,Spectra-method}
 \alias{compounds,MsBackendMassbankSql-method}
+\alias{$<-,MsBackendMassbankSql-method}
 \title{MS backend accessing the MassBank MySQL database}
 \usage{
 MsBackendMassbankSql()
@@ -47,6 +48,8 @@ MsBackendMassbankSql()
 \S4method{compounds}{Spectra}(object, ...)
 
 \S4method{compounds}{MsBackendMassbankSql}(object, ...)
+
+\S4method{$}{MsBackendMassbankSql}(x, name) <- value
 }
 \arguments{
 \item{object}{Object extending \code{MsBackendMassbankSql}.}
@@ -75,6 +78,9 @@ total ion current should be (re)calculated on the actual data
 \item{j}{For \code{[}: not supported.}
 
 \item{drop}{For \code{[}: not considered.}
+
+\item{name}{name of the variable to replace for \verb{<-} methods. See individual
+method description or expected data type.}
 
 \item{spectraVariables}{For \code{selectSpectraVariables}: \code{character} with the
 names of the spectra variables to which the backend should be subsetted.}
