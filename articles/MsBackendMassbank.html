@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MsBackendMassbank</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.1</span>
       </span>
     </div>
 
@@ -97,7 +97,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (links[i].hostname != window.location.hostname)
       links[i].target = '_blank';
 });
-</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.15/MsBackendMassbank" class="external-link">MsBackendMassbank</a></em><br><strong>Authors</strong>: RforMassSpectrometry Package Maintainer [cre], Michael Witting [aut] (<a href="https://orcid.org/0000-0002-1462-4426" class="external-link uri">https://orcid.org/0000-0002-1462-4426</a>), Johannes Rainer [aut] (<a href="https://orcid.org/0000-0002-6977-7147" class="external-link uri">https://orcid.org/0000-0002-6977-7147</a>), Michael Stravs [ctb]<br><strong>Compiled</strong>: Sat Jan 1 09:06:16 2022</p>
+</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.15/MsBackendMassbank" class="external-link">MsBackendMassbank</a></em><br><strong>Authors</strong>: RforMassSpectrometry Package Maintainer [cre], Michael Witting [aut] (<a href="https://orcid.org/0000-0002-1462-4426" class="external-link uri">https://orcid.org/0000-0002-1462-4426</a>), Johannes Rainer [aut] (<a href="https://orcid.org/0000-0002-6977-7147" class="external-link uri">https://orcid.org/0000-0002-6977-7147</a>), Michael Stravs [ctb]<br><strong>Compiled</strong>: Sat Jan 1 09:26:04 2022</p>
 <div class="section level1">
 <h1 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h1>
@@ -405,16 +405,16 @@ document.addEventListener("DOMContentLoaded", function() {
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">mz</a></span><span class="op">(</span><span class="va">mb</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## NumericList of length 70</span>
-<span class="co">## [["MCH00020"]] 146.760803 158.863541 174.988785 ... 487.989319 585.88446</span>
-<span class="co">## [["MCH00002"]] 22.99 23.07 23.19 38.98 53.15 ... 413.22 414.22 429.16 495.2</span>
-<span class="co">## [["MCH00006"]] 108.099566 152.005378 153.01824 ... 409.06729 499.103447</span>
-<span class="co">## [["MCH00009"]] 137.0227 138.025605 139.034602 ... 316.303106 352.234228</span>
-<span class="co">## [["MCH00014"]] 112.977759 205.053323 208.041128 ... 671.1778 673.200866</span>
-<span class="co">## [["MCH00019"]] 78.893929 183.011719 193.957916 ... 408.010193 426.021942</span>
-<span class="co">## [["MCH00012"]] 167.03389 168.040758 333.079965 ... 365.040698 373.073473</span>
-<span class="co">## [["MCH00003"]] 195.09167 196.095033</span>
-<span class="co">## [["MCH00016"]] 108.096149 152.004656 153.01824 ... 409.065314 491.043775</span>
-<span class="co">## [["MCH00001"]] 1278.12 1279.11 1279.18 1306.21 ... 2091.32 2092.3 2136.33</span>
+<span class="co">## [[1]] 146.760803 158.863541 174.988785 ... 470.057434 487.989319 585.88446</span>
+<span class="co">## [[2]] 22.99 23.07 23.19 38.98 53.15 60.08 ... 391.18 413.22 414.22 429.16 495.2</span>
+<span class="co">## [[3]] 108.099566 152.005378 153.01824 ... 341.031964 409.06729 499.103447</span>
+<span class="co">## [[4]] 137.0227 138.025605 139.034602 ... 304.271886 316.303106 352.234228</span>
+<span class="co">## [[5]] 112.977759 205.053323 208.041128 ... 449.137152 671.1778 673.200866</span>
+<span class="co">## [[6]] 78.893929 183.011719 193.957916 ... 328.091949 408.010193 426.021942</span>
+<span class="co">## [[7]] 167.03389 168.040758 333.079965 ... 357.073039 365.040698 373.073473</span>
+<span class="co">## [[8]] 195.09167 196.095033</span>
+<span class="co">## [[9]] 108.096149 152.004656 153.01824 ... 359.997563 409.065314 491.043775</span>
+<span class="co">## [[10]] 1278.12 1279.11 1279.18 1306.21 ... 2064.29 2091.32 2092.3 2136.33</span>
 <span class="co">## ...</span>
 <span class="co">## &lt;60 more elements&gt;</span></code></pre>
 <p>Note that not all spectra from the database were generated using the same instrumentation. Below we list the number of spectra for each type of instrument.</p>
@@ -482,7 +482,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <span class="co">## [8] base     </span>
 <span class="co">## </span>
 <span class="co">## other attached packages:</span>
-<span class="co">## [1] MsCoreUtils_1.7.1       RSQLite_2.2.9           MsBackendMassbank_1.3.0</span>
+<span class="co">## [1] MsCoreUtils_1.7.1       RSQLite_2.2.9           MsBackendMassbank_1.3.1</span>
 <span class="co">## [4] Spectra_1.5.4           ProtGenerics_1.27.1     BiocParallel_1.29.8    </span>
 <span class="co">## [7] S4Vectors_0.33.8        BiocGenerics_0.41.2     BiocStyle_2.23.1       </span>
 <span class="co">## </span>
