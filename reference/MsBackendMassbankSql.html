@@ -32,7 +32,7 @@ m/z reported in MassBank.'><meta property="og:image" content="/logo.png"><!-- ma
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MsBackendMassbank</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.0</span>
       </span>
     </div>
 
@@ -47,7 +47,7 @@ m/z reported in MassBank.'><meta property="og:image" content="/logo.png"><!-- ma
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/RforMassSpectrometry/MsBackendMassbank/">
+  <a href="https://github.com/RforMassSpectrometry/MsBackendMassbank/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -62,13 +62,13 @@ m/z reported in MassBank.'><meta property="og:image" content="/logo.png"><!-- ma
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>MS backend accessing the MassBank MySQL database</h1>
-    <small class="dont-index">Source: <a href="https://github.com/RforMassSpectrometry/MsBackendMassbank/blob/master/R/MsBackendMassbankSql-functions.R"><code>R/MsBackendMassbankSql-functions.R</code></a>, <a href="https://github.com/RforMassSpectrometry/MsBackendMassbank/blob/master/R/MsBackendMassbankSql.R"><code>R/MsBackendMassbankSql.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/RforMassSpectrometry/MsBackendMassbank/blob/HEAD/R/MsBackendMassbankSql-functions.R" class="external-link"><code>R/MsBackendMassbankSql-functions.R</code></a>, <a href="https://github.com/RforMassSpectrometry/MsBackendMassbank/blob/HEAD/R/MsBackendMassbankSql.R" class="external-link"><code>R/MsBackendMassbankSql.R</code></a></small>
     <div class="hidden name"><code>MsBackendMassbankSql.Rd</code></div>
     </div>
 
     <div class="ref-description">
     <p>The <code>MsBackendMassbankSql</code> provides access to mass spectrometry data from
-<a href="https://massbank.eu/MassBank/">MassBank</a> by directly accessing its
+<a href="https://massbank.eu/MassBank/" class="external-link">MassBank</a> by directly accessing its
 MySQL/MariaDb database. In addition it supports adding new spectra variables
 or <em>locally</em> changing spectra variables provided by MassBank (without
 changing the original values in the database).</p>
@@ -85,7 +85,8 @@ variable <code>"precursor_mz_text"</code> can be used to get the <em>original</e
 m/z reported in MassBank.</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre><code>MsBackendMassbankSql()
+    <div id="ref-usage">
+    <div class="sourceCode"><pre><code>MsBackendMassbankSql()
 
 # S4 method for MsBackendMassbankSql
 show(object)
@@ -233,48 +234,52 @@ compounds(object, ...)
 
 # S4 method for MsBackendMassbankSql
 compounds(object, ...)</code></pre></div>
+    </div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
-      <td><p>Object extending <code>MsBackendMassbankSql</code>.</p></td>
-    </tr><tr><th>dbcon</th>
-      <td><p>For <code>backendInitialize,MsBackendMassbankSql</code>: SQL database
-connection to the MassBank (MariaDb) database.</p></td>
-    </tr><tr><th>...</th>
-      <td><p>Additional arguments.</p></td>
-    </tr><tr><th>value</th>
-      <td><p>replacement value for <code>&lt;-</code> methods. See individual
-method description or expected data type.</p></td>
-    </tr><tr><th>x</th>
-      <td><p>Object extending <code>MsBackendMassbankSql</code>.</p></td>
-    </tr><tr><th>use.names</th>
-      <td><p>For <code>lengths</code>: whether spectrum names should be used.</p></td>
-    </tr><tr><th>spectraVariables</th>
-      <td><p>For <code>selectSpectraVariables</code>: <code>character</code> with the
-names of the spectra variables to which the backend should be subsetted.</p></td>
-    </tr><tr><th>columns</th>
-      <td><p>For <code>spectraData</code> accessor: optional <code>character</code> with column
+    <div id="arguments">
+    <h2>Arguments</h2>
+    <dl><dt>object</dt>
+<dd><p>Object extending <code>MsBackendMassbankSql</code>.</p></dd>
+<dt>dbcon</dt>
+<dd><p>For <code>backendInitialize,MsBackendMassbankSql</code>: SQL database
+connection to the MassBank (MariaDb) database.</p></dd>
+<dt>...</dt>
+<dd><p>Additional arguments.</p></dd>
+<dt>value</dt>
+<dd><p>replacement value for <code>&lt;-</code> methods. See individual
+method description or expected data type.</p></dd>
+<dt>x</dt>
+<dd><p>Object extending <code>MsBackendMassbankSql</code>.</p></dd>
+<dt>use.names</dt>
+<dd><p>For <code>lengths</code>: whether spectrum names should be used.</p></dd>
+<dt>spectraVariables</dt>
+<dd><p>For <code>selectSpectraVariables</code>: <code>character</code> with the
+names of the spectra variables to which the backend should be subsetted.</p></dd>
+<dt>columns</dt>
+<dd><p>For <code>spectraData</code> accessor: optional <code>character</code> with column
 names (spectra variables) that should be included in the
-returned <code>DataFrame</code>. By default, all columns are returned.</p></td>
-    </tr><tr><th>initial</th>
-      <td><p>For <code>tic</code>: <code>logical(1)</code> whether the initially
+returned <code>DataFrame</code>. By default, all columns are returned.</p></dd>
+<dt>initial</dt>
+<dd><p>For <code>tic</code>: <code>logical(1)</code> whether the initially
 reported total ion current should be reported, or whether the
 total ion current should be (re)calculated on the actual data
-(<code>initial = FALSE</code>).</p></td>
-    </tr><tr><th>i</th>
-      <td><p>For <code>[</code>: <code>integer</code>, <code>logical</code> or <code>character</code> to subset the object.</p></td>
-    </tr><tr><th>j</th>
-      <td><p>For <code>[</code>: not supported.</p></td>
-    </tr><tr><th>drop</th>
-      <td><p>For <code>[</code>: not considered.</p></td>
-    </tr><tr><th>name</th>
-      <td><p>For <code>$</code> and <code>$&lt;-</code>: the name of the spectra variable to return
-or set.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
+(<code>initial = FALSE</code>).</p></dd>
+<dt>i</dt>
+<dd><p>For <code>[</code>: <code>integer</code>, <code>logical</code> or <code>character</code> to subset the object.</p></dd>
+<dt>j</dt>
+<dd><p>For <code>[</code>: not supported.</p></dd>
+<dt>drop</dt>
+<dd><p>For <code>[</code>: not considered.</p></dd>
+<dt>name</dt>
+<dd><p>For <code>$</code> and <code>$&lt;-</code>: the name of the spectra variable to return
+or set.</p></dd>
+</dl></div>
+    <div id="value">
+    <h2>Value</h2>
     <p>See documentation of respective function.</p>
-    <h2 class="hasAnchor" id="supported-backend-functions"><a class="anchor" href="#supported-backend-functions"></a>Supported Backend functions</h2>
-
+    </div>
+    <div id="supported-backend-functions">
+    <h2>Supported Backend functions</h2>
     
 
 
@@ -392,8 +397,9 @@ default not returned by the <code>spectraVariables,Spectra</code> method).</p></
 spectrum) for all spectra in <code>object</code>. By default, the value
 reported in the original raw data file is returned. For an empty
 spectrum, <code>NA_real_</code> is returned.</p></li>
-</ul><h2 class="hasAnchor" id="not-supported-backend-functions"><a class="anchor" href="#not-supported-backend-functions"></a>Not supported Backend functions</h2>
-
+</ul></div>
+    <div id="not-supported-backend-functions">
+    <h2>Not supported Backend functions</h2>
     
 
 
@@ -402,8 +408,9 @@ the original data can not be changed.</p>
 <p><code>backendMerge</code>, <code>export</code>, <code>filterDataStorage</code>, <code>filterPrecursorScan</code>,
 <code>peaksData&lt;-</code>, <code>filterAcquisitionNum</code>, <code>intensity&lt;-</code>, <code>mz&lt;-</code>, <code>precScanNum</code>,
 <code>spectraData&lt;-</code>, <code>spectraNames&lt;-</code>.</p>
-    <h2 class="hasAnchor" id="retrieving-compound-annotations-for-spectra"><a class="anchor" href="#retrieving-compound-annotations-for-spectra"></a>Retrieving compound annotations for spectra</h2>
-
+    </div>
+    <div id="retrieving-compound-annotations-for-spectra">
+    <h2>Retrieving compound annotations for spectra</h2>
     
 
 
@@ -411,19 +418,22 @@ the original data can not be changed.</p>
 the backend, it would also be possible to use the <code>compounds</code> function on
 a <code>Spectra</code> object (that uses a <code>MsBackendMassbankSql</code> backend) to retrieve
 compound annotations for the specific spectra.</p>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+    </div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Johannes Rainer</p>
+    </div>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
+    <div id="ref-examples">
+    <h2>Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="co">## Create a connection to a database with MassBank data - in the present</span></span>
 <span class="r-in"><span class="co">## example we connect to a tiny SQLite database bundled in this package</span></span>
 <span class="r-in"><span class="co">## as public access to the MassBank MySQL is not (yet) supported. See the</span></span>
 <span class="r-in"><span class="co">## vignette for more information on how to install MassBank locally and</span></span>
 <span class="r-in"><span class="co">## enable MySQL database connections</span></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://rsqlite.r-dbi.org">RSQLite</a></span><span class="op">)</span></span>
-<span class="r-in"><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu">dbConnect</span><span class="op">(</span><span class="fu"><a href="https://rsqlite.r-dbi.org/reference/SQLite.html">SQLite</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"sql"</span>, <span class="st">"minimassbank.sqlite"</span>,</span>
+<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rsqlite.r-dbi.org" class="external-link">RSQLite</a></span><span class="op">)</span></span>
+<span class="r-in"><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu">dbConnect</span><span class="op">(</span><span class="fu"><a href="https://rsqlite.r-dbi.org/reference/SQLite.html" class="external-link">SQLite</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"sql"</span>, <span class="st">"minimassbank.sqlite"</span>,</span>
 <span class="r-in">    package <span class="op">=</span> <span class="st">"MsBackendMassbank"</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Given that we have the connection to a MassBank databas we can</span></span>
@@ -668,7 +678,7 @@ compound annotations for the specific spectra.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [58] "b" "b" "b" "b" "b" "b" "b" "b" "b" "b" "b" "b" "b"</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Subset the backend</span></span>
-<span class="r-in"><span class="va">be_sub</span> <span class="op">&lt;-</span> <span class="va">be</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">1</span><span class="op">)</span><span class="op">]</span></span>
+<span class="r-in"><span class="va">be_sub</span> <span class="op">&lt;-</span> <span class="va">be</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">1</span><span class="op">)</span><span class="op">]</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="fu">spectraNames</span><span class="op">(</span><span class="va">be</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "MCH00020" "MCH00002" "MCH00006" "MCH00009" "MCH00014" "MCH00019"</span>
@@ -686,6 +696,7 @@ compound annotations for the specific spectra.</p>
 <span class="r-in"><span class="fu">spectraNames</span><span class="op">(</span><span class="va">be_sub</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "MCH00006" "MCH00020"</span>
 </code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>
@@ -698,7 +709,7 @@ compound annotations for the specific spectra.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.9000.9000.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.9000.</p>
 </div>
 
       </footer></div>

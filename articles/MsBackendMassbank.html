@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MsBackendMassbank</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.0</span>
       </span>
     </div>
 
@@ -79,7 +79,7 @@
       <h1 data-toc-skip>Description and usage of MsBackendMassbank</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/RforMassSpectrometry/MsBackendMassbank/blob/master/vignettes/MsBackendMassbank.Rmd" class="external-link"><code>vignettes/MsBackendMassbank.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/RforMassSpectrometry/MsBackendMassbank/blob/HEAD/vignettes/MsBackendMassbank.Rmd" class="external-link"><code>vignettes/MsBackendMassbank.Rmd</code></a></small>
       <div class="hidden name"><code>MsBackendMassbank.Rmd</code></div>
 
     </div>
@@ -97,20 +97,20 @@ document.addEventListener("DOMContentLoaded", function() {
     if (links[i].hostname != window.location.hostname)
       links[i].target = '_blank';
 });
-</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.14/MsBackendMassbank" class="external-link">MsBackendMassbank</a></em><br><strong>Authors</strong>: RforMassSpectrometry Package Maintainer [cre], Michael Witting [aut] (<a href="https://orcid.org/0000-0002-1462-4426" class="external-link uri">https://orcid.org/0000-0002-1462-4426</a>), Johannes Rainer [aut] (<a href="https://orcid.org/0000-0002-6977-7147" class="external-link uri">https://orcid.org/0000-0002-6977-7147</a>), Michael Stravs [ctb]<br><strong>Compiled</strong>: Thu Oct 14 14:09:24 2021</p>
-<div id="introduction" class="section level1">
-<h1 class="hasAnchor">
-<a href="#introduction" class="anchor" aria-hidden="true"></a>Introduction</h1>
+</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.15/MsBackendMassbank" class="external-link">MsBackendMassbank</a></em><br><strong>Authors</strong>: RforMassSpectrometry Package Maintainer [cre], Michael Witting [aut] (<a href="https://orcid.org/0000-0002-1462-4426" class="external-link uri">https://orcid.org/0000-0002-1462-4426</a>), Johannes Rainer [aut] (<a href="https://orcid.org/0000-0002-6977-7147" class="external-link uri">https://orcid.org/0000-0002-6977-7147</a>), Michael Stravs [ctb]<br><strong>Compiled</strong>: Sat Jan 1 08:54:01 2022</p>
+<div class="section level1">
+<h1 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+</h1>
 <p>The <code>Spectra</code> package provides a central infrastructure for the handling of Mass Spectrometry (MS) data. The package supports interchangeable use of different <em>backends</em> to import MS data from a variety of sources (such as mzML files). The <code>MsBackendMassbank</code> package allows import and handling MS/MS spectrum data from <a href="https://massbank.eu/MassBank/" class="external-link">Massbank</a>. This vignette illustrates the usage of the <code>MsBackendMassbank</code> package to include MassBank data into MS data analysis workflow with the <code>Spectra</code> package in R.</p>
 </div>
-<div id="installation" class="section level1">
-<h1 class="hasAnchor">
-<a href="#installation" class="anchor" aria-hidden="true"></a>Installation</h1>
+<div class="section level1">
+<h1 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h1>
 <p>The package can be installed with the <code>BiocManager</code> package. To install <code>BiocManager</code> use <code>install.packages("BiocManager")</code> and, after that, <code>BiocManager::install("MsBackendMassbank")</code> to install this package.</p>
 </div>
-<div id="importing-msms-data-from-massbank-files" class="section level1">
-<h1 class="hasAnchor">
-<a href="#importing-msms-data-from-massbank-files" class="anchor" aria-hidden="true"></a>Importing MS/MS data from MassBank files</h1>
+<div class="section level1">
+<h1 id="importing-msms-data-from-massbank-files">Importing MS/MS data from MassBank files<a class="anchor" aria-label="anchor" href="#importing-msms-data-from-massbank-files"></a>
+</h1>
 <p>MassBank files (as provided by the <a href="https://github.com/MassBank/MassBank-data" class="external-link">Massbank github repository</a>) store normally one library spectrum per file, typically centroided and of MS level 2. In our short example below, we load data from a file containing multiple library spectra per file or from files with each a single spectrum provided with this package. Below we first load all required packages and define the paths to the Massbank files.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/RforMassSpectrometry/Spectra" class="external-link">Spectra</a></span><span class="op">)</span>
@@ -118,14 +118,14 @@ document.addEventListener("DOMContentLoaded", function() {
 <span class="va">fls</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">dir</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, package <span class="op">=</span> <span class="st">"MsBackendMassbank"</span><span class="op">)</span>,
            full.names <span class="op">=</span> <span class="cn">TRUE</span>, pattern <span class="op">=</span> <span class="st">"txt$"</span><span class="op">)</span>
 <span class="va">fls</span></code></pre></div>
-<pre><code>## [1] "/__w/_temp/Library/MsBackendMassbank/extdata/BSU00001.txt"       
-## [2] "/__w/_temp/Library/MsBackendMassbank/extdata/MassBankRecords.txt"
-## [3] "/__w/_temp/Library/MsBackendMassbank/extdata/RP000501.txt"       
-## [4] "/__w/_temp/Library/MsBackendMassbank/extdata/RP000502.txt"       
-## [5] "/__w/_temp/Library/MsBackendMassbank/extdata/RP000503.txt"       
-## [6] "/__w/_temp/Library/MsBackendMassbank/extdata/RP000511.txt"       
-## [7] "/__w/_temp/Library/MsBackendMassbank/extdata/RP000512.txt"       
-## [8] "/__w/_temp/Library/MsBackendMassbank/extdata/RP000513.txt"</code></pre>
+<pre><code><span class="co">## [1] "/__w/_temp/Library/MsBackendMassbank/extdata/BSU00001.txt"       </span>
+<span class="co">## [2] "/__w/_temp/Library/MsBackendMassbank/extdata/MassBankRecords.txt"</span>
+<span class="co">## [3] "/__w/_temp/Library/MsBackendMassbank/extdata/RP000501.txt"       </span>
+<span class="co">## [4] "/__w/_temp/Library/MsBackendMassbank/extdata/RP000502.txt"       </span>
+<span class="co">## [5] "/__w/_temp/Library/MsBackendMassbank/extdata/RP000503.txt"       </span>
+<span class="co">## [6] "/__w/_temp/Library/MsBackendMassbank/extdata/RP000511.txt"       </span>
+<span class="co">## [7] "/__w/_temp/Library/MsBackendMassbank/extdata/RP000512.txt"       </span>
+<span class="co">## [8] "/__w/_temp/Library/MsBackendMassbank/extdata/RP000513.txt"</span></code></pre>
 <p>MS data can be accessed and analyzed through <code>Spectra</code> objects. Below we create a <code>Spectra</code> with the data from these mgf files. To this end we provide the file names and specify to use a <code><a href="../reference/MsBackendMassbank.html">MsBackendMassbank()</a></code> backend as <em>source</em> to enable data import. First we import from a single file with multiple library spectra.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html" class="external-link">Spectra</a></span><span class="op">(</span><span class="va">fls</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,
@@ -134,21 +134,21 @@ document.addEventListener("DOMContentLoaded", function() {
 <p>With that we have now full access to all imported spectra variables that we list below.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">spectraVariables</a></span><span class="op">(</span><span class="va">sps</span><span class="op">)</span></code></pre></div>
-<pre><code>##  [1] "msLevel"                 "rtime"                  
-##  [3] "acquisitionNum"          "scanIndex"              
-##  [5] "dataStorage"             "dataOrigin"             
-##  [7] "centroided"              "smoothed"               
-##  [9] "polarity"                "precScanNum"            
-## [11] "precursorMz"             "precursorIntensity"     
-## [13] "precursorCharge"         "collisionEnergy"        
-## [15] "isolationWindowLowerMz"  "isolationWindowTargetMz"
-## [17] "isolationWindowUpperMz"  "acquistionNum"          
-## [19] "accession"               "name"                   
-## [21] "smiles"                  "exactmass"              
-## [23] "formula"                 "inchi"                  
-## [25] "cas"                     "inchikey"               
-## [27] "adduct"                  "splash"                 
-## [29] "title"</code></pre>
+<pre><code><span class="co">##  [1] "msLevel"                 "rtime"                  </span>
+<span class="co">##  [3] "acquisitionNum"          "scanIndex"              </span>
+<span class="co">##  [5] "dataStorage"             "dataOrigin"             </span>
+<span class="co">##  [7] "centroided"              "smoothed"               </span>
+<span class="co">##  [9] "polarity"                "precScanNum"            </span>
+<span class="co">## [11] "precursorMz"             "precursorIntensity"     </span>
+<span class="co">## [13] "precursorCharge"         "collisionEnergy"        </span>
+<span class="co">## [15] "isolationWindowLowerMz"  "isolationWindowTargetMz"</span>
+<span class="co">## [17] "isolationWindowUpperMz"  "acquistionNum"          </span>
+<span class="co">## [19] "accession"               "name"                   </span>
+<span class="co">## [21] "smiles"                  "exactmass"              </span>
+<span class="co">## [23] "formula"                 "inchi"                  </span>
+<span class="co">## [25] "cas"                     "inchikey"               </span>
+<span class="co">## [27] "adduct"                  "splash"                 </span>
+<span class="co">## [29] "title"</span></code></pre>
 <p>The same is possible with multiple files, each containing a library spectrum.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html" class="external-link">Spectra</a></span><span class="op">(</span><span class="va">fls</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span>,
@@ -156,21 +156,21 @@ document.addEventListener("DOMContentLoaded", function() {
                backend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/MsBackend.html" class="external-link">MsBackendDataFrame</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 
 <span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">spectraVariables</a></span><span class="op">(</span><span class="va">sps</span><span class="op">)</span></code></pre></div>
-<pre><code>##  [1] "msLevel"                 "rtime"                  
-##  [3] "acquisitionNum"          "scanIndex"              
-##  [5] "dataStorage"             "dataOrigin"             
-##  [7] "centroided"              "smoothed"               
-##  [9] "polarity"                "precScanNum"            
-## [11] "precursorMz"             "precursorIntensity"     
-## [13] "precursorCharge"         "collisionEnergy"        
-## [15] "isolationWindowLowerMz"  "isolationWindowTargetMz"
-## [17] "isolationWindowUpperMz"  "acquistionNum"          
-## [19] "accession"               "name"                   
-## [21] "smiles"                  "exactmass"              
-## [23] "formula"                 "inchi"                  
-## [25] "cas"                     "inchikey"               
-## [27] "adduct"                  "splash"                 
-## [29] "title"</code></pre>
+<pre><code><span class="co">##  [1] "msLevel"                 "rtime"                  </span>
+<span class="co">##  [3] "acquisitionNum"          "scanIndex"              </span>
+<span class="co">##  [5] "dataStorage"             "dataOrigin"             </span>
+<span class="co">##  [7] "centroided"              "smoothed"               </span>
+<span class="co">##  [9] "polarity"                "precScanNum"            </span>
+<span class="co">## [11] "precursorMz"             "precursorIntensity"     </span>
+<span class="co">## [13] "precursorCharge"         "collisionEnergy"        </span>
+<span class="co">## [15] "isolationWindowLowerMz"  "isolationWindowTargetMz"</span>
+<span class="co">## [17] "isolationWindowUpperMz"  "acquistionNum"          </span>
+<span class="co">## [19] "accession"               "name"                   </span>
+<span class="co">## [21] "smiles"                  "exactmass"              </span>
+<span class="co">## [23] "formula"                 "inchi"                  </span>
+<span class="co">## [25] "cas"                     "inchikey"               </span>
+<span class="co">## [27] "adduct"                  "splash"                 </span>
+<span class="co">## [29] "title"</span></code></pre>
 <p>By default the complete metadata is read together with the spectra. This can increase loading time. The different metadata blocks can be skipped which reduces import time. This requires to define an additional <code>data.frame</code> indicating what shall be read.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># create data frame to indicate with metadata blocks shall be read.</span>
@@ -185,160 +185,160 @@ document.addEventListener("DOMContentLoaded", function() {
 
 <span class="co"># all spectraVariables possible in MassBank are read</span>
 <span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">spectraVariables</a></span><span class="op">(</span><span class="va">sps</span><span class="op">)</span></code></pre></div>
-<pre><code>##   [1] "msLevel"                     "rtime"                      
-##   [3] "acquisitionNum"              "scanIndex"                  
-##   [5] "dataStorage"                 "dataOrigin"                 
-##   [7] "centroided"                  "smoothed"                   
-##   [9] "polarity"                    "precScanNum"                
-##  [11] "precursorMz"                 "precursorIntensity"         
-##  [13] "precursorCharge"             "collisionEnergy"            
-##  [15] "isolationWindowLowerMz"      "isolationWindowTargetMz"    
-##  [17] "isolationWindowUpperMz"      "acquistionNum"              
-##  [19] "accession"                   "name"                       
-##  [21] "smiles"                      "exactmass"                  
-##  [23] "formula"                     "inchi"                      
-##  [25] "cas"                         "inchikey"                   
-##  [27] "adduct"                      "splash"                     
-##  [29] "title"                       "instrument"                 
-##  [31] "instrument_type"             "ms_ms_type"                 
-##  [33] "ms_cap_voltage"              "ms_col_gas"                 
-##  [35] "ms_desolv_gas_flow"          "ms_desolv_temp"             
-##  [37] "ms_frag_mode"                "ms_ionization"              
-##  [39] "ms_ionization_energy"        "ms_laser"                   
-##  [41] "ms_matrix"                   "ms_mass_accuracy"           
-##  [43] "ms_mass_range"               "ms_reagent_gas"             
-##  [45] "ms_resolution"               "ms_scan_setting"            
-##  [47] "ms_source_temp"              "chrom_carrier_gas"          
-##  [49] "chrom_column"                "chrom_column_temp"          
-##  [51] "chrom_column_temp_gradient"  "chrom_flow_gradient"        
-##  [53] "chrom_flow_rate"             "chrom_inj_temp"             
-##  [55] "chrom_inj_temp_gradient"     "chrom_rti_kovats"           
-##  [57] "chrom_rti_lee"               "chrom_rti_naps"             
-##  [59] "chrom_rti_uoa"               "chrom_rti_uoa_pred"         
-##  [61] "chrom_rt"                    "chrom_rt_uoa_pred"          
-##  [63] "chrom_solvent"               "chrom_transfer_temp"        
-##  [65] "ims_instrument_type"         "ims_drift_gas"              
-##  [67] "ims_drift_time"              "ims_ccs"                    
-##  [69] "general_conc"                "compound_class"             
-##  [71] "link_cayman"                 "link_chebi"                 
-##  [73] "link_chembl"                 "link_chempdb"               
-##  [75] "link_chemspider"             "link_comptox"               
-##  [77] "link_hmdb"                   "link_kappaview"             
-##  [79] "link_kegg"                   "link_knapsack"              
-##  [81] "link_lipidbank"              "link_lipidmaps"             
-##  [83] "link_nikkaji"                "link_pubchem"               
-##  [85] "link_zinc"                   "scientific_name"            
-##  [87] "lineage"                     "link"                       
-##  [89] "sample"                      "focus_base_peak"            
-##  [91] "focus_derivative_form"       "focus_derivative_mass"      
-##  [93] "focus_derivative_type"       "focus_ion_type"             
-##  [95] "data_processing_comment"     "data_processing_deprofile"  
-##  [97] "data_processing_find"        "data_processing_reanalyze"  
-##  [99] "data_processing_recalibrate" "data_processing_whole"      
-## [101] "deprecated"                  "date"                       
-## [103] "authors"                     "license"                    
-## [105] "copyright"                   "publication"                
-## [107] "project"                     "pknum"                      
-## [109] "comment"</code></pre>
+<pre><code><span class="co">##   [1] "msLevel"                     "rtime"                      </span>
+<span class="co">##   [3] "acquisitionNum"              "scanIndex"                  </span>
+<span class="co">##   [5] "dataStorage"                 "dataOrigin"                 </span>
+<span class="co">##   [7] "centroided"                  "smoothed"                   </span>
+<span class="co">##   [9] "polarity"                    "precScanNum"                </span>
+<span class="co">##  [11] "precursorMz"                 "precursorIntensity"         </span>
+<span class="co">##  [13] "precursorCharge"             "collisionEnergy"            </span>
+<span class="co">##  [15] "isolationWindowLowerMz"      "isolationWindowTargetMz"    </span>
+<span class="co">##  [17] "isolationWindowUpperMz"      "acquistionNum"              </span>
+<span class="co">##  [19] "accession"                   "name"                       </span>
+<span class="co">##  [21] "smiles"                      "exactmass"                  </span>
+<span class="co">##  [23] "formula"                     "inchi"                      </span>
+<span class="co">##  [25] "cas"                         "inchikey"                   </span>
+<span class="co">##  [27] "adduct"                      "splash"                     </span>
+<span class="co">##  [29] "title"                       "instrument"                 </span>
+<span class="co">##  [31] "instrument_type"             "ms_ms_type"                 </span>
+<span class="co">##  [33] "ms_cap_voltage"              "ms_col_gas"                 </span>
+<span class="co">##  [35] "ms_desolv_gas_flow"          "ms_desolv_temp"             </span>
+<span class="co">##  [37] "ms_frag_mode"                "ms_ionization"              </span>
+<span class="co">##  [39] "ms_ionization_energy"        "ms_laser"                   </span>
+<span class="co">##  [41] "ms_matrix"                   "ms_mass_accuracy"           </span>
+<span class="co">##  [43] "ms_mass_range"               "ms_reagent_gas"             </span>
+<span class="co">##  [45] "ms_resolution"               "ms_scan_setting"            </span>
+<span class="co">##  [47] "ms_source_temp"              "chrom_carrier_gas"          </span>
+<span class="co">##  [49] "chrom_column"                "chrom_column_temp"          </span>
+<span class="co">##  [51] "chrom_column_temp_gradient"  "chrom_flow_gradient"        </span>
+<span class="co">##  [53] "chrom_flow_rate"             "chrom_inj_temp"             </span>
+<span class="co">##  [55] "chrom_inj_temp_gradient"     "chrom_rti_kovats"           </span>
+<span class="co">##  [57] "chrom_rti_lee"               "chrom_rti_naps"             </span>
+<span class="co">##  [59] "chrom_rti_uoa"               "chrom_rti_uoa_pred"         </span>
+<span class="co">##  [61] "chrom_rt"                    "chrom_rt_uoa_pred"          </span>
+<span class="co">##  [63] "chrom_solvent"               "chrom_transfer_temp"        </span>
+<span class="co">##  [65] "ims_instrument_type"         "ims_drift_gas"              </span>
+<span class="co">##  [67] "ims_drift_time"              "ims_ccs"                    </span>
+<span class="co">##  [69] "general_conc"                "compound_class"             </span>
+<span class="co">##  [71] "link_cayman"                 "link_chebi"                 </span>
+<span class="co">##  [73] "link_chembl"                 "link_chempdb"               </span>
+<span class="co">##  [75] "link_chemspider"             "link_comptox"               </span>
+<span class="co">##  [77] "link_hmdb"                   "link_kappaview"             </span>
+<span class="co">##  [79] "link_kegg"                   "link_knapsack"              </span>
+<span class="co">##  [81] "link_lipidbank"              "link_lipidmaps"             </span>
+<span class="co">##  [83] "link_nikkaji"                "link_pubchem"               </span>
+<span class="co">##  [85] "link_zinc"                   "scientific_name"            </span>
+<span class="co">##  [87] "lineage"                     "link"                       </span>
+<span class="co">##  [89] "sample"                      "focus_base_peak"            </span>
+<span class="co">##  [91] "focus_derivative_form"       "focus_derivative_mass"      </span>
+<span class="co">##  [93] "focus_derivative_type"       "focus_ion_type"             </span>
+<span class="co">##  [95] "data_processing_comment"     "data_processing_deprofile"  </span>
+<span class="co">##  [97] "data_processing_find"        "data_processing_reanalyze"  </span>
+<span class="co">##  [99] "data_processing_recalibrate" "data_processing_whole"      </span>
+<span class="co">## [101] "deprecated"                  "date"                       </span>
+<span class="co">## [103] "authors"                     "license"                    </span>
+<span class="co">## [105] "copyright"                   "publication"                </span>
+<span class="co">## [107] "project"                     "pknum"                      </span>
+<span class="co">## [109] "comment"</span></code></pre>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># all NA columns can be dropped</span>
 <span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">spectraVariables</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/hidden_aliases.html" class="external-link">dropNaSpectraVariables</a></span><span class="op">(</span><span class="va">sps</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code>##  [1] "msLevel"                   "rtime"                    
-##  [3] "acquisitionNum"            "scanIndex"                
-##  [5] "dataStorage"               "dataOrigin"               
-##  [7] "centroided"                "smoothed"                 
-##  [9] "polarity"                  "precScanNum"              
-## [11] "precursorMz"               "precursorIntensity"       
-## [13] "precursorCharge"           "collisionEnergy"          
-## [15] "isolationWindowLowerMz"    "isolationWindowTargetMz"  
-## [17] "isolationWindowUpperMz"    "acquistionNum"            
-## [19] "accession"                 "name"                     
-## [21] "smiles"                    "exactmass"                
-## [23] "formula"                   "inchi"                    
-## [25] "cas"                       "inchikey"                 
-## [27] "adduct"                    "splash"                   
-## [29] "title"                     "instrument"               
-## [31] "instrument_type"           "ms_ms_type"               
-## [33] "ms_frag_mode"              "ms_ionization"            
-## [35] "chrom_column"              "chrom_flow_gradient"      
-## [37] "chrom_flow_rate"           "chrom_rt"                 
-## [39] "chrom_solvent"             "compound_class"           
-## [41] "link_chebi"                "link_chemspider"          
-## [43] "link_comptox"              "link_kegg"                
-## [45] "link_pubchem"              "focus_base_peak"          
-## [47] "data_processing_reanalyze" "data_processing_whole"    
-## [49] "date"                      "authors"                  
-## [51] "license"                   "copyright"                
-## [53] "pknum"                     "comment"</code></pre>
+<pre><code><span class="co">##  [1] "msLevel"                   "rtime"                    </span>
+<span class="co">##  [3] "acquisitionNum"            "scanIndex"                </span>
+<span class="co">##  [5] "dataStorage"               "dataOrigin"               </span>
+<span class="co">##  [7] "centroided"                "smoothed"                 </span>
+<span class="co">##  [9] "polarity"                  "precScanNum"              </span>
+<span class="co">## [11] "precursorMz"               "precursorIntensity"       </span>
+<span class="co">## [13] "precursorCharge"           "collisionEnergy"          </span>
+<span class="co">## [15] "isolationWindowLowerMz"    "isolationWindowTargetMz"  </span>
+<span class="co">## [17] "isolationWindowUpperMz"    "acquistionNum"            </span>
+<span class="co">## [19] "accession"                 "name"                     </span>
+<span class="co">## [21] "smiles"                    "exactmass"                </span>
+<span class="co">## [23] "formula"                   "inchi"                    </span>
+<span class="co">## [25] "cas"                       "inchikey"                 </span>
+<span class="co">## [27] "adduct"                    "splash"                   </span>
+<span class="co">## [29] "title"                     "instrument"               </span>
+<span class="co">## [31] "instrument_type"           "ms_ms_type"               </span>
+<span class="co">## [33] "ms_frag_mode"              "ms_ionization"            </span>
+<span class="co">## [35] "chrom_column"              "chrom_flow_gradient"      </span>
+<span class="co">## [37] "chrom_flow_rate"           "chrom_rt"                 </span>
+<span class="co">## [39] "chrom_solvent"             "compound_class"           </span>
+<span class="co">## [41] "link_chebi"                "link_chemspider"          </span>
+<span class="co">## [43] "link_comptox"              "link_kegg"                </span>
+<span class="co">## [45] "link_pubchem"              "focus_base_peak"          </span>
+<span class="co">## [47] "data_processing_reanalyze" "data_processing_whole"    </span>
+<span class="co">## [49] "date"                      "authors"                  </span>
+<span class="co">## [51] "license"                   "copyright"                </span>
+<span class="co">## [53] "pknum"                     "comment"</span></code></pre>
 <p>Besides default spectra variables, such as <code>msLevel</code>, <code>rtime</code>, <code>precursorMz</code>, we also have additional spectra variables such as the <code>title</code> of each spectrum in the mgf file.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sps</span><span class="op">$</span><span class="va">rtime</span></code></pre></div>
-<pre><code>##                       rtime  rtime  rtime  rtime  rtime  rtime 
-## 142.14 142.14 142.14 142.14 142.14 142.14 143.94 143.94 143.94</code></pre>
+<pre><code><span class="co">##                       rtime  rtime  rtime  rtime  rtime  rtime </span>
+<span class="co">## 142.14 142.14 142.14 142.14 142.14 142.14 143.94 143.94 143.94</span></code></pre>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sps</span><span class="op">$</span><span class="va">title</span></code></pre></div>
-<pre><code>##                                                      
-## "L-Tryptophan; LC-ESI-QTOF; MS2; CE: 10; R=; [M+H]+" 
-##                                                      
-## "L-Tryptophan; LC-ESI-QTOF; MS2; CE: 20; R=; [M+H]+" 
-##                                                      
-## "L-Tryptophan; LC-ESI-QTOF; MS2; CE: 40; R=; [M+H]+" 
-##                                                title 
-## "L-Tryptophan; LC-ESI-QTOF; MS2; CE: 10; R=; [M+H]+" 
-##                                                title 
-## "L-Tryptophan; LC-ESI-QTOF; MS2; CE: 20; R=; [M+H]+" 
-##                                                title 
-## "L-Tryptophan; LC-ESI-QTOF; MS2; CE: 40; R=; [M+H]+" 
-##                                                title 
-## "L-Tryptophan; LC-ESI-QTOF; MS2; CE: 10; R=; [M-H]-" 
-##                                                title 
-## "L-Tryptophan; LC-ESI-QTOF; MS2; CE: 20; R=; [M-H]-" 
-##                                                title 
-## "L-Tryptophan; LC-ESI-QTOF; MS2; CE: 40; R=; [M-H]-"</code></pre>
+<pre><code><span class="co">##                                                      </span>
+<span class="co">## "L-Tryptophan; LC-ESI-QTOF; MS2; CE: 10; R=; [M+H]+" </span>
+<span class="co">##                                                      </span>
+<span class="co">## "L-Tryptophan; LC-ESI-QTOF; MS2; CE: 20; R=; [M+H]+" </span>
+<span class="co">##                                                      </span>
+<span class="co">## "L-Tryptophan; LC-ESI-QTOF; MS2; CE: 40; R=; [M+H]+" </span>
+<span class="co">##                                                title </span>
+<span class="co">## "L-Tryptophan; LC-ESI-QTOF; MS2; CE: 10; R=; [M+H]+" </span>
+<span class="co">##                                                title </span>
+<span class="co">## "L-Tryptophan; LC-ESI-QTOF; MS2; CE: 20; R=; [M+H]+" </span>
+<span class="co">##                                                title </span>
+<span class="co">## "L-Tryptophan; LC-ESI-QTOF; MS2; CE: 40; R=; [M+H]+" </span>
+<span class="co">##                                                title </span>
+<span class="co">## "L-Tryptophan; LC-ESI-QTOF; MS2; CE: 10; R=; [M-H]-" </span>
+<span class="co">##                                                title </span>
+<span class="co">## "L-Tryptophan; LC-ESI-QTOF; MS2; CE: 20; R=; [M-H]-" </span>
+<span class="co">##                                                title </span>
+<span class="co">## "L-Tryptophan; LC-ESI-QTOF; MS2; CE: 40; R=; [M-H]-"</span></code></pre>
 <p>In addition we can also access the m/z and intensity values of each spectrum.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">mz</a></span><span class="op">(</span><span class="va">sps</span><span class="op">)</span></code></pre></div>
-<pre><code>## NumericList of length 9
-## [[""]] 74.0233 132.0807 144.0805 146.0598 ... 170.0597 188.0699 205.0965
-## [[""]] 74.0232 77.0381 86.0027 91.0539 ... 160.0947 170.0596 171.0625 188.07
-## [[""]] 53.0019 53.0383 63.0225 65.0381 ... 158.0817 159.0921 160.0755 170.06
-## [["mz"]] 74.0233 132.0807 144.0805 146.0598 ... 170.0597 188.0699 205.0965
-## [["mz"]] 74.0232 77.0381 86.0027 91.0539 ... 160.0947 170.0596 171.0625 188.07
-## [["mz"]] 53.0019 53.0383 63.0225 65.0381 ... 158.0817 159.0921 160.0755 170.06
-## [["mz"]] 72.0095 116.0517 117.0554 159.0935 186.0558 203.0826
-## [["mz"]] 72.0094 74.0253 116.0511 117.0539 ... 162.0307 186.0548 203.0818
-## [["mz"]] 74.0253 116.0508</code></pre>
+<pre><code><span class="co">## NumericList of length 9</span>
+<span class="co">## [[""]] 74.0233 132.0807 144.0805 146.0598 ... 170.0597 188.0699 205.0965</span>
+<span class="co">## [[""]] 74.0232 77.0381 86.0027 91.0539 ... 160.0947 170.0596 171.0625 188.07</span>
+<span class="co">## [[""]] 53.0019 53.0383 63.0225 65.0381 ... 158.0817 159.0921 160.0755 170.06</span>
+<span class="co">## [["mz"]] 74.0233 132.0807 144.0805 146.0598 ... 170.0597 188.0699 205.0965</span>
+<span class="co">## [["mz"]] 74.0232 77.0381 86.0027 91.0539 ... 160.0947 170.0596 171.0625 188.07</span>
+<span class="co">## [["mz"]] 53.0019 53.0383 63.0225 65.0381 ... 158.0817 159.0921 160.0755 170.06</span>
+<span class="co">## [["mz"]] 72.0095 116.0517 117.0554 159.0935 186.0558 203.0826</span>
+<span class="co">## [["mz"]] 72.0094 74.0253 116.0511 117.0539 ... 162.0307 186.0548 203.0818</span>
+<span class="co">## [["mz"]] 74.0253 116.0508</span></code></pre>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">intensity</a></span><span class="op">(</span><span class="va">sps</span><span class="op">)</span></code></pre></div>
-<pre><code>## NumericList of length 9
-## [[""]] 646 980 2114 20052 1248 7628 2036 494048 75708
-## [[""]] 10186 142 142 750 138 490 126 ... 14266 1478 1600 16504 1446 109762
-## [[""]] 324 184 138 3770 500 800 7214 3238 ... 2802 206 898 162 166 814 250 1840
-## [["intensity"]] 646 980 2114 20052 1248 7628 2036 494048 75708
-## [["intensity"]] 10186 142 142 750 138 490 ... 14266 1478 1600 16504 1446 109762
-## [["intensity"]] 324 184 138 3770 500 800 7214 ... 206 898 162 166 814 250 1840
-## [["intensity"]] 150 200 32 232 80 12162
-## [["intensity"]] 460 3630 658 74 28 190 44 142 50 52 634
-## [["intensity"]] 282 424</code></pre>
+<pre><code><span class="co">## NumericList of length 9</span>
+<span class="co">## [[""]] 646 980 2114 20052 1248 7628 2036 494048 75708</span>
+<span class="co">## [[""]] 10186 142 142 750 138 490 126 ... 14266 1478 1600 16504 1446 109762</span>
+<span class="co">## [[""]] 324 184 138 3770 500 800 7214 3238 ... 2802 206 898 162 166 814 250 1840</span>
+<span class="co">## [["intensity"]] 646 980 2114 20052 1248 7628 2036 494048 75708</span>
+<span class="co">## [["intensity"]] 10186 142 142 750 138 490 ... 14266 1478 1600 16504 1446 109762</span>
+<span class="co">## [["intensity"]] 324 184 138 3770 500 800 7214 ... 206 898 162 166 814 250 1840</span>
+<span class="co">## [["intensity"]] 150 200 32 232 80 12162</span>
+<span class="co">## [["intensity"]] 460 3630 658 74 28 190 44 142 50 52 634</span>
+<span class="co">## [["intensity"]] 282 424</span></code></pre>
 <p>When importing a large number of mgf files, setting <code>nonStop = TRUE</code> prevents the call to stop whenever problematic mgf files are encountered.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html" class="external-link">Spectra</a></span><span class="op">(</span><span class="va">fls</span>, source <span class="op">=</span> <span class="fu"><a href="../reference/MsBackendMassbank.html">MsBackendMassbank</a></span><span class="op">(</span><span class="op">)</span>, nonStop <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="accessing-the-massbank-mysql-database" class="section level1">
-<h1 class="hasAnchor">
-<a href="#accessing-the-massbank-mysql-database" class="anchor" aria-hidden="true"></a>Accessing the MassBank MySQL database</h1>
+<div class="section level1">
+<h1 id="accessing-the-massbank-mysql-database">Accessing the MassBank MySQL database<a class="anchor" aria-label="anchor" href="#accessing-the-massbank-mysql-database"></a>
+</h1>
 <p>An alternative to the import of the MassBank data from individual text files (which can take a considerable amount of time) is to directly access the MS/MS data in the MassBank MySQL database. For demonstration purposes we are using here a tiny subset of the MassBank data which is stored as a SQLite database within this package.</p>
-<div id="pre-requisites" class="section level2">
-<h2 class="hasAnchor">
-<a href="#pre-requisites" class="anchor" aria-hidden="true"></a>Pre-requisites</h2>
+<div class="section level2">
+<h2 id="pre-requisites">Pre-requisites<a class="anchor" aria-label="anchor" href="#pre-requisites"></a>
+</h2>
 <p>At present it is not possible to directly connect to the main MassBank <em>production</em> MySQL server, thus, to use the <code>MsBackendMassbankSql</code> backend it is required to install the database locally. The MySQL database dump for each MassBank release can be downloaded from <a href="">here</a>. This dump could be imported to a local MySQL server.</p>
 </div>
-<div id="direct-access-to-the-massbank-database" class="section level2">
-<h2 class="hasAnchor">
-<a href="#direct-access-to-the-massbank-database" class="anchor" aria-hidden="true"></a>Direct access to the MassBank database</h2>
+<div class="section level2">
+<h2 id="direct-access-to-the-massbank-database">Direct access to the MassBank database<a class="anchor" aria-label="anchor" href="#direct-access-to-the-massbank-database"></a>
+</h2>
 <p>To use the <code>MsBackendMassbankSql</code> it is required to first connect to a <em>MassBank</em> database. Below we show the R code which could be used for that - but the actual settings (user name, password, database name, or host) will depend on where and how the MassBank database was installed.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">RMariaDB</span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rmariadb.r-dbi.org" class="external-link">RMariaDB</a></span><span class="op">)</span>
 <span class="va">con</span> <span class="op">&lt;-</span> <span class="fu">dbConnect</span><span class="op">(</span><span class="fu">MariaDB</span><span class="op">(</span><span class="op">)</span>, host <span class="op">=</span> <span class="st">"localhost"</span>, user <span class="op">=</span> <span class="st">"massbank"</span>,
                  dbname <span class="op">=</span> <span class="st">"MassBank"</span><span class="op">)</span></code></pre></div>
 <p>To illustrate the general functionality of this backend we use a tiny subset of the MassBank (release 2020.10) which is provided as an small SQLite database within this package. Below we connect to this database.</p>
@@ -350,90 +350,90 @@ document.addEventListener("DOMContentLoaded", function() {
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">mb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html" class="external-link">Spectra</a></span><span class="op">(</span><span class="va">con</span>, source <span class="op">=</span> <span class="fu"><a href="../reference/MsBackendMassbankSql.html">MsBackendMassbankSql</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 <span class="va">mb</span></code></pre></div>
-<pre><code>## MSn data (Spectra) with 70 spectra in a MsBackendMassbankSql backend:
-##       msLevel precursorMz  polarity
-##     &lt;integer&gt;   &lt;numeric&gt; &lt;integer&gt;
-## 1           2         506         0
-## 2          NA          NA         1
-## 3          NA          NA         0
-## 4          NA          NA         1
-## 5          NA          NA         0
-## ...       ...         ...       ...
-## 66          2     185.028         0
-## 67          2     455.290         1
-## 68          2     253.051         0
-## 69          2     358.238         1
-## 70          2     256.170         1
-##  ... 42 more variables/columns.
-##  Use  'spectraVariables' to list all of them.</code></pre>
+<pre><code><span class="co">## MSn data (Spectra) with 70 spectra in a MsBackendMassbankSql backend:</span>
+<span class="co">##       msLevel precursorMz  polarity</span>
+<span class="co">##     &lt;integer&gt;   &lt;numeric&gt; &lt;integer&gt;</span>
+<span class="co">## 1           2         506         0</span>
+<span class="co">## 2          NA          NA         1</span>
+<span class="co">## 3          NA          NA         0</span>
+<span class="co">## 4          NA          NA         1</span>
+<span class="co">## 5          NA          NA         0</span>
+<span class="co">## ...       ...         ...       ...</span>
+<span class="co">## 66          2     185.028         0</span>
+<span class="co">## 67          2     455.290         1</span>
+<span class="co">## 68          2     253.051         0</span>
+<span class="co">## 69          2     358.238         1</span>
+<span class="co">## 70          2     256.170         1</span>
+<span class="co">##  ... 42 more variables/columns.</span>
+<span class="co">##  Use  'spectraVariables' to list all of them.</span></code></pre>
 <p>We can now use this <code>Spectra</code> object to access and use the MassBank data for our analysis. Note that the <code>Spectra</code> object itself does not contain any data from MassBank. Any data will be fetched on demand from the database backend.</p>
 <p>To get a listing of all available annotations for each spectrum (the so-called <em>spectra variables</em>) we can use the <code>spectraVariables</code> function.</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">spectraVariables</a></span><span class="op">(</span><span class="va">mb</span><span class="op">)</span></code></pre></div>
-<pre><code>##  [1] "msLevel"                 "rtime"                  
-##  [3] "acquisitionNum"          "scanIndex"              
-##  [5] "dataStorage"             "dataOrigin"             
-##  [7] "centroided"              "smoothed"               
-##  [9] "polarity"                "precScanNum"            
-## [11] "precursorMz"             "precursorIntensity"     
-## [13] "precursorCharge"         "collisionEnergy"        
-## [15] "isolationWindowLowerMz"  "isolationWindowTargetMz"
-## [17] "isolationWindowUpperMz"  "spectrum_id"            
-## [19] "spectrum_name"           "date"                   
-## [21] "authors"                 "license"                
-## [23] "copyright"               "publication"            
-## [25] "splash"                  "compound_id"            
-## [27] "adduct"                  "ionization"             
-## [29] "ionization_voltage"      "fragmentation_mode"     
-## [31] "collision_energy_text"   "instrument"             
-## [33] "instrument_type"         "formula"                
-## [35] "exactmass"               "smiles"                 
-## [37] "inchi"                   "inchikey"               
-## [39] "cas"                     "pubchem"                
-## [41] "synonym"                 "precursor_mz_text"      
-## [43] "compound_name"</code></pre>
+<pre><code><span class="co">##  [1] "msLevel"                 "rtime"                  </span>
+<span class="co">##  [3] "acquisitionNum"          "scanIndex"              </span>
+<span class="co">##  [5] "dataStorage"             "dataOrigin"             </span>
+<span class="co">##  [7] "centroided"              "smoothed"               </span>
+<span class="co">##  [9] "polarity"                "precScanNum"            </span>
+<span class="co">## [11] "precursorMz"             "precursorIntensity"     </span>
+<span class="co">## [13] "precursorCharge"         "collisionEnergy"        </span>
+<span class="co">## [15] "isolationWindowLowerMz"  "isolationWindowTargetMz"</span>
+<span class="co">## [17] "isolationWindowUpperMz"  "spectrum_id"            </span>
+<span class="co">## [19] "spectrum_name"           "date"                   </span>
+<span class="co">## [21] "authors"                 "license"                </span>
+<span class="co">## [23] "copyright"               "publication"            </span>
+<span class="co">## [25] "splash"                  "compound_id"            </span>
+<span class="co">## [27] "adduct"                  "ionization"             </span>
+<span class="co">## [29] "ionization_voltage"      "fragmentation_mode"     </span>
+<span class="co">## [31] "collision_energy_text"   "instrument"             </span>
+<span class="co">## [33] "instrument_type"         "formula"                </span>
+<span class="co">## [35] "exactmass"               "smiles"                 </span>
+<span class="co">## [37] "inchi"                   "inchikey"               </span>
+<span class="co">## [39] "cas"                     "pubchem"                </span>
+<span class="co">## [41] "synonym"                 "precursor_mz_text"      </span>
+<span class="co">## [43] "compound_name"</span></code></pre>
 <p>Through the <code>MsBackendMassbankSql</code> we can thus access spectra information as well as its annotation.</p>
 <p>We can access <em>core</em> spectra variables, such as the MS level with the corresponding function <code>msLevel</code>.</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">msLevel</a></span><span class="op">(</span><span class="va">mb</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code>## [1]  2 NA NA NA NA  2</code></pre>
+<pre><code><span class="co">## [1]  2 NA NA NA NA  2</span></code></pre>
 <p>Spectra variables can also be accessed with <code>$</code> and the name of the variable. Thus, MS levels can also be accessed with <code>$msLevel</code>:</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mb</span><span class="op">$</span><span class="va">msLevel</span><span class="op">)</span></code></pre></div>
-<pre><code>## [1]  2 NA NA NA NA  2</code></pre>
+<pre><code><span class="co">## [1]  2 NA NA NA NA  2</span></code></pre>
 <p>In addition to spectra variables, we can also get the actual peaks (i.e. m/z and intensity values) with the <code>mz</code> and <code>intensity</code> functions:</p>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">mz</a></span><span class="op">(</span><span class="va">mb</span><span class="op">)</span></code></pre></div>
-<pre><code>## NumericList of length 70
-## [["MCH00020"]] 146.760803 158.863541 174.988785 ... 487.989319 585.88446
-## [["MCH00002"]] 22.99 23.07 23.19 38.98 53.15 ... 413.22 414.22 429.16 495.2
-## [["MCH00006"]] 108.099566 152.005378 153.01824 ... 409.06729 499.103447
-## [["MCH00009"]] 137.0227 138.025605 139.034602 ... 316.303106 352.234228
-## [["MCH00014"]] 112.977759 205.053323 208.041128 ... 671.1778 673.200866
-## [["MCH00019"]] 78.893929 183.011719 193.957916 ... 408.010193 426.021942
-## [["MCH00012"]] 167.03389 168.040758 333.079965 ... 365.040698 373.073473
-## [["MCH00003"]] 195.09167 196.095033
-## [["MCH00016"]] 108.096149 152.004656 153.01824 ... 409.065314 491.043775
-## [["MCH00001"]] 1278.12 1279.11 1279.18 1306.21 ... 2091.32 2092.3 2136.33
-## ...
-## &lt;60 more elements&gt;</code></pre>
+<pre><code><span class="co">## NumericList of length 70</span>
+<span class="co">## [["MCH00020"]] 146.760803 158.863541 174.988785 ... 487.989319 585.88446</span>
+<span class="co">## [["MCH00002"]] 22.99 23.07 23.19 38.98 53.15 ... 413.22 414.22 429.16 495.2</span>
+<span class="co">## [["MCH00006"]] 108.099566 152.005378 153.01824 ... 409.06729 499.103447</span>
+<span class="co">## [["MCH00009"]] 137.0227 138.025605 139.034602 ... 316.303106 352.234228</span>
+<span class="co">## [["MCH00014"]] 112.977759 205.053323 208.041128 ... 671.1778 673.200866</span>
+<span class="co">## [["MCH00019"]] 78.893929 183.011719 193.957916 ... 408.010193 426.021942</span>
+<span class="co">## [["MCH00012"]] 167.03389 168.040758 333.079965 ... 365.040698 373.073473</span>
+<span class="co">## [["MCH00003"]] 195.09167 196.095033</span>
+<span class="co">## [["MCH00016"]] 108.096149 152.004656 153.01824 ... 409.065314 491.043775</span>
+<span class="co">## [["MCH00001"]] 1278.12 1279.11 1279.18 1306.21 ... 2091.32 2092.3 2136.33</span>
+<span class="co">## ...</span>
+<span class="co">## &lt;60 more elements&gt;</span></code></pre>
 <p>Note that not all spectra from the database were generated using the same instrumentation. Below we list the number of spectra for each type of instrument.</p>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">mb</span><span class="op">$</span><span class="va">instrument_type</span><span class="op">)</span></code></pre></div>
-<pre><code>## 
-## LC-ESI-ITFT  LC-ESI-QFT   MALDI-TOF 
-##           3          50          17</code></pre>
+<pre><code><span class="co">## </span>
+<span class="co">## LC-ESI-ITFT  LC-ESI-QFT   MALDI-TOF </span>
+<span class="co">##           3          50          17</span></code></pre>
 <p>We next subset the data to all spectra from ions generated by electro spray ionization (ESI).</p>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">mb</span> <span class="op">&lt;-</span> <span class="va">mb</span><span class="op">[</span><span class="va">mb</span><span class="op">$</span><span class="va">ionization</span> <span class="op">==</span> <span class="st">"ESI"</span><span class="op">]</span>
 <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">mb</span><span class="op">)</span></code></pre></div>
-<pre><code>## [1] 50</code></pre>
+<pre><code><span class="co">## [1] 50</span></code></pre>
 <p>As a simple example to illustrate the <code>Spectra</code> functionality we next calculate spectra similarity between one spectrum against all other spectra in the database. To this end we use the <code>compareSpectra</code> function with the normalized dot product as similarity function and allowing 20 ppm difference in m/z between matching peaks</p>
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/RforMassSpectrometry/MsCoreUtils" class="external-link">MsCoreUtils</a></span><span class="op">)</span>
 <span class="va">sims</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">compareSpectra</a></span><span class="op">(</span><span class="va">mb</span><span class="op">[</span><span class="fl">11</span><span class="op">]</span>, <span class="va">mb</span><span class="op">[</span><span class="op">-</span><span class="fl">11</span><span class="op">]</span>, FUN <span class="op">=</span> <span class="va">ndotproduct</span>, ppm <span class="op">=</span> <span class="fl">40</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">sims</span><span class="op">)</span></code></pre></div>
-<pre><code>## [1] 0.7507467</code></pre>
+<pre><code><span class="co">## [1] 0.7507467</span></code></pre>
 <p>We plot next a mirror plot for the two best matching spectra.</p>
 <div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/spectra-plotting.html" class="external-link">plotSpectraMirror</a></span><span class="op">(</span><span class="va">mb</span><span class="op">[</span><span class="fl">11</span><span class="op">]</span>, <span class="va">mb</span><span class="op">[</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/which.min.html" class="external-link">which.max</a></span><span class="op">(</span><span class="va">sims</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span><span class="op">]</span>, ppm <span class="op">=</span> <span class="fl">40</span><span class="op">)</span></code></pre></div>
@@ -442,66 +442,66 @@ document.addEventListener("DOMContentLoaded", function() {
 <div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">mb_match</span> <span class="op">&lt;-</span> <span class="va">mb</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">11</span>, <span class="fu"><a href="https://rdrr.io/r/base/which.min.html" class="external-link">which.max</a></span><span class="op">(</span><span class="va">sims</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span><span class="op">]</span>
 <span class="fu"><a href="../reference/MsBackendMassbankSql.html">compounds</a></span><span class="op">(</span><span class="va">mb_match</span><span class="op">)</span></code></pre></div>
-<pre><code>## DataFrame with 2 rows and 10 columns
-##   compound_id     formula exactmass                 smiles
-##     &lt;integer&gt; &lt;character&gt; &lt;numeric&gt;            &lt;character&gt;
-## 1          31    C12H10O2   186.068 COC1=C(C=O)C2=CC=CC=..
-## 2          45    C12H10O2   186.068 COC1=CC=C(C=O)C2=CC=..
-##                    inchi               inchikey         cas     pubchem
-##              &lt;character&gt;            &lt;character&gt; &lt;character&gt; &lt;character&gt;
-## 1 InChI=1S/C12H10O2/c1.. YIQGLTKAOHRZOL-UHFFF..   1/12/5392   CID:79352
-## 2 InChI=1S/C12H10O2/c1.. MVXMNHYVCLMLDD-UHFFF..  15971-29-6   CID:85217
-##                                         synonym                   name
-##                                 &lt;CharacterList&gt;            &lt;character&gt;
-## 1 2-Methoxy-1-naphthal..,2-methoxynaphthalene.. 2-Methoxy-1-naphthal..
-## 2 4-Methoxy-1-Naphthal..,4-methoxynaphthalene.. 4-Methoxy-1-Naphthal..</code></pre>
+<pre><code><span class="co">## DataFrame with 2 rows and 10 columns</span>
+<span class="co">##   compound_id     formula exactmass                 smiles</span>
+<span class="co">##     &lt;integer&gt; &lt;character&gt; &lt;numeric&gt;            &lt;character&gt;</span>
+<span class="co">## 1          31    C12H10O2   186.068 COC1=C(C=O)C2=CC=CC=..</span>
+<span class="co">## 2          45    C12H10O2   186.068 COC1=CC=C(C=O)C2=CC=..</span>
+<span class="co">##                    inchi               inchikey         cas     pubchem</span>
+<span class="co">##              &lt;character&gt;            &lt;character&gt; &lt;character&gt; &lt;character&gt;</span>
+<span class="co">## 1 InChI=1S/C12H10O2/c1.. YIQGLTKAOHRZOL-UHFFF..   1/12/5392   CID:79352</span>
+<span class="co">## 2 InChI=1S/C12H10O2/c1.. MVXMNHYVCLMLDD-UHFFF..  15971-29-6   CID:85217</span>
+<span class="co">##                                         synonym                   name</span>
+<span class="co">##                                 &lt;CharacterList&gt;            &lt;character&gt;</span>
+<span class="co">## 1 2-Methoxy-1-naphthal..,2-methoxynaphthalene.. 2-Methoxy-1-naphthal..</span>
+<span class="co">## 2 4-Methoxy-1-Naphthal..,4-methoxynaphthalene.. 4-Methoxy-1-Naphthal..</span></code></pre>
 </div>
 </div>
-<div id="session-information" class="section level1">
-<h1 class="hasAnchor">
-<a href="#session-information" class="anchor" aria-hidden="true"></a>Session information</h1>
+<div class="section level1">
+<h1 id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
+</h1>
 <div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code>## R version 4.1.1 (2021-08-10)
-## Platform: x86_64-pc-linux-gnu (64-bit)
-## Running under: Ubuntu 20.04.3 LTS
-## 
-## Matrix products: default
-## BLAS/LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.8.so
-## 
-## locale:
-##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
-##  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
-##  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=C             
-##  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
-##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-## [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
-## 
-## attached base packages:
-## [1] stats4    stats     graphics  grDevices utils     datasets  methods  
-## [8] base     
-## 
-## other attached packages:
-## [1] MsCoreUtils_1.5.0       RSQLite_2.2.8           MsBackendMassbank_1.1.4
-## [4] Spectra_1.3.11          ProtGenerics_1.25.1     BiocParallel_1.27.17   
-## [7] S4Vectors_0.31.5        BiocGenerics_0.39.2     BiocStyle_2.21.4       
-## 
-## loaded via a namespace (and not attached):
-##  [1] Rcpp_1.0.7               highr_0.9                bslib_0.3.1             
-##  [4] compiler_4.1.1           BiocManager_1.30.16      jquerylib_0.1.4         
-##  [7] tools_4.1.1              bit_4.0.4                digest_0.6.28           
-## [10] jsonlite_1.7.2           evaluate_0.14            memoise_2.0.0           
-## [13] clue_0.3-60              pkgconfig_2.0.3          rlang_0.99.0.9000       
-## [16] DBI_1.1.1                cli_3.0.1                yaml_2.2.1              
-## [19] parallel_4.1.1           pkgdown_1.9000.9000.9000 xfun_0.26               
-## [22] fastmap_1.1.0            cluster_2.1.2            stringr_1.4.0           
-## [25] knitr_1.36               vctrs_0.3.8              desc_1.4.0              
-## [28] fs_1.5.0                 sass_0.4.0               systemfonts_1.0.2       
-## [31] IRanges_2.27.2           bit64_4.0.5              rprojroot_2.0.2         
-## [34] R6_2.5.1                 textshaping_0.3.5        rmarkdown_2.11          
-## [37] bookdown_0.24            blob_1.2.2               magrittr_2.0.1          
-## [40] htmltools_0.5.2          MASS_7.3-54              ragg_1.1.3              
-## [43] stringi_1.7.5            cachem_1.0.6             crayon_1.4.1</code></pre>
+<pre><code><span class="co">## R Under development (unstable) (2021-12-30 r81418)</span>
+<span class="co">## Platform: x86_64-pc-linux-gnu (64-bit)</span>
+<span class="co">## Running under: Ubuntu 20.04.3 LTS</span>
+<span class="co">## </span>
+<span class="co">## Matrix products: default</span>
+<span class="co">## BLAS/LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.8.so</span>
+<span class="co">## </span>
+<span class="co">## locale:</span>
+<span class="co">##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              </span>
+<span class="co">##  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    </span>
+<span class="co">##  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=C             </span>
+<span class="co">##  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 </span>
+<span class="co">##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            </span>
+<span class="co">## [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       </span>
+<span class="co">## </span>
+<span class="co">## attached base packages:</span>
+<span class="co">## [1] stats4    stats     graphics  grDevices utils     datasets  methods  </span>
+<span class="co">## [8] base     </span>
+<span class="co">## </span>
+<span class="co">## other attached packages:</span>
+<span class="co">## [1] MsCoreUtils_1.7.1       RSQLite_2.2.9           MsBackendMassbank_1.3.0</span>
+<span class="co">## [4] Spectra_1.5.4           ProtGenerics_1.27.1     BiocParallel_1.29.8    </span>
+<span class="co">## [7] S4Vectors_0.33.8        BiocGenerics_0.41.2     BiocStyle_2.23.1       </span>
+<span class="co">## </span>
+<span class="co">## loaded via a namespace (and not attached):</span>
+<span class="co">##  [1] Rcpp_1.0.7          highr_0.9           bslib_0.3.1        </span>
+<span class="co">##  [4] compiler_4.2.0      BiocManager_1.30.16 jquerylib_0.1.4    </span>
+<span class="co">##  [7] tools_4.2.0         bit_4.0.4           digest_0.6.29      </span>
+<span class="co">## [10] jsonlite_1.7.2      evaluate_0.14       memoise_2.0.1      </span>
+<span class="co">## [13] clue_0.3-60         pkgconfig_2.0.3     rlang_0.4.12       </span>
+<span class="co">## [16] DBI_1.1.2           yaml_2.2.1          parallel_4.2.0     </span>
+<span class="co">## [19] pkgdown_2.0.1.9000  xfun_0.29           fastmap_1.1.0      </span>
+<span class="co">## [22] stringr_1.4.0       knitr_1.37          cluster_2.1.2      </span>
+<span class="co">## [25] vctrs_0.3.8         desc_1.4.0          fs_1.5.2           </span>
+<span class="co">## [28] sass_0.4.0          systemfonts_1.0.3   IRanges_2.29.1     </span>
+<span class="co">## [31] bit64_4.0.5         rprojroot_2.0.2     R6_2.5.1           </span>
+<span class="co">## [34] textshaping_0.3.6   rmarkdown_2.11      bookdown_0.24      </span>
+<span class="co">## [37] blob_1.2.2          purrr_0.3.4         magrittr_2.0.1     </span>
+<span class="co">## [40] htmltools_0.5.2     MASS_7.3-54         ragg_1.2.1         </span>
+<span class="co">## [43] stringi_1.7.6       cachem_1.0.6        crayon_1.4.2</span></code></pre>
 </div>
   </div>
 
@@ -522,7 +522,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link external-link">pkgdown</a> 1.9000.9000.9000.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.9000.</p>
 </div>
 
       </footer>
