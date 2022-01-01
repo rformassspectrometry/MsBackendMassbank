@@ -39,7 +39,7 @@ test_that("spectraVariables,MsBackendMassbankSql works", {
     res <- spectraVariables(be)
     expect_true(length(res) > length(names(Spectra:::.SPECTRA_DATA_COLUMNS)))
 
-    be@localData <- DataFrame(a = 1:3)
+    be$a <- 1
     res_2 <- spectraVariables(be)
     expect_true(length(res_2) == (length(res) + 1))
 })
@@ -152,6 +152,7 @@ test_that("peaksData,MsBackendMassbankSql works", {
     expect_equal(lapply(res, function(z) unname(z[, 1])),
                  unname(as.list(be$mz)))
 
+    ## duplicated spectra.
     be2 <- be[c(3, 1, 1, 2)]
     res2 <- peaksData(be2)
     expect_equal(lapply(res2, function(z) unname(z[, 1])),
@@ -187,15 +188,19 @@ test_that("selectSpectraVariables,MsBackendMassbankSql works", {
     expect_error(selectSpectraVariables(be, c("rtime", "other")), "available")
 
     res <- selectSpectraVariables(be, c("rtime", "mz", "intensity", "authors"))
-    expect_equal(spectraVariables(res),
-                 c("rtime", "mz", "intensity", "authors"))
+    expect_equal(sort(spectraVariables(res)),
+                 sort(unique(c(names(Spectra:::.SPECTRA_DATA_COLUMNS), "rtime",
+                               "mz", "intensity", "authors"))))
     res$new_col <- "b"
-    expect_equal(spectraVariables(res),
-                 c("rtime", "mz", "intensity", "new_col", "authors"))
+    expect_equal(sort(spectraVariables(res)),
+                 sort(unique(c(names(Spectra:::.SPECTRA_DATA_COLUMNS), "rtime",
+                               "mz", "intensity", "authors", "new_col"))))
     res_2 <- selectSpectraVariables(res, spectraVariables(res))
     expect_equal(spectraVariables(res), spectraVariables(res_2))
     res <- selectSpectraVariables(res, c("rtime"))
-    expect_equal(spectraVariables(res), "rtime")
+    expect_equal(
+        spectraVariables(res),
+        unique(c(names(Spectra:::.SPECTRA_DATA_COLUMNS)), "rtime"))
 })
 
 test_that("[,MsBackendMassbankSql works", {
@@ -249,7 +254,7 @@ test_that("lengths,MsBackendMassbankSql works", {
 test_that("intensity,intensity<-,MsBackendMassbankSql works", {
     be <- MsBackendMassbankSql()
     res <- intensity(be)
-    expect_equal(res, IRanges::NumericList())
+    expect_equal(res, IRanges::NumericList(compress = FALSE))
 
     be <- backendInitialize(be, dbc)
     res <- intensity(be)
@@ -258,12 +263,22 @@ test_that("intensity,intensity<-,MsBackendMassbankSql works", {
     expect_true(all(lengths(res) > 0))
 
     expect_error(intensity(be) <- 3, "Can not")
+
+    ## duplicated spectra
+    be2 <- be[c(4, 1, 9, 1, 4, 1)]
+    res2 <- intensity(be2)
+    expect_equal(res[[4]], res2[[1]])
+    expect_equal(res[[1]], res2[[2]])
+    expect_equal(res[[9]], res2[[3]])
+    expect_equal(res[[1]], res2[[4]])
+    expect_equal(res[[4]], res2[[5]])
+    expect_equal(res[[1]], res2[[6]])
 })
 
 test_that("mz,mz<-,MsBackendMassbankSql works", {
     be <- MsBackendMassbankSql()
     res <- mz(be)
-    expect_equal(res, IRanges::NumericList())
+    expect_equal(res, IRanges::NumericList(compress = FALSE))
 
     be <- backendInitialize(be, dbc)
     res <- mz(be)
@@ -272,6 +287,16 @@ test_that("mz,mz<-,MsBackendMassbankSql works", {
     expect_true(all(lengths(res) > 0))
 
     expect_error(mz(be) <- 3, "Can not")
+
+    ## duplicated spectra.
+    be2 <- be[c(4, 1, 9, 1, 4, 1)]
+    res2 <- mz(be2)
+    expect_equal(res[[4]], res2[[1]])
+    expect_equal(res[[1]], res2[[2]])
+    expect_equal(res[[9]], res2[[3]])
+    expect_equal(res[[1]], res2[[4]])
+    expect_equal(res[[4]], res2[[5]])
+    expect_equal(res[[1]], res2[[6]])
 })
 
 test_that("ionCount,MsBackendMassbankSql works", {
@@ -361,7 +386,7 @@ test_that("polarity,&<-,MsBackendMassbankSql works", {
     expect_equal(res, rep(c(1, 0), length(be)/2))
 
     expect_error(polarity(be) <- 1:2, "length 1")
-    expect_error(polarity(be) <- "a", "numeric")
+    expect_error(polarity(be) <- "a", "integer")
 })
 
 test_that("precursorCharge,MsBackendMassbankSql works", {

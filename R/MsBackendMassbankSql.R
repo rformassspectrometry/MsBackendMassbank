@@ -41,15 +41,13 @@
 #'
 #' @param j For `[`: not supported.
 #'
-#' @param name For `$` and `$<-`: the name of the spectra variable to return
-#'     or set.
+#' @param name name of the variable to replace for `<-` methods. See individual
+#'     method description or expected data type.
 #'
 #' @param object Object extending `MsBackendMassbankSql`.
 #'
 #' @param spectraVariables For `selectSpectraVariables`: `character` with the
 #'     names of the spectra variables to which the backend should be subsetted.
-#'
-#' @param use.names For `lengths`: whether spectrum names should be used.
 #'
 #' @param value replacement value for `<-` methods. See individual
 #'     method description or expected data type.
@@ -191,7 +189,7 @@
 #'   to the number of spectra. `smoothed<-` takes a `logical` vector
 #'   of length 1 or equal to the number of spectra in `object`.
 #'
-#' - `spectraData`: gets general spectrummetadata (annotation, also called
+#' - `spectraData`: gets general spectrum metadata (annotation, also called
 #'   header).  `spectraData` returns a `DataFrame`. Note that replacing the
 #'   spectra data with `spectraData<-` is not supported.
 #'
@@ -276,68 +274,38 @@ setClassUnion("DBIConnectionOrNULL", c("DBIConnection", "NULL"))
 
 #' @importClassesFrom DBI DBIConnection
 #'
+#' @importClassesFrom Spectra MsBackendCached
+#'
 #' @importClassesFrom S4Vectors DataFrame
 setClass(
     "MsBackendMassbankSql",
-    contains = "MsBackend",
+    contains = "MsBackendCached",
     slots = c(
         dbcon = "DBIConnectionOrNULL",
         spectraIds = "character",
-        spectraVariables = "character",
-        coreSpectraVariables = "character",
-        localData = "DataFrame",
         .tables = "list"),
     prototype = prototype(
         dbcon = NULL,
         spectraIds = character(),
-        spectraVariables = character(),
-        coreSpectraVariables = names(Spectra:::.SPECTRA_DATA_COLUMNS),
-        localData = DataFrame(),
         .tables = list(),
-        readonly = TRUE, version = "0.1"))
+        readonly = TRUE, version = "0.2"))
 
 #' @importFrom methods .valueClassTest is new validObject
 #'
 #' @noRd
 setValidity("MsBackendMassbankSql", function(object) {
     msg <- .valid_dbcon(object@dbcon)
-    msg <- c(msg, .valid_local_data(object@localData, object@spectraIds))
     if (is.null(msg)) TRUE
     else msg
-})
-
-#' @rdname MsBackendMassbankSql
-#'
-#' @importFrom utils capture.output head tail
-#'
-#' @importMethodsFrom methods show
-#'
-#' @export
-setMethod("show", "MsBackendMassbankSql", function(object) {
-    n <- length(object@spectraIds)
-    cat(class(object), "with", n, "spectra\n")
-    if (n) {
-        idx <- union(1:min(6, n), max(1, n-5):n)
-        spd <- spectraData(object[idx, ],
-                           c("msLevel", "precursorMz", "polarity"))
-        if (!length(rownames(spd)))
-            rownames(spd) <- idx
-        txt <- capture.output(print(spd))
-        cat(txt[-1], sep = "\n")
-        sp_cols <- spectraVariables(object)
-        cat(" ...", length(sp_cols) - 3, "more variables/columns.\n", "Use ",
-            "'spectraVariables' to list all of them.\n")
-    }
 })
 
 #' @exportMethod backendInitialize
 #'
 #' @importFrom DBI dbGetQuery
-#' @importFrom S4Vectors make_zero_col_DFrame
 #'
 #' @rdname MsBackendMassbankSql
-setMethod("backendInitialize", "MsBackendMassbankSql",
-          function(object, dbcon, ...) {
+setMethod("backendInitialize", "MsBackendMassbankSql", function(object,
+                                                                dbcon, ...) {
     if (missing(dbcon))
         stop("Parameter 'dbcon' is required for 'MsBackendMassbankSql'")
     msg <- .valid_dbcon(dbcon)
@@ -348,11 +316,6 @@ setMethod("backendInitialize", "MsBackendMassbankSql",
     res <- dbGetQuery(
         dbcon, "select spectrum_id, precursor_mz_text from msms_spectrum")
     object@spectraIds <- as.character(res[, "spectrum_id"])
-    object@localData <- make_zero_col_DFrame(length(object@spectraIds))
-
-    suppressWarnings(object@localData$precursorMz <-
-                         as.numeric(res[, "precursor_mz_text"]))
-
     object@.tables <- list(
         msms_spectrum = colnames(
             dbGetQuery(dbcon, "select * from msms_spectrum limit 0")),
@@ -360,22 +323,16 @@ setMethod("backendInitialize", "MsBackendMassbankSql",
             dbGetQuery(dbcon, "select * from ms_compound limit 0")),
         synonym = colnames(
             dbGetQuery(dbcon, "select * from synonym")))
-    object@spectraVariables <- c(.map_sql_to_spectraVariables(
-        unique(unlist(object@.tables))),
-        "precursor_mz_text", "compound_name")
+    ## Initialize cached backend
+    object <- callNextMethod(
+        object, nspectra = length(object@spectraIds),
+        spectraVariables = c(
+            .map_sql_to_spectraVariables(unique(unlist(object@.tables))),
+            "precursor_mz_text", "compound_name"))
+    suppressWarnings(object@localData$precursorMz <-
+                         as.numeric(res[, "precursor_mz_text"]))
     validObject(object)
     object
-})
-
-#' @exportMethod acquisitionNum
-#'
-#' @importMethodsFrom ProtGenerics acquisitionNum
-#'
-#' @rdname MsBackendMassbankSql
-setMethod("acquisitionNum", "MsBackendMassbankSql", function(object) {
-    if (length(object))
-        .spectra_data_massbank_sql(object, "acquisitionNum")[, 1]
-    else integer()
 })
 
 #' @importMethodsFrom Spectra peaksData
@@ -385,89 +342,14 @@ setMethod("acquisitionNum", "MsBackendMassbankSql", function(object) {
 #' @rdname MsBackendMassbankSql
 setMethod("peaksData", "MsBackendMassbankSql", function(object) {
     pks <- .fetch_peaks_sql(object)
-    f <- factor(pks$spectrum_id)
-    pks <- unname(split.data.frame(pks, f)[object@spectraIds])
+    f <- factor(pks$spectrum_id)        # using levels does not work because we can have duplicates
+    pks <- unname(split.data.frame(pks, f)[as.character(object@spectraIds)])
     lapply(pks, function(z) {
         if (nrow(z))
             as.matrix(z[, 2:3], rownames.force = FALSE)
         else matrix(ncol = 2, nrow = 0,
                     dimnames = list(character(), c("mz", "intensity")))
     })
-})
-
-#' @exportMethod centroided
-#'
-#' @aliases centroided<-,MsBackendMassbankSql-method
-#'
-#' @importMethodsFrom ProtGenerics centroided
-#'
-#' @rdname MsBackendMassbankSql
-setMethod("centroided", "MsBackendMassbankSql", function(object) {
-    if (length(object))
-        .spectra_data_massbank_sql(object, "centroided")[, 1]
-    else logical()
-})
-
-#' @exportMethod centroided<-
-#'
-#' @importMethodsFrom ProtGenerics centroided<-
-#'
-#' @rdname MsBackendMassbankSql
-setReplaceMethod("centroided", "MsBackendMassbankSql", function(object, value) {
-    if (!is.logical(value))
-        stop("'value' has to be a logical")
-    object$centroided <- value
-    validObject(object)
-    object
-})
-
-#' @exportMethod collisionEnergy
-#'
-#' @importMethodsFrom ProtGenerics collisionEnergy
-#'
-#' @rdname MsBackendMassbankSql
-setMethod("collisionEnergy", "MsBackendMassbankSql", function(object) {
-    if (length(object))
-        .spectra_data_massbank_sql(object, "collisionEnergy")[, 1]
-    else numeric()
-})
-
-#' @exportMethod collisionEnergy<-
-#'
-#' @importMethodsFrom ProtGenerics collisionEnergy<-
-#'
-#' @rdname MsBackendMassbankSql
-setReplaceMethod("collisionEnergy", "MsBackendMassbankSql",
-                 function(object, value) {
-                     if (!is.numeric(value))
-                         stop("'value' has to be a numeric value")
-                     object$collisionEnergy <- value
-                     validObject(object)
-                     object
-})
-
-#' @exportMethod dataOrigin
-#'
-#' @importMethodsFrom ProtGenerics dataOrigin
-#'
-#' @rdname MsBackendMassbankSql
-setMethod("dataOrigin", "MsBackendMassbankSql", function(object) {
-    if (length(object))
-        .spectra_data_massbank_sql(object, "dataOrigin")[, 1]
-    else character()
-})
-
-#' @exportMethod dataOrigin<-
-#'
-#' @importMethodsFrom ProtGenerics dataOrigin<-
-#'
-#' @rdname MsBackendMassbankSql
-setReplaceMethod("dataOrigin", "MsBackendMassbankSql", function(object, value) {
-    if (!is.character(value))
-        stop("'value' has to be a character")
-    object$dataOrigin <- value
-    validObject(object)
-    object
 })
 
 #' @exportMethod dataStorage
@@ -479,17 +361,6 @@ setMethod("dataStorage", "MsBackendMassbankSql", function(object) {
     rep("<MassBank>", length(object))
 })
 
-#' @exportMethod intensity
-#'
-#' @importMethodsFrom ProtGenerics intensity
-#'
-#' @rdname MsBackendMassbankSql
-setMethod("intensity", "MsBackendMassbankSql", function(object) {
-    if (length(object)) {
-        .spectra_data_massbank_sql(object, "intensity")[, 1]
-    } else NumericList()
-})
-
 #' @exportMethod intensity<-
 #'
 #' @importMethodsFrom ProtGenerics intensity<-
@@ -497,130 +368,6 @@ setMethod("intensity", "MsBackendMassbankSql", function(object) {
 #' @rdname MsBackendMassbankSql
 setReplaceMethod("intensity", "MsBackendMassbankSql", function(object, value) {
     stop("Can not replace original intensity values in MassBank.")
-})
-
-#' @exportMethod ionCount
-#'
-#' @importMethodsFrom ProtGenerics ionCount
-#'
-#' @importFrom MsCoreUtils vapply1d
-#'
-#' @rdname MsBackendMassbankSql
-setMethod("ionCount", "MsBackendMassbankSql", function(object) {
-    vapply1d(intensity(object), sum, na.rm = TRUE)
-})
-
-#' @exportMethod isEmpty
-#'
-#' @rdname MsBackendMassbankSql
-#'
-#' @importMethodsFrom S4Vectors isEmpty
-setMethod("isEmpty", "MsBackendMassbankSql", function(x) {
-    lengths(intensity(x)) == 0
-})
-
-#' @exportMethod isolationWindowLowerMz
-#'
-#' @importMethodsFrom ProtGenerics isolationWindowLowerMz
-#'
-#' @rdname MsBackendMassbankSql
-setMethod("isolationWindowLowerMz", "MsBackendMassbankSql", function(object) {
-    if (length(object))
-        .spectra_data_massbank_sql(object, "isolationWindowLowerMz")[, 1]
-    else numeric()
-})
-
-#' @exportMethod isolationWindowLowerMz<-
-#'
-#' @importMethodsFrom ProtGenerics isolationWindowLowerMz<-
-#'
-#' @rdname MsBackendMassbankSql
-setReplaceMethod("isolationWindowLowerMz", "MsBackendMassbankSql",
-                 function(object, value) {
-                     if (!is.numeric(value))
-                         stop("'value' has to be numeric")
-                     object$isolationWindowLowerMz <- value
-                     validObject(object)
-                     object
-                 })
-
-#' @exportMethod isolationWindowTargetMz
-#'
-#' @importMethodsFrom ProtGenerics isolationWindowTargetMz
-#'
-#' @rdname MsBackendMassbankSql
-setMethod("isolationWindowTargetMz", "MsBackendMassbankSql", function(object) {
-    if (length(object))
-        .spectra_data_massbank_sql(object, "isolationWindowTargetMz")[, 1]
-    else numeric()
-})
-
-#' @exportMethod isolationWindowTargetMz<-
-#'
-#' @importMethodsFrom ProtGenerics isolationWindowTargetMz<-
-#'
-#' @rdname MsBackendMassbankSql
-setReplaceMethod("isolationWindowTargetMz", "MsBackendMassbankSql",
-                 function(object, value) {
-                     if (!is.numeric(value))
-                         stop("'value' has to be numeric")
-                     object$isolationWindowTargetMz <- value
-                     validObject(object)
-                     object
-                 })
-
-#' @exportMethod isolationWindowUpperMz
-#'
-#' @importMethodsFrom ProtGenerics isolationWindowUpperMz
-#'
-#' @rdname MsBackendMassbankSql
-setMethod("isolationWindowUpperMz", "MsBackendMassbankSql", function(object) {
-    if (length(object))
-        .spectra_data_massbank_sql(object, "isolationWindowUpperMz")[, 1]
-    else numeric()
-})
-
-#' @exportMethod isolationWindowUpperMz<-
-#'
-#' @importMethodsFrom ProtGenerics isolationWindowUpperMz<-
-#'
-#' @rdname MsBackendMassbankSql
-setReplaceMethod("isolationWindowUpperMz", "MsBackendMassbankSql",
-                 function(object, value) {
-                     if (!is.numeric(value))
-                         stop("'value' has to be numeric")
-                     object$isolationWindowUpperMz <- value
-                     validObject(object)
-                     object
-                 })
-
-#' @exportMethod length
-#'
-#' @rdname MsBackendMassbankSql
-setMethod("length", "MsBackendMassbankSql", function(x) {
-    length(x@spectraIds)
-})
-
-#' @exportMethod msLevel
-#'
-#' @importMethodsFrom ProtGenerics msLevel
-#'
-#' @rdname MsBackendMassbankSql
-setMethod("msLevel", "MsBackendMassbankSql", function(object) {
-    if (length(object)) {
-        .spectra_data_massbank_sql(object, "msLevel")[, 1]
-    } else integer()
-})
-
-#' @exportMethod mz
-#'
-#' @importMethodsFrom ProtGenerics mz
-#'
-#' @rdname MsBackendMassbankSql
-setMethod("mz", "MsBackendMassbankSql", function(object) {
-    if (length(object)) {
-        .spectra_data_massbank_sql(object, "mz")[, 1]
-    } else NumericList()
 })
 
 #' @exportMethod mz<-
@@ -632,68 +379,6 @@ setReplaceMethod("mz", "MsBackendMassbankSql", function(object, value) {
     stop("Can not replace original data in MassBank.")
 })
 
-#' @rdname MsBackendMassbankSql
-setMethod("lengths", "MsBackendMassbankSql", function(x, use.names = FALSE) {
-    lengths(mz(x))
-})
-
-#' @exportMethod polarity
-#'
-#' @importMethodsFrom ProtGenerics polarity
-#'
-#' @rdname MsBackendMassbankSql
-setMethod("polarity", "MsBackendMassbankSql", function(object) {
-    if (length(object))
-        .spectra_data_massbank_sql(object, "polarity")[, 1]
-    else integer()
-})
-
-#' @exportMethod polarity<-
-#'
-#' @importMethodsFrom ProtGenerics polarity<-
-#'
-#' @rdname MsBackendMassbankSql
-setReplaceMethod("polarity", "MsBackendMassbankSql", function(object, value) {
-    if (!is.numeric(value))
-        stop("'value' has to be numeric")
-    object$polarity <- as.integer(value)
-    validObject(object)
-    object
-})
-
-#' @exportMethod precursorCharge
-#'
-#' @importMethodsFrom ProtGenerics precursorCharge
-#'
-#' @rdname MsBackendMassbankSql
-setMethod("precursorCharge", "MsBackendMassbankSql", function(object) {
-    if (length(object))
-        .spectra_data_massbank_sql(object, "precursorCharge")[, 1]
-    else integer()
-})
-
-#' @exportMethod precursorIntensity
-#'
-#' @importMethodsFrom ProtGenerics precursorIntensity
-#'
-#' @rdname MsBackendMassbankSql
-setMethod("precursorIntensity", "MsBackendMassbankSql", function(object) {
-    if (length(object))
-        .spectra_data_massbank_sql(object, "precursorIntensity")[, 1]
-    else numeric()
-})
-
-#' @exportMethod precursorMz
-#'
-#' @importMethodsFrom ProtGenerics precursorMz
-#'
-#' @rdname MsBackendMassbankSql
-setMethod("precursorMz", "MsBackendMassbankSql", function(object) {
-    if (length(object))
-        .spectra_data_massbank_sql(object, "precursorMz")[, 1]
-    else numeric()
-})
-
 #' @exportMethod reset
 #'
 #' @importMethodsFrom Spectra reset
@@ -701,94 +386,9 @@ setMethod("precursorMz", "MsBackendMassbankSql", function(object) {
 #' @rdname MsBackendMassbankSql
 setMethod("reset", "MsBackendMassbankSql", function(object) {
     message("Restoring original data ...", appendLF = FALSE)
-    object@localData <- DataFrame()
     if (is(object@dbcon, "DBIConnection"))
         object <- backendInitialize(object, object@dbcon)
     message("DONE")
-    object
-})
-
-#' @exportMethod rtime
-#'
-#' @importMethodsFrom ProtGenerics rtime
-#'
-#' @rdname MsBackendMassbankSql
-setMethod("rtime", "MsBackendMassbankSql", function(object) {
-    if (length(object))
-        .spectra_data_massbank_sql(object, "rtime")[, 1]
-    else numeric()
-})
-
-#' @exportMethod rtime<-
-#'
-#' @importMethodsFrom ProtGenerics rtime<-
-#'
-#' @rdname MsBackendMassbankSql
-setReplaceMethod("rtime", "MsBackendMassbankSql", function(object, value) {
-    if (!is.numeric(value))
-        stop("'value' has to be numeric")
-    object$rtime <- value
-    validObject(object)
-    object
-})
-
-#' @exportMethod scanIndex
-#'
-#' @importMethodsFrom ProtGenerics scanIndex
-#'
-#' @rdname MsBackendMassbankSql
-setMethod("scanIndex", "MsBackendMassbankSql", function(object) {
-    if (length(object))
-        .spectra_data_massbank_sql(object, "scanIndex")[, 1]
-    else numeric()
-})
-
-#' @importMethodsFrom Spectra selectSpectraVariables
-#'
-#' @exportMethod selectSpectraVariables
-#'
-#' @rdname MsBackendMassbankSql
-setMethod(
-    "selectSpectraVariables", "MsBackendMassbankSql",
-    function(object, spectraVariables = spectraVariables(object)) {
-        if (any(!spectraVariables %in% spectraVariables(object)))
-            stop("spectra variable(s) ",
-                 paste(spectraVariables[!spectraVariables %in%
-                                        spectraVariables(object)],
-                       collapse = ", "), " not available")
-        object@spectraVariables <- intersect(object@spectraVariables,
-                                             spectraVariables)
-        object@coreSpectraVariables <- intersect(object@coreSpectraVariables,
-                                                 spectraVariables)
-        object@localData <- object@localData[, colnames(object@localData) %in%
-                                               spectraVariables, drop = FALSE]
-        validObject(object)
-        object
-    })
-
-#' @exportMethod smoothed
-#'
-#' @importMethodsFrom ProtGenerics smoothed
-#'
-#' @rdname MsBackendMassbankSql
-setMethod("smoothed", "MsBackendMassbankSql", function(object) {
-    if (length(object))
-        .spectra_data_massbank_sql(object, "smoothed")[, 1]
-    else logical()
-})
-
-#' @exportMethod smoothed<-
-#'
-#' @aliases smoothed<-,MsBackendMassbankSql-method
-#'
-#' @importMethodsFrom ProtGenerics smoothed<-
-#'
-#' @rdname MsBackendMassbankSql
-setReplaceMethod("smoothed", "MsBackendMassbankSql", function(object, value) {
-    if (!is.logical(value))
-        stop("'value' has to be logical")
-    object$smoothed <- value
-    validObject(object)
     object
 })
 
@@ -800,13 +400,6 @@ setMethod(
     function(object, columns = spectraVariables(object)) {
         .spectra_data_massbank_sql(object, columns = columns)
     })
-
-#' @exportMethod spectraData<-
-#'
-#' @rdname MsBackendMassbankSql
-setReplaceMethod("spectraData", "MsBackendMassbankSql",function(object, value) {
-    stop(class(object)[1], " does not support replacing the full spectra data.")
-})
 
 #' @exportMethod spectraNames
 #'
@@ -828,19 +421,13 @@ setReplaceMethod("spectraNames", "MsBackendMassbankSql",
                           " does not support replacing spectra names (IDs).")
 })
 
-#' @exportMethod spectraVariables
-#'
-#' @importMethodsFrom ProtGenerics spectraVariables
-#'
-#' @rdname MsBackendMassbankSql
-setMethod("spectraVariables", "MsBackendMassbankSql", function(object) {
-    unique(c(object@coreSpectraVariables, colnames(object@localData),
-             object@spectraVariables))
-})
-
 #' @exportMethod tic
 #'
 #' @importMethodsFrom ProtGenerics tic
+#'
+#' @importFrom Spectra intensity
+#'
+#' @importFrom MsCoreUtils vapply1d
 #'
 #' @rdname MsBackendMassbankSql
 setMethod("tic", "MsBackendMassbankSql", function(object, initial = TRUE) {
@@ -865,45 +452,7 @@ setMethod("[", "MsBackendMassbankSql", function(x, i, j, ..., drop = FALSE) {
         return(x)
     i <- i2index(i, length(x), x@spectraIds)
     slot(x, "spectraIds", check = FALSE) <- x@spectraIds[i]
-    if (length(x@localData))
-        slot(x, "localData", check = FALSE) <- extractROWS(x@localData, i)
-    x
-})
-
-#' @exportMethod $
-#'
-#' @rdname MsBackendMassbankSql
-setMethod("$", "MsBackendMassbankSql", function(x, name) {
-    if (!any(spectraVariables(x) == name))
-        stop("Spectra variable '", name, "' not available.")
-    .spectra_data_massbank_sql(x, name)[, 1]
-})
-
-#' @exportMethod $<-
-#'
-#' @rdname MsBackendMassbankSql
-setReplaceMethod("$", "MsBackendMassbankSql", function(x, name, value) {
-    if (name %in% c("mz", "intensity"))
-        stop("Replacing m/z and intensity values is not supported.")
-    if (length(value) == 1)
-        value <- rep(value, length(x))
-    if (length(value) != length(x))
-        stop("value has to be either of length 1 or length equal to the ",
-             "number of spectra")
-    if (length(x@localData)) {
-        cn <- colnames(x@localData) == name
-        if (any(cn))
-            x@localData[, cn] <- value
-        else {
-            cn <- colnames(x@localData)
-            x@localData <- cbind(x@localData, value)
-            colnames(x@localData) <- c(cn, name)
-        }
-    } else {
-        x@localData <- DataFrame(value)
-        colnames(x@localData) <- name
-    }
-    validObject(x)
+    x <- callNextMethod(x, i = i)
     x
 })
 
@@ -934,4 +483,13 @@ setMethod("compounds", "MsBackendMassbankSql", function(object, ...) {
     res$synonym <- CharacterList(syns, compress = FALSE)
     res$name <- vapply(syns, function(z) z[1], character(1))
     res[match(object$compound_id, res$compound_id), ]
+})
+
+#' @rdname MsBackendMassbankSql
+#'
+#' @export
+setReplaceMethod("$", "MsBackendMassbankSql", function(x, name, value) {
+    if (name %in% c("spectrum_id"))
+        stop("Spectra IDs can not be changes.", call. = FALSE)
+    callNextMethod()
 })

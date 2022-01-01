@@ -1,3 +1,10 @@
+# MsBackendMassbank 1.3
+
+## Changes in 1.3.1
+
+- `MsBackendMassbankSql` extends `Spectra::MsBackendCached` to re-use the
+  general caching mechanism provided by that backend.
+
 # MsBackendMassbank 1.1
 
 ## Changes in 1.1.4
