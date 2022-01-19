@@ -25,7 +25,7 @@ Description: Mass spectrometry (MS) data backend supporting import and
 	     adds MassBank support to the Spectra package.
 Depends:
     R (>= 4.0),
-    Spectra (>= 1.5.4)
+    Spectra (>= 1.5.6)
 Imports:
     BiocParallel,
     S4Vectors,

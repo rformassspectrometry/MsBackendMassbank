@@ -3,6 +3,7 @@
 ## Changes in 1.3.2
 
 - Use in addition unit tests from the `Spectra` package.
+- Add `filterPrecursorMzValues` and `filterPrecursorMzRange`.
 
 ## Changes in 1.3.1
 

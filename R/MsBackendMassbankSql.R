@@ -493,3 +493,13 @@ setReplaceMethod("$", "MsBackendMassbankSql", function(x, name, value) {
         stop("Spectra IDs can not be changes.", call. = FALSE)
     callNextMethod()
 })
+
+
+#' @rdname MsBackendMassbankSql
+#'
+#' @importMethodsFrom Spectra precScanNum
+#' @export
+setMethod("precScanNum", "MsBackendMassbankSql", function(object) {
+    warning("precursor scan numbers not available")
+    rep(NA_integer_, length(object))
+})
