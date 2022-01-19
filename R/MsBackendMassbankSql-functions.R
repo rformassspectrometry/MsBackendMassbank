@@ -23,12 +23,6 @@ MsBackendMassbankSql <- function() {
     NULL
 }
 
-.valid_local_data <- function(x, y) {
-    if (nrow(x) && nrow(x) != length(y))
-        "Number of rows in local data and number of spectra don't match"
-    else NULL
-}
-
 #' Returns the spectra data, from the database and eventually filling with
 #' *core* spectra variables, if they are not available in the database.
 #'
@@ -44,22 +38,25 @@ MsBackendMassbankSql <- function() {
 #'
 #' @importFrom S4Vectors extractCOLS
 #'
-#' @importFrom methods as
+#' @importFrom S4Vectors make_zero_col_DFrame
+#'
+#' @importFrom methods as callNextMethod getMethod
 #'
 #' @author Johannes Rainer
 #'
 #' @noRd
 .spectra_data_massbank_sql <- function(x, columns = spectraVariables(x)) {
-    local_cols <- intersect(columns, colnames(x@localData))
-    db_cols <- intersect(x@spectraVariables, columns)
-    db_cols <- db_cols[!db_cols %in% local_cols]
+    res <- getMethod("spectraData", "MsBackendCached")(x, columns = columns)
+    if (is.null(res))
+        res <- make_zero_col_DFrame(length(x))
+    ## Define what needs to be still retrieved.
+    db_cols <- intersect(columns, x@spectraVariables)
+    db_cols <- db_cols[!db_cols %in% c("mz", "intensity", colnames(res))]
     mz_cols <- intersect(columns, c("mz", "intensity"))
-    core_cols <- intersect(columns, names(Spectra:::.SPECTRA_DATA_COLUMNS))
-    core_cols <- core_cols[!core_cols %in% c(db_cols, mz_cols, local_cols)]
-    res <- NULL
-    ## Get data from database
+
     if (length(db_cols)) {
-        res <- DataFrame(.fetch_spectra_data_sql(x, columns = db_cols))
+        res <- cbind(
+            res, as(.fetch_spectra_data_sql(x, columns = db_cols), "DataFrame"))
         if (any(colnames(res) == "synonym"))
             res$synonym <- CharacterList(res$synonym, compress = FALSE)
     }
@@ -68,39 +65,14 @@ MsBackendMassbankSql <- function() {
         pks <- .fetch_peaks_sql(x, columns = mz_cols)
         f <- factor(pks$spectrum_id)
         if (any(mz_cols == "mz")) {
-            mzs <- split(pks$mz, f)
-            if (length(res))
-                res$mz <- NumericList(mzs[as.character(x@spectraIds)],
-                                      compress = FALSE)
-            else res <- DataFrame(
-                     mz = NumericList(mzs[as.character(x@spectraIds)],
-                                      compress = FALSE))
+            mzs <- unname(split(pks$mz, f)[as.character(x@spectraIds)])
+            res$mz <- NumericList(mzs, compress = FALSE)
         }
         if (any(mz_cols == "intensity")) {
-            ints <- split(pks$intensity, f)
-            if (length(res))
-                res$intensity <- NumericList(
-                    ints[as.character(x@spectraIds)], compress = FALSE)
-            else res <- DataFrame(
-                     intensity = NumericList(
-                         ints[as.character(x@spectraIds)], compress = FALSE))
+            ints <- unname(
+                split(pks$intensity, f)[as.character(x@spectraIds)])
+            res$intensity <- NumericList(ints, compress = FALSE)
         }
-    }
-    ## Get local data
-    if (length(local_cols)) {
-        if (length(res))
-            res <- cbind(res, extractCOLS(x@localData, local_cols))
-        else res <- extractCOLS(x@localData, local_cols)
-    }
-    ## Create missing core variables
-    if (length(core_cols)) {
-        tmp <- DataFrame(lapply(Spectra:::.SPECTRA_DATA_COLUMNS[core_cols],
-                                function(z, n) rep(as(NA, z), n), length(x)))
-        if (length(res))
-            res <- cbind(res, tmp)
-        else res <- tmp
-        if (any(core_cols == "dataStorage"))
-            res$dataStorage <- dataStorage(x)
     }
     if (!all(columns %in% colnames(res)))
         stop("Column(s) ", paste0(columns[!columns %in% names(res)],
@@ -108,66 +80,6 @@ MsBackendMassbankSql <- function() {
              call. = FALSE)
     extractCOLS(res, columns)
 }
-
-## .spectra_data_massbank_sql <- function(x, columns = spectraVariables(x)) {
-##     local_cols <- intersect(columns, colnames(x@localData))
-##     db_cols <- intersect(x@spectraVariables, columns)
-##     db_cols <- db_cols[!db_cols %in% local_cols]
-##     mz_cols <- intersect(columns, c("mz", "intensity"))
-##     core_cols <- intersect(columns, names(Spectra:::.SPECTRA_DATA_COLUMNS))
-##     core_cols <- core_cols[!core_cols %in% c(db_cols, mz_cols, local_cols)]
-##     res <- NULL
-##     ## Get data from database
-##     if (length(db_cols)) {
-##         res <- DataFrame(.fetch_spectra_data_sql(x, columns = db_cols))
-##         if (any(colnames(res) == "synonym"))
-##             res$synonym <- CharacterList(res$synonym, compress = FALSE)
-##     }
-##     ## Get m/z and intensity values
-##     if (length(mz_cols)) {
-##         pks <- .fetch_peaks_sql(x, columns = mz_cols)
-##         f <- factor(pks$spectrum_id)
-##         if (any(mz_cols == "mz")) {
-##             mzs <- split(pks$mz, f)
-##             if (length(res))
-##                 res$mz <- NumericList(mzs[as.character(x@spectraIds)],
-##                                       compress = FALSE)
-##             else res <- DataFrame(
-##                      mz = NumericList(mzs[as.character(x@spectraIds)],
-##                                       compress = FALSE))
-##         }
-##         if (any(mz_cols == "intensity")) {
-##             ints <- split(pks$intensity, f)
-##             if (length(res))
-##                 res$intensity <- NumericList(
-##                     ints[as.character(x@spectraIds)], compress = FALSE)
-##             else res <- DataFrame(
-##                      intensity = NumericList(
-##                          ints[as.character(x@spectraIds)], compress = FALSE))
-##         }
-##     }
-##     ## Get local data
-##     if (length(local_cols)) {
-##         if (length(res))
-##             res <- cbind(res, extractCOLS(x@localData, local_cols))
-##         else res <- extractCOLS(x@localData, local_cols)
-##     }
-##     ## Create missing core variables
-##     if (length(core_cols)) {
-##         tmp <- DataFrame(lapply(Spectra:::.SPECTRA_DATA_COLUMNS[core_cols],
-##                                 function(z, n) rep(as(NA, z), n), length(x)))
-##         if (length(res))
-##             res <- cbind(res, tmp)
-##         else res <- tmp
-##         if (any(core_cols == "dataStorage"))
-##             res$dataStorage <- dataStorage(x)
-##     }
-##     if (!all(columns %in% colnames(res)))
-##         stop("Column(s) ", paste0(columns[!columns %in% names(res)],
-##                                   collapse = ", "), " not available.",
-##              call. = FALSE)
-##     extractCOLS(res, columns)
-## }
 
 #' @importFrom DBI dbSendQuery dbBind dbFetch dbClearResult
 #'
@@ -184,22 +96,6 @@ MsBackendMassbankSql <- function() {
                    intensity = numeric())
     }
 }
-
-## .fetch_peaks_sql <- function(x, columns = c("mz", "intensity")) {
-##     if (length(x@dbcon)) {
-##         qry <- dbSendQuery(
-##             x@dbcon, paste0("select spectrum_id,",
-##                             paste(columns, collapse = ","),
-##                             " from msms_spectrum_peak where spectrum_id = ?"))
-##         qry <- dbBind(qry, list(unique(x@spectraIds)))
-##         res <- dbFetch(qry)
-##         dbClearResult(qry)
-##         res
-##     } else {
-##         data.frame(spectrum_id = character(), mz = numeric(),
-##                    intensity = numeric())
-##     }
-## }
 
 .columns_sql <- c(
     precursorIntensity = "precursor_intensity",

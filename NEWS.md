@@ -1,8 +1,13 @@
 # MsBackendMassbank 1.3
 
-## Changes in 1.3.1
+## Changes in 1.3.2
 
 - Use in addition unit tests from the `Spectra` package.
+
+## Changes in 1.3.1
+
+- `MsBackendMassbankSql` extends `Spectra::MsBackendCached` to re-use the
+  general caching mechanism provided by that backend.
 
 # MsBackendMassbank 1.1
 
