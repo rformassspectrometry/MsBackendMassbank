@@ -272,6 +272,7 @@ spectraVariableMapping <- function(format = c("Massbank")) {
            copyright = "COPYRIGHT:",
            publication = "PUBLICATION:",
            project = "PROJECT:",
+           comment = "COMMENT:",
 
            # peak information
            pknum = "PK$NUM_PEAK:"
