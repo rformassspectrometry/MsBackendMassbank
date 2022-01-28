@@ -1,4 +1,4 @@
-fls <- system.file("extdata/MassBankRecords.txt",
+fls <- system.file("extdata", "MassBankRecords.txt",
                    package = "MsBackendMassbank")
 mb <- scan(fls, what = "", sep = "\n", quote = "",
            allowEscapes = FALSE, quiet = TRUE)

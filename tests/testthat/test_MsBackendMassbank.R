@@ -1,6 +1,6 @@
 test_that("backendInitialize,MsBackendMassbank works", {
     ## Import a single file with multiple record
-    fls <- system.file("extdata/MassBankRecords.txt",
+    fls <- system.file("extdata","MassBankRecords.txt",
                        package = "MsBackendMassbank")
     be <- MsBackendMassbank()
 
@@ -39,7 +39,7 @@ test_that("backendInitialize,MsBackendMassbank works", {
     expect_true(is.integer(res_multiple@spectraData$msLevel))
 
     ## Import a single file without RT information
-    fls <- system.file("extdata/BSU00001.txt", package = "MsBackendMassbank")
+    fls <- system.file("extdata", "BSU00001.txt", package = "MsBackendMassbank")
     be <- MsBackendMassbank()
 
     res_single <- backendInitialize(be, fls)

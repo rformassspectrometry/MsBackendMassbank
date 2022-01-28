@@ -3,11 +3,6 @@ test_that(".valid_dbcon works", {
     expect_true(length(.valid_dbcon(4)) == 1)
 })
 
-test_that(".valid_local_data works", {
-    expect_true(length(.valid_local_data(DataFrame(), 3)) == 0)
-    expect_true(length(.valid_local_data(data.frame(a = 4), 1:3)) == 1)
-})
-
 test_that("MsBackendMassbankSql works", {
     res <- MsBackendMassbankSql()
     expect_true(validObject(res))
@@ -127,7 +122,7 @@ test_that(".spectra_data_massbank_sql works", {
     expect_true(is(res$intensity, "NumericList"))
 
     ## With local data.
-    be@localData <- DataFrame(rtime = seq_len(length(be)))
+    be@localData <- data.frame(rtime = seq_len(length(be)))
     res <- .spectra_data_massbank_sql(
         be, columns = c("mz", "rtime", "spectrum_id"))
     expect_true(is(res, "DataFrame"))
