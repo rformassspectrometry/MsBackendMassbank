@@ -1,5 +1,9 @@
 # MsBackendMassbank 1.3
 
+## Changes in 1.3.3
+
+- Map comment to spectra variable.
+
 ## Changes in 1.3.2
 
 - Use in addition unit tests from the `Spectra` package.
