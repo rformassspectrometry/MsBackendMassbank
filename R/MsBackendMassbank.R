@@ -158,7 +158,7 @@ MsBackendMassbank <- function() {
 #' @rdname MsBackendMassbank
 setMethod(
     "spectraVariableMapping", "MsBackendMassbank",
-    function(format = c("Massbank")) {
+    function(object, format = c("Massbank")) {
         switch(match.arg(format),
                "Massbank" = c(
                    ## minimal information

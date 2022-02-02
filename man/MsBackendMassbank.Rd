@@ -4,7 +4,7 @@
 \alias{MsBackendMassbank}
 \alias{MsBackendMassbank-class}
 \alias{backendInitialize,MsBackendMassbank-method}
-\alias{spectraVariableMapping}
+\alias{spectraVariableMapping,MsBackendMassbank-method}
 \alias{export,MsBackendMassbank-method}
 \title{MS data backend for mgf files}
 \usage{
@@ -19,9 +19,15 @@
 
 MsBackendMassbank()
 
-spectraVariableMapping(format = c("Massbank"))
+\S4method{spectraVariableMapping}{MsBackendMassbank}(object, format = c("Massbank"))
 
-\S4method{export}{MsBackendMassbank}(object, x, file = tempfile(), mapping = spectraVariableMapping(), ...)
+\S4method{export}{MsBackendMassbank}(
+  object,
+  x,
+  file = tempfile(),
+  mapping = spectraVariableMapping(MsBackendMassbank()),
+  ...
+)
 }
 \arguments{
 \item{object}{Instance of \code{MsBackendMassbank} class.}
@@ -52,7 +58,7 @@ format to be used. Currently only \code{format = "Massbank"} is supported.}
 allowing to specify how fields from the Massbank file should be renamed.
 Names are supposed to be the spectra variable name and values of the
 vector the field names in the Massbank file. See output of
-\code{spectraVariableMapping()} for the expected format.}
+\code{spectraVariableMapping(MsBackendMassbank())} for the expected format.}
 }
 \value{
 \code{backendInitialize} and \code{MsBackendMassbank} return an instance of
