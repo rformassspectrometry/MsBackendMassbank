@@ -31,7 +31,7 @@ will abort import regardless of parameter nonStop."><meta property="og:image" co
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MsBackendMassbank</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.4</span>
       </span>
     </div>
 
@@ -96,10 +96,17 @@ will abort import regardless of parameter <code>nonStop</code>.</p>
 
 <span class="fu">MsBackendMassbank</span><span class="op">(</span><span class="op">)</span>
 
-<span class="fu">spectraVariableMapping</span><span class="op">(</span>format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Massbank"</span><span class="op">)</span><span class="op">)</span>
+<span class="co"># S4 method for MsBackendMassbank</span>
+<span class="fu">spectraVariableMapping</span><span class="op">(</span><span class="va">object</span>, format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Massbank"</span><span class="op">)</span><span class="op">)</span>
 
 <span class="co"># S4 method for MsBackendMassbank</span>
-<span class="fu">export</span><span class="op">(</span><span class="va">object</span>, <span class="va">x</span>, file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span>, mapping <span class="op">=</span> <span class="fu">spectraVariableMapping</span><span class="op">(</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+<span class="fu">export</span><span class="op">(</span>
+  <span class="va">object</span>,
+  <span class="va">x</span>,
+  file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span>,
+  mapping <span class="op">=</span> <span class="fu">spectraVariableMapping</span><span class="op">(</span><span class="fu">MsBackendMassbank</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>,
+  <span class="va">...</span>
+<span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -133,7 +140,7 @@ format to be used. Currently only <code>format = "Massbank"</code> is supported.
 allowing to specify how fields from the Massbank file should be renamed.
 Names are supposed to be the spectra variable name and values of the
 vector the field names in the Massbank file. See output of
-<code>spectraVariableMapping()</code> for the expected format.</p></dd>
+<code>spectraVariableMapping(MsBackendMassbank())</code> for the expected format.</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
