@@ -563,7 +563,8 @@ metaDataBlocks <- function() {
 #'
 #' @noRd
 .export_massbank <- function(x, con = stdout(),
-                             mapping = spectraVariableMapping()) {
+                             mapping = spectraVariableMapping(
+                                 MsBackendMassbank())) {
     if (is.character(con) && file.exists(con)) {
         message("Overwriting ", con, "!")
         unlink(con)

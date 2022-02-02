@@ -39,7 +39,7 @@ NULL
 #'     allowing to specify how fields from the Massbank file should be renamed.
 #'     Names are supposed to be the spectra variable name and values of the
 #'     vector the field names in the Massbank file. See output of
-#'     `spectraVariableMapping()` for the expected format.
+#'     `spectraVariableMapping(MsBackendMassbank())` for the expected format.
 #'
 #' @param metaBlocks `data.frame` indicating which metadata shall
 #'     be imported. Default is [metaDataBlocks()].
@@ -151,134 +151,141 @@ MsBackendMassbank <- function() {
   new("MsBackendMassbank")
 }
 
-#' @export
+#' @importMethodsFrom Spectra spectraVariableMapping
+#'
+#' @exportMethod spectraVariableMapping
 #'
 #' @rdname MsBackendMassbank
-spectraVariableMapping <- function(format = c("Massbank")) {
-  ## In future eventually define that in a text file and import upon package
-  ## init.
-  switch(match.arg(format),
-         "Massbank" = c(
-           # minimal information
-           accession = "ACCESSION:",
-           name = "CH$NAME:",
-           smiles = "CH$SMILES:",
-           exactmass = "CH$EXACT_MASS:",
-           formula = "CH$FORMULA:",
-           inchi = "CH$IUPAC:",
-           cas = "CH$LINK: CAS",
-           inchikey = "CH$LINK: INCHIKEY",
-           collisionEnergy = "AC$MASS_SPECTROMETRY: COLLISION_ENERGY",
-           precursorMz = "MS$FOCUSED_ION: PRECURSOR_M/Z",
-           precursorIntensity = "MS$FOCUSED_ION: PRECURSOR_INT",
-           adduct = "MS$FOCUSED_ION: PRECURSOR_TYPE",
-           rtime = "AC$CHROMATOGRAPHY: RETENTION_TIME",
-           polarity = "AC$MASS_SPECTROMETRY: ION_MODE",
-           splash = "PK$SPLASH:",
-           title = "RECORD_TITLE:",
+setMethod(
+    "spectraVariableMapping", "MsBackendMassbank",
+    function(format = c("Massbank")) {
+        switch(match.arg(format),
+               "Massbank" = c(
+                   ## minimal information
+                   accession = "ACCESSION:",
+                   name = "CH$NAME:",
+                   smiles = "CH$SMILES:",
+                   exactmass = "CH$EXACT_MASS:",
+                   formula = "CH$FORMULA:",
+                   inchi = "CH$IUPAC:",
+                   cas = "CH$LINK: CAS",
+                   inchikey = "CH$LINK: INCHIKEY",
+                   collisionEnergy = "AC$MASS_SPECTROMETRY: COLLISION_ENERGY",
+                   precursorMz = "MS$FOCUSED_ION: PRECURSOR_M/Z",
+                   precursorIntensity = "MS$FOCUSED_ION: PRECURSOR_INT",
+                   adduct = "MS$FOCUSED_ION: PRECURSOR_TYPE",
+                   rtime = "AC$CHROMATOGRAPHY: RETENTION_TIME",
+                   polarity = "AC$MASS_SPECTROMETRY: ION_MODE",
+                   splash = "PK$SPLASH:",
+                   title = "RECORD_TITLE:",
 
-           # instrument information
-           instrument = "AC$INSTRUMENT:",
-           instrument_type = "AC$INSTRUMENT_TYPE:",
+                   ## instrument information
+                   instrument = "AC$INSTRUMENT:",
+                   instrument_type = "AC$INSTRUMENT_TYPE:",
 
-           # ms information
-           ms_ms_type = "AC$MASS_SPECTROMETRY: MS_TYPE",
-           ms_cap_voltage = "AC$MASS_SPECTROMETRY: CAPILLARY_VOLTAGE",
-           ms_col_gas = "AC$MASS_SPECTROMETRY: COLLISION_GAS",
-           ms_desolv_gas_flow = "AC$MASS_SPECTROMETRY: DESOLVATION_GAS_FLOW",
-           ms_desolv_temp = "AC$MASS_SPECTROMETRY: DESOLVATION_TEMPERATURE",
-           ms_ionization = "AC$MASS_SPECTROMETRY: IONIZATION",
-           ms_ionization_energy = "AC$MASS_SPECTROMETRY: IONIZATION_ENERGY",
-           ms_laser = "AC$MASS_SPECTROMETRY: LASER",
-           ms_matrix = "AC$MASS_SPECTROMETRY: MATRIX",
-           ms_mass_accuracy = "AC$MASS_SPECTROMETRY: MASS_ACCURACY",
-           ms_mass_range = "AC$MASS_SPECTROMETRY: MASS_RANGE_MZ",
-           ms_reagent_gas = "AC$MASS_SPECTROMETRY: REAGENT_GAS",
-           ms_resolution = "AC$MASS_SPECTROMETRY: RESOLUTION",
-           ms_scan_setting = "AC$MASS_SPECTROMETRY: SCANNING_SETTING",
-           ms_source_temp = "AC$MASS_SPECTROMETRY: SOURCE_TEMPERATURE",
-           ms_frag_mode = "AC$MASS_SPECTROMETRY: FRAGMENTATION_MODE",
+                   ## ms information
+                   ms_ms_type = "AC$MASS_SPECTROMETRY: MS_TYPE",
+                   ms_cap_voltage = "AC$MASS_SPECTROMETRY: CAPILLARY_VOLTAGE",
+                   ms_col_gas = "AC$MASS_SPECTROMETRY: COLLISION_GAS",
+                   ms_desolv_gas_flow =
+                       "AC$MASS_SPECTROMETRY: DESOLVATION_GAS_FLOW",
+                   ms_desolv_temp =
+                       "AC$MASS_SPECTROMETRY: DESOLVATION_TEMPERATURE",
+                   ms_ionization = "AC$MASS_SPECTROMETRY: IONIZATION",
+                   ms_ionization_energy =
+                       "AC$MASS_SPECTROMETRY: IONIZATION_ENERGY",
+                   ms_laser = "AC$MASS_SPECTROMETRY: LASER",
+                   ms_matrix = "AC$MASS_SPECTROMETRY: MATRIX",
+                   ms_mass_accuracy = "AC$MASS_SPECTROMETRY: MASS_ACCURACY",
+                   ms_mass_range = "AC$MASS_SPECTROMETRY: MASS_RANGE_MZ",
+                   ms_reagent_gas = "AC$MASS_SPECTROMETRY: REAGENT_GAS",
+                   ms_resolution = "AC$MASS_SPECTROMETRY: RESOLUTION",
+                   ms_scan_setting = "AC$MASS_SPECTROMETRY: SCANNING_SETTING",
+                   ms_source_temp = "AC$MASS_SPECTROMETRY: SOURCE_TEMPERATURE",
+                   ms_frag_mode = "AC$MASS_SPECTROMETRY: FRAGMENTATION_MODE",
 
-           # ims information
-           ims_instrument_type = "AC$ION_MOBILITY: INSTRUMENT_TYPE",
-           ims_drift_gas = "AC$ION_MOBILITY: DRIFT_GAS",
-           ims_drift_time = "AC$ION_MOBILITY: DRIFT_TIME",
-           ims_ccs = "AC$ION_MOBILITY: CCS",
+                   ## ims information
+                   ims_instrument_type = "AC$ION_MOBILITY: INSTRUMENT_TYPE",
+                   ims_drift_gas = "AC$ION_MOBILITY: DRIFT_GAS",
+                   ims_drift_time = "AC$ION_MOBILITY: DRIFT_TIME",
+                   ims_ccs = "AC$ION_MOBILITY: CCS",
 
-           # ms information part II
-           focus_base_peak = "MS$FOCUSED_ION: BASE_PEAK",
-           focus_derivative_form = "MS$FOCUSED_ION: DERIVATIVE_FORM",
-           focus_derivative_mass = "MS$FOCUSED_ION: DERIVATIVE_MASS",
-           focus_derivative_type = "MS$FOCUSED_ION: DERIVATIVE_TYPE",
-           focus_ion_type = "MS$FOCUSED_ION: ION_TYPE",
+                   ## ms information part II
+                   focus_base_peak = "MS$FOCUSED_ION: BASE_PEAK",
+                   focus_derivative_form = "MS$FOCUSED_ION: DERIVATIVE_FORM",
+                   focus_derivative_mass = "MS$FOCUSED_ION: DERIVATIVE_MASS",
+                   focus_derivative_type = "MS$FOCUSED_ION: DERIVATIVE_TYPE",
+                   focus_ion_type = "MS$FOCUSED_ION: ION_TYPE",
 
-           # data processing information
-           data_processing_comment = "MS$DATA_PROCESSING: COMMENT",
-           data_processing_deprofile = "MS$DATA_PROCESSING: DEPROFILE",
-           data_processing_find = "MS$DATA_PROCESSING: FIND_PEAK",
-           data_processing_reanalyze = "MS$DATA_PROCESSING: REANALYZE",
-           data_processing_recalibrate = "MS$DATA_PROCESSING: RECALIBRATE",
-           data_processing_whole = "MS$DATA_PROCESSING: WHOLE",
+                   ## data processing information
+                   data_processing_comment = "MS$DATA_PROCESSING: COMMENT",
+                   data_processing_deprofile = "MS$DATA_PROCESSING: DEPROFILE",
+                   data_processing_find = "MS$DATA_PROCESSING: FIND_PEAK",
+                   data_processing_reanalyze = "MS$DATA_PROCESSING: REANALYZE",
+                   data_processing_recalibrate =
+                       "MS$DATA_PROCESSING: RECALIBRATE",
+                   data_processing_whole = "MS$DATA_PROCESSING: WHOLE",
 
-           # chromatography information
-           chrom_carrier_gas = "AC$CHROMATOGRAPHY: CARRIER_GAS",
-           chrom_column = "AC$CHROMATOGRAPHY: COLUMN_NAME",
-           chrom_column_temp = "AC$CHROMATOGRAPHY: COLUMN_TEMPERATURE",
-           chrom_column_temp_gradient =
-               "AC$CHROMATOGRAPHY: COLUMN_TEMPERATURE_GRADIENT",
-           chrom_flow_gradient = "AC$CHROMATOGRAPHY: FLOW_GRADIENT",
-           chrom_flow_rate = "AC$CHROMATOGRAPHY: FLOW_RATE",
-           chrom_inj_temp = "AC$CHROMATOGRAPHY: INJECTION_TEMPERATURE",
-           chrom_inj_temp_gradient =
-               "AC$CHROMATOGRAPHY: INJECTION_TEMPERATURE_GRADIENT",
-           chrom_rti_kovats = "AC$CHROMATOGRAPHY: KOVATS_RTI",
-           chrom_rti_lee = "AC$CHROMATOGRAPHY: LEE_RTI",
-           chrom_rti_naps = "AC$CHROMATOGRAPHY: NAPS_RTI",
-           chrom_rti_uoa = "AC$CHROMATOGRAPHY: UOA_RTI",
-           chrom_rti_uoa_pred = "AC$CHROMATOGRAPHY: UOA_PREDICTED_RTI",
-           chrom_rt = "AC$CHROMATOGRAPHY: RETENTION_TIME",
-           chrom_solvent = "AC$CHROMATOGRAPHY: SOLVENT",
-           chrom_transfer_temp = "AC$CHROMATOGRAPHY: TRANSFERLINE_TEMPERATURE",
+                   ## chromatography information
+                   chrom_carrier_gas = "AC$CHROMATOGRAPHY: CARRIER_GAS",
+                   chrom_column = "AC$CHROMATOGRAPHY: COLUMN_NAME",
+                   chrom_column_temp = "AC$CHROMATOGRAPHY: COLUMN_TEMPERATURE",
+                   chrom_column_temp_gradient =
+                       "AC$CHROMATOGRAPHY: COLUMN_TEMPERATURE_GRADIENT",
+                   chrom_flow_gradient = "AC$CHROMATOGRAPHY: FLOW_GRADIENT",
+                   chrom_flow_rate = "AC$CHROMATOGRAPHY: FLOW_RATE",
+                   chrom_inj_temp = "AC$CHROMATOGRAPHY: INJECTION_TEMPERATURE",
+                   chrom_inj_temp_gradient =
+                       "AC$CHROMATOGRAPHY: INJECTION_TEMPERATURE_GRADIENT",
+                   chrom_rti_kovats = "AC$CHROMATOGRAPHY: KOVATS_RTI",
+                   chrom_rti_lee = "AC$CHROMATOGRAPHY: LEE_RTI",
+                   chrom_rti_naps = "AC$CHROMATOGRAPHY: NAPS_RTI",
+                   chrom_rti_uoa = "AC$CHROMATOGRAPHY: UOA_RTI",
+                   chrom_rti_uoa_pred = "AC$CHROMATOGRAPHY: UOA_PREDICTED_RTI",
+                   chrom_rt = "AC$CHROMATOGRAPHY: RETENTION_TIME",
+                   chrom_solvent = "AC$CHROMATOGRAPHY: SOLVENT",
+                   chrom_transfer_temp =
+                       "AC$CHROMATOGRAPHY: TRANSFERLINE_TEMPERATURE",
 
-           # chemical information
-           compound_class = "CH$COMPOUND_CLASS:",
-           link_cayman = "CH$LINK: CAYMAN",
-           link_chebi = "CH$LINK: CHEBI",
-           link_chembl = "CH$LINK: CHEMBL",
-           link_chempdb = "CH$LINK: CHEMPDB",
-           link_chemspider = "CH$LINK: CHEMSPIDER",
-           link_comptox = "CH$LINK: COMPTOX",
-           link_hmdb = "CH$LINK: HMDB",
-           link_kappaview = "CH$LINK: KAPPAVIEW",
-           link_kegg = "CH$LINK: KEGG",
-           link_knapsack = "CH$LINK: KNAPSACK",
-           link_lipidbank = "CH$LINK: LIPIDBANK",
-           link_lipidmaps = "CH$LINK: LIPIDMAPS",
-           link_nikkaji = "CH$LINK: NIKKAJI",
-           link_pubchem = "CH$LINK: PUBCHEM",
-           link_zinc = "CH$LINK: ZINC",
+                   ## chemical information
+                   compound_class = "CH$COMPOUND_CLASS:",
+                   link_cayman = "CH$LINK: CAYMAN",
+                   link_chebi = "CH$LINK: CHEBI",
+                   link_chembl = "CH$LINK: CHEMBL",
+                   link_chempdb = "CH$LINK: CHEMPDB",
+                   link_chemspider = "CH$LINK: CHEMSPIDER",
+                   link_comptox = "CH$LINK: COMPTOX",
+                   link_hmdb = "CH$LINK: HMDB",
+                   link_kappaview = "CH$LINK: KAPPAVIEW",
+                   link_kegg = "CH$LINK: KEGG",
+                   link_knapsack = "CH$LINK: KNAPSACK",
+                   link_lipidbank = "CH$LINK: LIPIDBANK",
+                   link_lipidmaps = "CH$LINK: LIPIDMAPS",
+                   link_nikkaji = "CH$LINK: NIKKAJI",
+                   link_pubchem = "CH$LINK: PUBCHEM",
+                   link_zinc = "CH$LINK: ZINC",
 
-           # sample information
-           scientific_name = "SP$SCIENTIFIC_NAME:",
-           lineage = "SP$LINEAGE:",
-           link = "SP$LINK:",
-           sample = "SP$SAMPLE:",
+                   ## sample information
+                   scientific_name = "SP$SCIENTIFIC_NAME:",
+                   lineage = "SP$LINEAGE:",
+                   link = "SP$LINK:",
+                   sample = "SP$SAMPLE:",
 
-           # record information
-           deprecated = "DEPRECATED:",
-           date = "DATE:",
-           authors = "AUTHORS:",
-           license = "LICENSE:",
-           copyright = "COPYRIGHT:",
-           publication = "PUBLICATION:",
-           project = "PROJECT:",
-           comment = "COMMENT:",
+                   ## record information
+                   deprecated = "DEPRECATED:",
+                   date = "DATE:",
+                   authors = "AUTHORS:",
+                   license = "LICENSE:",
+                   copyright = "COPYRIGHT:",
+                   publication = "PUBLICATION:",
+                   project = "PROJECT:",
+                   comment = "COMMENT:",
 
-           # peak information
-           pknum = "PK$NUM_PEAK:"
-         )
-  )
-}
+                   ## peak information
+                   pknum = "PK$NUM_PEAK:"
+               )
+               )
+    })
 
 #' @importMethodsFrom Spectra export
 #'
@@ -287,6 +294,6 @@ spectraVariableMapping <- function(format = c("Massbank")) {
 #' @rdname MsBackendMassbank
 setMethod("export", "MsBackendMassbank",
           function(object, x, file = tempfile(),
-                   mapping = spectraVariableMapping(), ...) {
+                   mapping = spectraVariableMapping(MsBackendMassbank()), ...) {
               .export_massbank(x = x, con = file, mapping = mapping)
           })

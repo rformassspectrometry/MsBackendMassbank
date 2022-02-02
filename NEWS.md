@@ -1,5 +1,9 @@
 # MsBackendMassbank 1.3
 
+## Changes in 1.3.4
+
+- Import and use `spectraVariableMapping` method from `Spectra`.
+
 ## Changes in 1.3.3
 
 - Map comment to spectra variable.
