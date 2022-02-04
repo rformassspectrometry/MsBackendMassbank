@@ -5,10 +5,6 @@
 [![codecov.io](http://codecov.io/github/RforMassSpectrometry/MsBackendMassbank/coverage.svg?branch=master)](http://codecov.io/github/RforMassSpectrometry/MsBackendMassbank?branch=master)
 [![license](https://img.shields.io/badge/license-Artistic--2.0-brightgreen.svg)](https://opensource.org/licenses/Artistic-2.0)
 
-<img
-src="https://raw.githubusercontent.com/rformassspectrometry/stickers/master/MsBackendMassbank/MsBackendMassbank.png"
-height="150">
-
 The `MsBackendMassbank` package provides functionality to import and handle
 MS/MS spectrum data from [Massbank](https://github.com/MassBank/MassBank-data)
 files or to directly access a MassBank SQL database.  The package defines the
@@ -17,4 +13,4 @@ import and use MS2 spectrum data from mgf files respectively MySQL databases
 with the [Spectra](https://github.com/rformassspectrometry/Spectra) R package.
 
 For more information see the package
-[homepage](https://github.com/RforMassSpectrometry/MsBackendMassbank).
+[homepage](https://rformassspectrometry.github.io/MsBackendMassbank).
