@@ -6,8 +6,8 @@
 [![license](https://img.shields.io/badge/license-Artistic--2.0-brightgreen.svg)](https://opensource.org/licenses/Artistic-2.0)
 [![years in bioc](http://bioconductor.org/shields/years-in-bioc/MsBackendMassbank.svg)](https://bioconductor.org/packages/release/bioc/html/MsBackendMassbank.html)
 [![Ranking by downloads](http://bioconductor.org/shields/downloads/release/MsBackendMassbank.svg)](https://bioconductor.org/packages/stats/bioc/MsBackendMassbank/)
-Release: [![build release](http://bioconductor.org/shields/build/release/bioc/MsBackendMassbank.svg)](https://bioconductor.org/checkResults/release/bioc-LATEST/MsBackendMassbank/)
-Devel: [![build devel](http://bioconductor.org/shields/build/devel/bioc/MsBackendMassbank.svg)](https://bioconductor.org/checkResults/devel/bioc-LATEST/MsBackendMassbank/)
+[![build release](http://bioconductor.org/shields/build/release/bioc/MsBackendMassbank.svg)](https://bioconductor.org/checkResults/release/bioc-LATEST/MsBackendMassbank/)
+[![build devel](http://bioconductor.org/shields/build/devel/bioc/MsBackendMassbank.svg)](https://bioconductor.org/checkResults/devel/bioc-LATEST/MsBackendMassbank/)
 
 The `MsBackendMassbank` package provides functionality to import and handle
 MS/MS spectrum data from [Massbank](https://github.com/MassBank/MassBank-data)
