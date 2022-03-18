@@ -92,8 +92,9 @@ MsBackendMassbankSql <- function() {
                    " from msms_spectrum_peak where spectrum_id in (",
                    paste0("'", unique(x@spectraIds), "'", collapse = ","),")"))
     } else {
-        data.frame(spectrum_id = character(), mz = numeric(),
-                   intensity = numeric())
+        res <- data.frame(character(), lapply(columns, function(z) numeric()))
+        colnames(res) <- c("spectrum_id", columns)
+        res
     }
 }
 

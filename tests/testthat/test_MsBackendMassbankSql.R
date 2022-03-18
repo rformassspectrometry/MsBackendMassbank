@@ -4,7 +4,7 @@ test_that("MsBackendMassbankSql class works", {
     obj <- new("MsBackendMassbankSql")
     expect_true(validObject(obj))
 
-    show(obj)
+    expect_output(show(obj), "MsBackendMassbankSql")
 })
 
 test_that("backendInitialize,MsBackendMassbankSql works", {
@@ -13,7 +13,7 @@ test_that("backendInitialize,MsBackendMassbankSql works", {
     be <- backendInitialize(MsBackendMassbankSql(), dbcon = dbc)
     expect_true(length(be@spectraIds) > 0)
     expect_true(length(be@spectraVariables) > 0)
-    show(be)
+    expect_output(show(be), "MsBackendMassbankSql")
 })
 
 test_that("length,MsBackendMassbankSql works", {
@@ -140,6 +140,10 @@ test_that("peaksData,MsBackendMassbankSql works", {
     be <- MsBackendMassbankSql()
     res <- peaksData(be)
     expect_true(is.list(res))
+    expect_error(peaksData(be, columns = c("intensity", "other")),
+                 "only support columns")
+    res <- peaksData(be, columns = "intensity")
+    expect_true(is.list(res))
 
     be <- backendInitialize(be, dbc)
     res <- peaksData(be)
@@ -148,19 +152,30 @@ test_that("peaksData,MsBackendMassbankSql works", {
     expect_true(is.matrix(res[[1]]))
     expect_true(is.matrix(res[[2]]))
     expect_true(is.matrix(res[[3]]))
+    expect_equal(colnames(res[[1L]]), c("mz", "intensity"))
 
     expect_equal(lapply(res, function(z) unname(z[, 1])),
                  unname(as.list(be$mz)))
+
+    res <- peaksData(be, columns = "intensity")
+    expect_equal(colnames(res[[1L]]), "intensity")
+    res <- peaksData(be, columns = c("intensity", "mz", "intensity"))
+    expect_equal(colnames(res[[1L]]), c("intensity", "mz", "intensity.1"))
 
     ## duplicated spectra.
     be2 <- be[c(3, 1, 1, 2)]
     res2 <- peaksData(be2)
     expect_equal(lapply(res2, function(z) unname(z[, 1])),
                  unname(as.list(be2$mz)))
+    res <- peaksData(be)
     expect_equal(res2[[1]], res[[3]])
     expect_equal(res2[[2]], res[[1]])
     expect_equal(res2[[3]], res[[1]])
     expect_equal(res2[[4]], res[[2]])
+
+    ## columns
+    expect_error(peaksData(be, columns = c("intensity", "other")),
+                 "only support columns")
 })
 
 test_that("dataOrigin, dataOrigin<-,MsBackendMassbankSql works", {

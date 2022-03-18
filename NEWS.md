@@ -1,5 +1,9 @@
 # MsBackendMassbank 1.3
 
+## Changes in 1.3.5
+
+- Add parameter `columns` to `peaksData`.
+
 ## Changes in 1.3.4
 
 - Import and use `spectraVariableMapping` method from `Spectra`.

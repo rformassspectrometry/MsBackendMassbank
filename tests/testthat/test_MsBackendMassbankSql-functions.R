@@ -16,11 +16,42 @@ test_that(".fetch_peaks_sql works", {
     expect_equal(colnames(res), c("spectrum_id", "mz", "intensity"))
     expect_true(nrow(res) == 0)
 
+    ## columns
+    res <- .fetch_peaks_sql(be, columns = "intensity")
+    expect_true(is.data.frame(res))
+    expect_equal(colnames(res), c("spectrum_id", "intensity"))
+    expect_true(nrow(res) == 0)
+    expect_true(is.character(res[, 1L]))
+    expect_true(is.numeric(res[, 2L]))
+    res <- .fetch_peaks_sql(be, columns = c("intensity", "mz", "intensity"))
+    expect_true(is.data.frame(res))
+    expect_equal(colnames(res), c("spectrum_id", "intensity",
+                                  "mz", "intensity"))
+    expect_true(nrow(res) == 0)
+    expect_true(is.character(res[, 1L]))
+    expect_true(is.numeric(res[, 2L]))
+    expect_true(is.numeric(res[, 3L]))
+    expect_true(is.numeric(res[, 4L]))
+
     be <- backendInitialize(MsBackendMassbankSql(), dbc)
     res <- .fetch_peaks_sql(be)
     expect_true(is.data.frame(res))
     expect_equal(colnames(res), c("spectrum_id", "mz", "intensity"))
     expect_true(nrow(res) > 0)
+
+    ## columns
+    res <- MsBackendMassbank:::.fetch_peaks_sql(be, "intensity")
+    expect_true(is.data.frame(res))
+    expect_equal(colnames(res), c("spectrum_id", "intensity"))
+    expect_true(is.numeric(res$intensity))
+
+    res <- MsBackendMassbank:::.fetch_peaks_sql(be, c("intensity", "mz",
+                                                      "intensity"))
+    expect_true(is.data.frame(res))
+    expect_equal(colnames(res), c("spectrum_id", "intensity",
+                                  "mz", "intensity"))
+    expect_true(is.numeric(res$intensity))
+    expect_equal(res[, 2], res[, 4])
 })
 
 test_that(".fetch_spectra_data_sql works", {

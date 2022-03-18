@@ -29,6 +29,9 @@
 #' @param columns For `spectraData` accessor: optional `character` with column
 #'     names (spectra variables) that should be included in the
 #'     returned `DataFrame`. By default, all columns are returned.
+#'     For `peaksData` accessor: optional `character` with requested columns in
+#'     the individual `matrix` of the returned `list`. Use
+#'     `peaksVariables(object)` for supported columns.
 #'
 #' @param drop For `[`: not considered.
 #'
@@ -75,7 +78,8 @@
 #'   the list is equal to the number of spectra in `object`. Each element of
 #'   the list is a `matrix` with columns `"mz"` and `"intensity"`. For an empty
 #'   spectrum, a `matrix` with 0 rows and two columns (named `mz` and
-#'   `intensity`) is returned.
+#'   `intensity`) is returned. Parameter `columns` allows to select which peaks
+#'   variables to return, but supports currently only `"mz"` and `"intensity"`.
 #'
 #' - `backendInitialize`: initialises the backend by retrieving the IDs of all
 #'   spectra in the database. Parameter `dbcon` with the connection to the
@@ -337,20 +341,28 @@ setMethod("backendInitialize", "MsBackendMassbankSql", function(object,
 
 #' @importMethodsFrom Spectra peaksData
 #'
+#' @importMethodsFrom Spectra peaksVariables
+#'
 #' @exportMethod peaksData
 #'
 #' @rdname MsBackendMassbankSql
-setMethod("peaksData", "MsBackendMassbankSql", function(object) {
-    pks <- .fetch_peaks_sql(object)
-    f <- factor(pks$spectrum_id)        # using levels does not work because we can have duplicates
-    pks <- unname(split.data.frame(pks, f)[as.character(object@spectraIds)])
-    lapply(pks, function(z) {
-        if (nrow(z))
-            as.matrix(z[, 2:3], rownames.force = FALSE)
-        else matrix(ncol = 2, nrow = 0,
-                    dimnames = list(character(), c("mz", "intensity")))
+setMethod(
+    "peaksData", "MsBackendMassbankSql",
+    function(object, columns = peaksVariables(object)) {
+        if (!all(columns %in% c("mz", "intensity")))
+            stop("'peaksData' for 'MsBackendMassbankSql' does only support",
+                 " columns \"mz\" and \"intensity\"", call. = FALSE)
+        pks <- .fetch_peaks_sql(object, columns = columns)
+        f <- factor(pks$spectrum_id)        # using levels does not work because we can have duplicates
+        pks <- unname(split.data.frame(pks, f)[as.character(object@spectraIds)])
+        idx <- seq_along(columns) + 1
+        lapply(pks, function(z) {
+            if (nrow(z))
+                as.matrix(z[, idx, drop = FALSE], rownames.force = FALSE)
+            else matrix(NA_real_, ncol = length(columns), nrow = 0,
+                        dimnames = list(character(), columns))
+        })
     })
-})
 
 #' @exportMethod dataStorage
 #'

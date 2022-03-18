@@ -26,7 +26,7 @@ MsBackendMassbankSql()
 
 \S4method{backendInitialize}{MsBackendMassbankSql}(object, dbcon, ...)
 
-\S4method{peaksData}{MsBackendMassbankSql}(object)
+\S4method{peaksData}{MsBackendMassbankSql}(object, columns = peaksVariables(object))
 
 \S4method{dataStorage}{MsBackendMassbankSql}(object)
 
@@ -62,12 +62,15 @@ connection to the MassBank (MariaDb) database.}
 
 \item{...}{Additional arguments.}
 
-\item{value}{replacement value for \verb{<-} methods. See individual
-method description or expected data type.}
-
 \item{columns}{For \code{spectraData} accessor: optional \code{character} with column
 names (spectra variables) that should be included in the
-returned \code{DataFrame}. By default, all columns are returned.}
+returned \code{DataFrame}. By default, all columns are returned.
+For \code{peaksData} accessor: optional \code{character} with requested columns in
+the individual \code{matrix} of the returned \code{list}. Use
+\code{peaksVariables(object)} for supported columns.}
+
+\item{value}{replacement value for \verb{<-} methods. See individual
+method description or expected data type.}
 
 \item{initial}{For \code{tic}: \code{logical(1)} whether the initially
 reported total ion current should be reported, or whether the
@@ -127,7 +130,8 @@ spectra (with \code{NA_integer_} if not available).
 the list is equal to the number of spectra in \code{object}. Each element of
 the list is a \code{matrix} with columns \code{"mz"} and \code{"intensity"}. For an empty
 spectrum, a \code{matrix} with 0 rows and two columns (named \code{mz} and
-\code{intensity}) is returned.
+\code{intensity}) is returned. Parameter \code{columns} allows to select which peaks
+variables to return, but supports currently only \code{"mz"} and \code{"intensity"}.
 \item \code{backendInitialize}: initialises the backend by retrieving the IDs of all
 spectra in the database. Parameter \code{dbcon} with the connection to the
 MassBank MySQL database is required.
