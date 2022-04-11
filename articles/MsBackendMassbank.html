@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">MsBackendMassbank</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.5</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -95,21 +95,42 @@ document.addEventListener("DOMContentLoaded", function() {
     if (links[i].hostname != window.location.hostname)
       links[i].target = '_blank';
 });
-</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.15/MsBackendMassbank" class="external-link">MsBackendMassbank</a></em><br><strong>Authors</strong>: RforMassSpectrometry Package Maintainer [cre], Michael Witting [aut] (<a href="https://orcid.org/0000-0002-1462-4426" class="external-link uri">https://orcid.org/0000-0002-1462-4426</a>), Johannes Rainer [aut] (<a href="https://orcid.org/0000-0002-6977-7147" class="external-link uri">https://orcid.org/0000-0002-6977-7147</a>), Michael Stravs [ctb]<br><strong>Compiled</strong>: Fri Feb 4 10:41:12 2022</p>
+</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.15/MsBackendMassbank" class="external-link">MsBackendMassbank</a></em><br><strong>Authors</strong>: RforMassSpectrometry Package Maintainer [cre],
+Michael Witting [aut] (<a href="https://orcid.org/0000-0002-1462-4426" class="external-link uri">https://orcid.org/0000-0002-1462-4426</a>), Johannes Rainer
+[aut] (<a href="https://orcid.org/0000-0002-6977-7147" class="external-link uri">https://orcid.org/0000-0002-6977-7147</a>), Michael Stravs
+[ctb]<br><strong>Compiled</strong>: Mon Apr 11 13:33:05 2022</p>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>The <code>Spectra</code> package provides a central infrastructure for the handling of Mass Spectrometry (MS) data. The package supports interchangeable use of different <em>backends</em> to import MS data from a variety of sources (such as mzML files). The <code>MsBackendMassbank</code> package allows import and handling MS/MS spectrum data from <a href="https://massbank.eu/MassBank/" class="external-link">Massbank</a>. This vignette illustrates the usage of the <code>MsBackendMassbank</code> package to include MassBank data into MS data analysis workflow with the <code>Spectra</code> package in R.</p>
+<p>The <code>Spectra</code> package provides a central infrastructure
+for the handling of Mass Spectrometry (MS) data. The package supports
+interchangeable use of different <em>backends</em> to import MS data
+from a variety of sources (such as mzML files). The
+<code>MsBackendMassbank</code> package allows import and handling MS/MS
+spectrum data from <a href="https://massbank.eu/MassBank/" class="external-link">Massbank</a>.
+This vignette illustrates the usage of the
+<code>MsBackendMassbank</code> package to include MassBank data into MS
+data analysis workflow with the <code>Spectra</code> package in R.</p>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>The package can be installed with the <code>BiocManager</code> package. To install <code>BiocManager</code> use <code>install.packages("BiocManager")</code> and, after that, <code>BiocManager::install("MsBackendMassbank")</code> to install this package.</p>
+<p>The package can be installed with the <code>BiocManager</code>
+package. To install <code>BiocManager</code> use
+<code>install.packages("BiocManager")</code> and, after that,
+<code>BiocManager::install("MsBackendMassbank")</code> to install this
+package.</p>
 </div>
 <div class="section level2">
 <h2 id="importing-msms-data-from-massbank-files">Importing MS/MS data from MassBank files<a class="anchor" aria-label="anchor" href="#importing-msms-data-from-massbank-files"></a>
 </h2>
-<p>MassBank files (as provided by the <a href="https://github.com/MassBank/MassBank-data" class="external-link">Massbank github repository</a>) store normally one library spectrum per file, typically centroided and of MS level 2. In our short example below, we load data from a file containing multiple library spectra per file or from files with each a single spectrum provided with this package. Below we first load all required packages and define the paths to the Massbank files.</p>
+<p>MassBank files (as provided by the <a href="https://github.com/MassBank/MassBank-data" class="external-link">Massbank github
+repository</a>) store normally one library spectrum per file, typically
+centroided and of MS level 2. In our short example below, we load data
+from a file containing multiple library spectra per file or from files
+with each a single spectrum provided with this package. Below we first
+load all required packages and define the paths to the Massbank
+files.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/RforMassSpectrometry/Spectra" class="external-link">Spectra</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/RforMassSpectrometry/MsBackendMassbank" class="external-link">MsBackendMassbank</a></span><span class="op">)</span>
@@ -124,12 +145,18 @@ document.addEventListener("DOMContentLoaded", function() {
 <span class="co">## [6] "/__w/_temp/Library/MsBackendMassbank/extdata/RP000511.txt"       </span>
 <span class="co">## [7] "/__w/_temp/Library/MsBackendMassbank/extdata/RP000512.txt"       </span>
 <span class="co">## [8] "/__w/_temp/Library/MsBackendMassbank/extdata/RP000513.txt"</span></code></pre>
-<p>MS data can be accessed and analyzed through <code>Spectra</code> objects. Below we create a <code>Spectra</code> with the data from these mgf files. To this end we provide the file names and specify to use a <code><a href="../reference/MsBackendMassbank.html">MsBackendMassbank()</a></code> backend as <em>source</em> to enable data import. First we import from a single file with multiple library spectra.</p>
+<p>MS data can be accessed and analyzed through <code>Spectra</code>
+objects. Below we create a <code>Spectra</code> with the data from these
+mgf files. To this end we provide the file names and specify to use a
+<code><a href="../reference/MsBackendMassbank.html">MsBackendMassbank()</a></code> backend as <em>source</em> to enable
+data import. First we import from a single file with multiple library
+spectra.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html" class="external-link">Spectra</a></span><span class="op">(</span><span class="va">fls</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,
                source <span class="op">=</span> <span class="fu"><a href="../reference/MsBackendMassbank.html">MsBackendMassbank</a></span><span class="op">(</span><span class="op">)</span>,
                backend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/MsBackend.html" class="external-link">MsBackendDataFrame</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p>With that we have now full access to all imported spectra variables that we list below.</p>
+<p>With that we have now full access to all imported spectra variables
+that we list below.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">spectraVariables</a></span><span class="op">(</span><span class="va">sps</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">##  [1] "msLevel"                 "rtime"                  </span>
@@ -147,7 +174,8 @@ document.addEventListener("DOMContentLoaded", function() {
 <span class="co">## [25] "cas"                     "inchikey"               </span>
 <span class="co">## [27] "adduct"                  "splash"                 </span>
 <span class="co">## [29] "title"</span></code></pre>
-<p>The same is possible with multiple files, each containing a library spectrum.</p>
+<p>The same is possible with multiple files, each containing a library
+spectrum.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html" class="external-link">Spectra</a></span><span class="op">(</span><span class="va">fls</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span>,
                source <span class="op">=</span> <span class="fu"><a href="../reference/MsBackendMassbank.html">MsBackendMassbank</a></span><span class="op">(</span><span class="op">)</span>,
@@ -169,7 +197,10 @@ document.addEventListener("DOMContentLoaded", function() {
 <span class="co">## [25] "cas"                     "inchikey"               </span>
 <span class="co">## [27] "adduct"                  "splash"                 </span>
 <span class="co">## [29] "title"</span></code></pre>
-<p>By default the complete metadata is read together with the spectra. This can increase loading time. The different metadata blocks can be skipped which reduces import time. This requires to define an additional <code>data.frame</code> indicating what shall be read.</p>
+<p>By default the complete metadata is read together with the spectra.
+This can increase loading time. The different metadata blocks can be
+skipped which reduces import time. This requires to define an additional
+<code>data.frame</code> indicating what shall be read.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># create data frame to indicate with metadata blocks shall be read.</span>
 <span class="va">metaDataBlocks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>metadata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ac"</span>, <span class="st">"ch"</span>, <span class="st">"sp"</span>, <span class="st">"ms"</span>,
@@ -268,7 +299,10 @@ document.addEventListener("DOMContentLoaded", function() {
 <span class="co">## [49] "date"                      "authors"                  </span>
 <span class="co">## [51] "license"                   "copyright"                </span>
 <span class="co">## [53] "pknum"                     "comment"</span></code></pre>
-<p>Besides default spectra variables, such as <code>msLevel</code>, <code>rtime</code>, <code>precursorMz</code>, we also have additional spectra variables such as the <code>title</code> of each spectrum in the mgf file.</p>
+<p>Besides default spectra variables, such as <code>msLevel</code>,
+<code>rtime</code>, <code>precursorMz</code>, we also have additional
+spectra variables such as the <code>title</code> of each spectrum in the
+mgf file.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sps</span><span class="op">$</span><span class="va">rtime</span></code></pre></div>
 <pre><code><span class="co">##                       rtime  rtime  rtime  rtime  rtime  rtime </span>
@@ -293,7 +327,8 @@ document.addEventListener("DOMContentLoaded", function() {
 <span class="co">## "L-Tryptophan; LC-ESI-QTOF; MS2; CE: 20; R=; [M-H]-" </span>
 <span class="co">##                                                title </span>
 <span class="co">## "L-Tryptophan; LC-ESI-QTOF; MS2; CE: 40; R=; [M-H]-"</span></code></pre>
-<p>In addition we can also access the m/z and intensity values of each spectrum.</p>
+<p>In addition we can also access the m/z and intensity values of each
+spectrum.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">mz</a></span><span class="op">(</span><span class="va">sps</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## NumericList of length 9</span>
@@ -318,33 +353,53 @@ document.addEventListener("DOMContentLoaded", function() {
 <span class="co">## [["intensity"]] 150 200 32 232 80 12162</span>
 <span class="co">## [["intensity"]] 460 3630 658 74 28 190 44 142 50 52 634</span>
 <span class="co">## [["intensity"]] 282 424</span></code></pre>
-<p>When importing a large number of mgf files, setting <code>nonStop = TRUE</code> prevents the call to stop whenever problematic mgf files are encountered.</p>
+<p>When importing a large number of mgf files, setting
+<code>nonStop = TRUE</code> prevents the call to stop whenever
+problematic mgf files are encountered.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html" class="external-link">Spectra</a></span><span class="op">(</span><span class="va">fls</span>, source <span class="op">=</span> <span class="fu"><a href="../reference/MsBackendMassbank.html">MsBackendMassbank</a></span><span class="op">(</span><span class="op">)</span>, nonStop <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="accessing-the-massbank-mysql-database">Accessing the MassBank MySQL database<a class="anchor" aria-label="anchor" href="#accessing-the-massbank-mysql-database"></a>
 </h2>
-<p>An alternative to the import of the MassBank data from individual text files (which can take a considerable amount of time) is to directly access the MS/MS data in the MassBank MySQL database. For demonstration purposes we are using here a tiny subset of the MassBank data which is stored as a SQLite database within this package.</p>
+<p>An alternative to the import of the MassBank data from individual
+text files (which can take a considerable amount of time) is to directly
+access the MS/MS data in the MassBank MySQL database. For demonstration
+purposes we are using here a tiny subset of the MassBank data which is
+stored as a SQLite database within this package.</p>
 <div class="section level3">
 <h3 id="pre-requisites">Pre-requisites<a class="anchor" aria-label="anchor" href="#pre-requisites"></a>
 </h3>
-<p>At present it is not possible to directly connect to the main MassBank <em>production</em> MySQL server, thus, to use the <code>MsBackendMassbankSql</code> backend it is required to install the database locally. The MySQL database dump for each MassBank release can be downloaded from <a href="">here</a>. This dump could be imported to a local MySQL server.</p>
+<p>At present it is not possible to directly connect to the main
+MassBank <em>production</em> MySQL server, thus, to use the
+<code>MsBackendMassbankSql</code> backend it is required to install the
+database locally. The MySQL database dump for each MassBank release can
+be downloaded from <a href="">here</a>. This dump could be imported to a
+local MySQL server.</p>
 </div>
 <div class="section level3">
 <h3 id="direct-access-to-the-massbank-database">Direct access to the MassBank database<a class="anchor" aria-label="anchor" href="#direct-access-to-the-massbank-database"></a>
 </h3>
-<p>To use the <code>MsBackendMassbankSql</code> it is required to first connect to a <em>MassBank</em> database. Below we show the R code which could be used for that - but the actual settings (user name, password, database name, or host) will depend on where and how the MassBank database was installed.</p>
+<p>To use the <code>MsBackendMassbankSql</code> it is required to first
+connect to a <em>MassBank</em> database. Below we show the R code which
+could be used for that - but the actual settings (user name, password,
+database name, or host) will depend on where and how the MassBank
+database was installed.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rmariadb.r-dbi.org" class="external-link">RMariaDB</a></span><span class="op">)</span>
 <span class="va">con</span> <span class="op">&lt;-</span> <span class="fu">dbConnect</span><span class="op">(</span><span class="fu">MariaDB</span><span class="op">(</span><span class="op">)</span>, host <span class="op">=</span> <span class="st">"localhost"</span>, user <span class="op">=</span> <span class="st">"massbank"</span>,
                  dbname <span class="op">=</span> <span class="st">"MassBank"</span><span class="op">)</span></code></pre></div>
-<p>To illustrate the general functionality of this backend we use a tiny subset of the MassBank (release 2020.10) which is provided as an small SQLite database within this package. Below we connect to this database.</p>
+<p>To illustrate the general functionality of this backend we use a tiny
+subset of the MassBank (release 2020.10) which is provided as an small
+SQLite database within this package. Below we connect to this
+database.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rsqlite.r-dbi.org" class="external-link">RSQLite</a></span><span class="op">)</span>
 <span class="va">con</span> <span class="op">&lt;-</span> <span class="fu">dbConnect</span><span class="op">(</span><span class="fu"><a href="https://rsqlite.r-dbi.org/reference/SQLite.html" class="external-link">SQLite</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"sql"</span>, <span class="st">"minimassbank.sqlite"</span>,
                                        package <span class="op">=</span> <span class="st">"MsBackendMassbank"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p>We next <em>initialize</em> the <code>MsBackendMassbankSql</code> backend which supports direct access to the MassBank in a SQL database and create a <code>Spectra</code> object from that.</p>
+<p>We next <em>initialize</em> the <code>MsBackendMassbankSql</code>
+backend which supports direct access to the MassBank in a SQL database
+and create a <code>Spectra</code> object from that.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">mb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html" class="external-link">Spectra</a></span><span class="op">(</span><span class="va">con</span>, source <span class="op">=</span> <span class="fu"><a href="../reference/MsBackendMassbankSql.html">MsBackendMassbankSql</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 <span class="va">mb</span></code></pre></div>
@@ -364,8 +419,13 @@ document.addEventListener("DOMContentLoaded", function() {
 <span class="co">## 70          2     256.170         1</span>
 <span class="co">##  ... 42 more variables/columns.</span>
 <span class="co">##  Use  'spectraVariables' to list all of them.</span></code></pre>
-<p>We can now use this <code>Spectra</code> object to access and use the MassBank data for our analysis. Note that the <code>Spectra</code> object itself does not contain any data from MassBank. Any data will be fetched on demand from the database backend.</p>
-<p>To get a listing of all available annotations for each spectrum (the so-called <em>spectra variables</em>) we can use the <code>spectraVariables</code> function.</p>
+<p>We can now use this <code>Spectra</code> object to access and use the
+MassBank data for our analysis. Note that the <code>Spectra</code>
+object itself does not contain any data from MassBank. Any data will be
+fetched on demand from the database backend.</p>
+<p>To get a listing of all available annotations for each spectrum (the
+so-called <em>spectra variables</em>) we can use the
+<code>spectraVariables</code> function.</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">spectraVariables</a></span><span class="op">(</span><span class="va">mb</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">##  [1] "msLevel"                 "rtime"                  </span>
@@ -390,16 +450,22 @@ document.addEventListener("DOMContentLoaded", function() {
 <span class="co">## [39] "cas"                     "pubchem"                </span>
 <span class="co">## [41] "synonym"                 "precursor_mz_text"      </span>
 <span class="co">## [43] "compound_name"</span></code></pre>
-<p>Through the <code>MsBackendMassbankSql</code> we can thus access spectra information as well as its annotation.</p>
-<p>We can access <em>core</em> spectra variables, such as the MS level with the corresponding function <code>msLevel</code>.</p>
+<p>Through the <code>MsBackendMassbankSql</code> we can thus access
+spectra information as well as its annotation.</p>
+<p>We can access <em>core</em> spectra variables, such as the MS level
+with the corresponding function <code>msLevel</code>.</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">msLevel</a></span><span class="op">(</span><span class="va">mb</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## [1]  2 NA NA NA NA  2</span></code></pre>
-<p>Spectra variables can also be accessed with <code>$</code> and the name of the variable. Thus, MS levels can also be accessed with <code>$msLevel</code>:</p>
+<p>Spectra variables can also be accessed with <code>$</code> and the
+name of the variable. Thus, MS levels can also be accessed with
+<code>$msLevel</code>:</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mb</span><span class="op">$</span><span class="va">msLevel</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## [1]  2 NA NA NA NA  2</span></code></pre>
-<p>In addition to spectra variables, we can also get the actual peaks (i.e. m/z and intensity values) with the <code>mz</code> and <code>intensity</code> functions:</p>
+<p>In addition to spectra variables, we can also get the actual peaks
+(i.e. m/z and intensity values) with the <code>mz</code> and
+<code>intensity</code> functions:</p>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">mz</a></span><span class="op">(</span><span class="va">mb</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## NumericList of length 70</span>
@@ -415,18 +481,26 @@ document.addEventListener("DOMContentLoaded", function() {
 <span class="co">## [[10]] 1278.12 1279.11 1279.18 1306.21 ... 2064.29 2091.32 2092.3 2136.33</span>
 <span class="co">## ...</span>
 <span class="co">## &lt;60 more elements&gt;</span></code></pre>
-<p>Note that not all spectra from the database were generated using the same instrumentation. Below we list the number of spectra for each type of instrument.</p>
+<p>Note that not all spectra from the database were generated using the
+same instrumentation. Below we list the number of spectra for each type
+of instrument.</p>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">mb</span><span class="op">$</span><span class="va">instrument_type</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## </span>
 <span class="co">## LC-ESI-ITFT  LC-ESI-QFT   MALDI-TOF </span>
 <span class="co">##           3          50          17</span></code></pre>
-<p>We next subset the data to all spectra from ions generated by electro spray ionization (ESI).</p>
+<p>We next subset the data to all spectra from ions generated by electro
+spray ionization (ESI).</p>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">mb</span> <span class="op">&lt;-</span> <span class="va">mb</span><span class="op">[</span><span class="va">mb</span><span class="op">$</span><span class="va">ionization</span> <span class="op">==</span> <span class="st">"ESI"</span><span class="op">]</span>
 <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">mb</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## [1] 50</span></code></pre>
-<p>As a simple example to illustrate the <code>Spectra</code> functionality we next calculate spectra similarity between one spectrum against all other spectra in the database. To this end we use the <code>compareSpectra</code> function with the normalized dot product as similarity function and allowing 20 ppm difference in m/z between matching peaks</p>
+<p>As a simple example to illustrate the <code>Spectra</code>
+functionality we next calculate spectra similarity between one spectrum
+against all other spectra in the database. To this end we use the
+<code>compareSpectra</code> function with the normalized dot product as
+similarity function and allowing 20 ppm difference in m/z between
+matching peaks</p>
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/RforMassSpectrometry/MsCoreUtils" class="external-link">MsCoreUtils</a></span><span class="op">)</span>
 <span class="va">sims</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">compareSpectra</a></span><span class="op">(</span><span class="va">mb</span><span class="op">[</span><span class="fl">11</span><span class="op">]</span>, <span class="va">mb</span><span class="op">[</span><span class="op">-</span><span class="fl">11</span><span class="op">]</span>, FUN <span class="op">=</span> <span class="va">ndotproduct</span>, ppm <span class="op">=</span> <span class="fl">40</span><span class="op">)</span>
@@ -436,7 +510,11 @@ document.addEventListener("DOMContentLoaded", function() {
 <div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/spectra-plotting.html" class="external-link">plotSpectraMirror</a></span><span class="op">(</span><span class="va">mb</span><span class="op">[</span><span class="fl">11</span><span class="op">]</span>, <span class="va">mb</span><span class="op">[</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/which.min.html" class="external-link">which.max</a></span><span class="op">(</span><span class="va">sims</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span><span class="op">]</span>, ppm <span class="op">=</span> <span class="fl">40</span><span class="op">)</span></code></pre></div>
 <p><img src="MsBackendMassbank_files/figure-html/unnamed-chunk-10-1.png" width="700"></p>
-<p>We can also retrieve the <em>compound</em> information for these two best matching spectra. Note that this <code>compounds</code> function works only with the <code>MsBackendMassbankSql</code> backend as it retrieves the corresponding information from the database’s compound annotation table.</p>
+<p>We can also retrieve the <em>compound</em> information for these two
+best matching spectra. Note that this <code>compounds</code> function
+works only with the <code>MsBackendMassbankSql</code> backend as it
+retrieves the corresponding information from the database’s compound
+annotation table.</p>
 <div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">mb_match</span> <span class="op">&lt;-</span> <span class="va">mb</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">11</span>, <span class="fu"><a href="https://rdrr.io/r/base/which.min.html" class="external-link">which.max</a></span><span class="op">(</span><span class="va">sims</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span><span class="op">]</span>
 <span class="fu"><a href="../reference/MsBackendMassbankSql.html">compounds</a></span><span class="op">(</span><span class="va">mb_match</span><span class="op">)</span></code></pre></div>
@@ -460,9 +538,9 @@ document.addEventListener("DOMContentLoaded", function() {
 </h2>
 <div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## R Under development (unstable) (2022-01-29 r81593)</span>
+<pre><code><span class="co">## R Under development (unstable) (2022-03-14 r81896)</span>
 <span class="co">## Platform: x86_64-pc-linux-gnu (64-bit)</span>
-<span class="co">## Running under: Ubuntu 20.04.3 LTS</span>
+<span class="co">## Running under: Ubuntu 20.04.4 LTS</span>
 <span class="co">## </span>
 <span class="co">## Matrix products: default</span>
 <span class="co">## BLAS/LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.8.so</span>
@@ -480,27 +558,26 @@ document.addEventListener("DOMContentLoaded", function() {
 <span class="co">## [8] base     </span>
 <span class="co">## </span>
 <span class="co">## other attached packages:</span>
-<span class="co">## [1] MsCoreUtils_1.7.1       RSQLite_2.2.9           MsBackendMassbank_1.3.4</span>
-<span class="co">## [4] Spectra_1.5.8           ProtGenerics_1.27.2     BiocParallel_1.29.12   </span>
-<span class="co">## [7] S4Vectors_0.33.10       BiocGenerics_0.41.2     BiocStyle_2.23.1       </span>
+<span class="co">## [1] MsCoreUtils_1.7.4       RSQLite_2.2.12          MsBackendMassbank_1.3.5</span>
+<span class="co">## [4] Spectra_1.5.17          ProtGenerics_1.27.2     BiocParallel_1.29.20   </span>
+<span class="co">## [7] S4Vectors_0.33.17       BiocGenerics_0.41.2     BiocStyle_2.23.1       </span>
 <span class="co">## </span>
 <span class="co">## loaded via a namespace (and not attached):</span>
-<span class="co">##  [1] Rcpp_1.0.8          highr_0.9           bslib_0.3.1        </span>
+<span class="co">##  [1] Rcpp_1.0.8.3        highr_0.9           bslib_0.3.1        </span>
 <span class="co">##  [4] compiler_4.2.0      BiocManager_1.30.16 jquerylib_0.1.4    </span>
 <span class="co">##  [7] tools_4.2.0         bit_4.0.4           digest_0.6.29      </span>
-<span class="co">## [10] clue_0.3-60         jsonlite_1.7.3      evaluate_0.14      </span>
-<span class="co">## [13] memoise_2.0.1       pkgconfig_2.0.3     rlang_1.0.1        </span>
-<span class="co">## [16] DBI_1.1.2           cli_3.1.1           yaml_2.2.2         </span>
-<span class="co">## [19] parallel_4.2.0      pkgdown_2.0.2.9000  xfun_0.29          </span>
-<span class="co">## [22] fastmap_1.1.0       cluster_2.1.2       stringr_1.4.0      </span>
-<span class="co">## [25] knitr_1.37          vctrs_0.3.8         desc_1.4.0         </span>
-<span class="co">## [28] fs_1.5.2            sass_0.4.0          systemfonts_1.0.3  </span>
-<span class="co">## [31] IRanges_2.29.1      bit64_4.0.5         rprojroot_2.0.2    </span>
-<span class="co">## [34] R6_2.5.1            textshaping_0.3.6   rmarkdown_2.11     </span>
-<span class="co">## [37] bookdown_0.24       blob_1.2.2          purrr_0.3.4        </span>
-<span class="co">## [40] magrittr_2.0.2      htmltools_0.5.2     MASS_7.3-55        </span>
-<span class="co">## [43] ragg_1.2.1          stringi_1.7.6       cachem_1.0.6       </span>
-<span class="co">## [46] crayon_1.4.2</span></code></pre>
+<span class="co">## [10] jsonlite_1.8.0      evaluate_0.15       memoise_2.0.1      </span>
+<span class="co">## [13] clue_0.3-60         pkgconfig_2.0.3     rlang_1.0.2        </span>
+<span class="co">## [16] DBI_1.1.2           cli_3.2.0           yaml_2.3.5         </span>
+<span class="co">## [19] parallel_4.2.0      pkgdown_2.0.2.9000  xfun_0.30          </span>
+<span class="co">## [22] fastmap_1.1.0       cluster_2.1.3       stringr_1.4.0      </span>
+<span class="co">## [25] knitr_1.38          vctrs_0.4.0         desc_1.4.1         </span>
+<span class="co">## [28] fs_1.5.2            sass_0.4.1          systemfonts_1.0.4  </span>
+<span class="co">## [31] IRanges_2.29.1      bit64_4.0.5         rprojroot_2.0.3    </span>
+<span class="co">## [34] R6_2.5.1            textshaping_0.3.6   rmarkdown_2.13     </span>
+<span class="co">## [37] bookdown_0.25       blob_1.2.3          purrr_0.3.4        </span>
+<span class="co">## [40] magrittr_2.0.3      htmltools_0.5.2     MASS_7.3-56        </span>
+<span class="co">## [43] ragg_1.2.2          stringi_1.7.6       cachem_1.0.6</span></code></pre>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
@@ -510,12 +587,14 @@ document.addEventListener("DOMContentLoaded", function() {
 
     <footer><div class="pkgdown-footer-left">
   <p></p>
-<p>Developed by RforMassSpectrometry Package Maintainer, Michael Witting, Johannes Rainer.</p>
+<p>Developed by RforMassSpectrometry Package Maintainer, Michael
+Witting, Johannes Rainer.</p>
 </div>
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.9000.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
+2.0.2.9000.</p>
 </div>
 
     </footer>
