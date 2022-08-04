@@ -98,6 +98,28 @@ MsBackendMassbankSql <- function() {
     }
 }
 
+## #' This function ensures that m/z values are ALWAYS returned ordered! Note that
+## #' this is slightly faster than including `order by mz` in the SQL query.
+## #'
+## #' Note however that splitting the data.frame later is slower if the full data
+## #' frame is ordered by m/z.
+## #'
+## #' @noRd
+## .fetch_peaks_sql_mz_order <- function(x, columns = c("mz", "intensity")) {
+##     if (length(x@dbcon)) {
+##         res <- dbGetQuery(
+##             x@dbcon,
+##             paste0("select spectrum_id,", paste(columns, collapse = ","),
+##                    " from msms_spectrum_peak where spectrum_id in (",
+##                    paste0("'", unique(x@spectraIds), "'", collapse = ","),")"))
+##         res[order(res$mz), , drop = FALSE]
+##     } else {
+##         res <- data.frame(character(), lapply(columns, function(z) numeric()))
+##         colnames(res) <- c("spectrum_id", columns)
+##         res
+##     }
+## }
+
 .columns_sql <- c(
     precursorIntensity = "precursor_intensity",
     precursorMz = "precursor_mz_text",
