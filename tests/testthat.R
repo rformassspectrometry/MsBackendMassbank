@@ -17,11 +17,10 @@ fls <- dir(system.file("extdata", package = "MsBackendMassbank"),
 be <- MsBackendMassbank()
 be <- backendInitialize(be, fls)
 
-res <- test_file(paste0(test_suite, "/test_spectra_variables.R"),
-                 reporter = check_reporter(), stop_on_failure = TRUE)
+test_dir(test_suite, stop_on_failure = TRUE)
 
 ## Test MsBackendMassbankSql
 be <- MsBackendMassbankSql()
 be <- backendInitialize(be, dbc)
-res <- test_file(paste0(test_suite, "/test_spectra_variables.R"),
-                 reporter = check_reporter(), stop_on_failure = TRUE)
+
+test_dir(test_suite, stop_on_failure = TRUE)

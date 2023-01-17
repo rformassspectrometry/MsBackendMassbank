@@ -1,3 +1,10 @@
+# MsBackendMassbank 1.7
+
+## Changes in 1.7.1
+
+- Run the full test suite from the `Spectra` package to validate the `MsBackend`
+  implementations.
+
 # MsBackendMassbank 1.3
 
 ## Changes in 1.3.5
