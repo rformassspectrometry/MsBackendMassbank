@@ -1,5 +1,9 @@
 # MsBackendMassbank 1.7
 
+## Changes in 1.7.2
+
+- Avoid export of retention time data if not available.
+
 ## Changes in 1.7.1
 
 - Run the full test suite from the `Spectra` package to validate the `MsBackend`
