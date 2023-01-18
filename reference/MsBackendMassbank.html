@@ -13,7 +13,7 @@ files. Optional parameter nonStop allows to specify whether the
 import returns with an error if one of the text files lacks required
 data, such as mz and intensity values (default nonStop = FALSE), or whether only affected file(s) is(are) skipped and a
 warning is shown (nonStop = TRUE). Note that any other error
-will abort import regardless of parameter nonStop."><title>MS data backend for mgf files — MsBackendMassbank • MsBackendMassbank</title><!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png"><link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png"><link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png"><link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png"><link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png"><link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png"><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.1.0/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.1.0/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous"><!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="MS data backend for mgf files — MsBackendMassbank"><meta property="og:description" content="The MsBackendMassbank class supports import of MS/MS spectra data from
+will abort import regardless of parameter nonStop."><title>MS data backend for mgf files — MsBackendMassbank • MsBackendMassbank</title><!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png"><link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png"><link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png"><link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png"><link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png"><link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png"><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous"><!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="MS data backend for mgf files — MsBackendMassbank"><meta property="og:description" content="The MsBackendMassbank class supports import of MS/MS spectra data from
 MS/MS spectrum data from
 Massbank
 files. After initial import, the full MS data is kept in
@@ -38,7 +38,7 @@ will abort import regardless of parameter nonStop."><meta property="og:image" co
     
     <a class="navbar-brand me-2" href="../index.html">MsBackendMassbank</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.7.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -96,67 +96,88 @@ will abort import regardless of parameter <code>nonStop</code>.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># S4 method for MsBackendMassbank</span>
-<span class="fu">backendInitialize</span><span class="op">(</span>
-  <span class="va">object</span>,
-  <span class="va">files</span>,
-  metaBlocks <span class="op">=</span> <span class="fu"><a href="metaDataBlocks.html">metaDataBlocks</a></span><span class="op">(</span><span class="op">)</span>,
-  nonStop <span class="op">=</span> <span class="cn">FALSE</span>,
-  <span class="va">...</span>,
-  BPPARAM <span class="op">=</span> <span class="fu">bpparam</span><span class="op">(</span><span class="op">)</span>
-<span class="op">)</span>
-
-<span class="fu">MsBackendMassbank</span><span class="op">(</span><span class="op">)</span>
-
-<span class="co"># S4 method for MsBackendMassbank</span>
-<span class="fu">spectraVariableMapping</span><span class="op">(</span><span class="va">object</span>, format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Massbank"</span><span class="op">)</span><span class="op">)</span>
-
-<span class="co"># S4 method for MsBackendMassbank</span>
-<span class="fu">export</span><span class="op">(</span>
-  <span class="va">object</span>,
-  <span class="va">x</span>,
-  file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span>,
-  mapping <span class="op">=</span> <span class="fu">spectraVariableMapping</span><span class="op">(</span><span class="fu">MsBackendMassbank</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S4 method for MsBackendMassbank</span></span>
+<span><span class="fu">backendInitialize</span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  <span class="va">files</span>,</span>
+<span>  metaBlocks <span class="op">=</span> <span class="fu"><a href="metaDataBlocks.html">metaDataBlocks</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  nonStop <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span>,</span>
+<span>  BPPARAM <span class="op">=</span> <span class="fu">bpparam</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">MsBackendMassbank</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for MsBackendMassbank</span></span>
+<span><span class="fu">spectraVariableMapping</span><span class="op">(</span><span class="va">object</span>, format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Massbank"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for MsBackendMassbank</span></span>
+<span><span class="fu">export</span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  <span class="va">x</span>,</span>
+<span>  file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  mapping <span class="op">=</span> <span class="fu">spectraVariableMapping</span><span class="op">(</span><span class="fu">MsBackendMassbank</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>object</dt>
 <dd><p>Instance of <code>MsBackendMassbank</code> class.</p></dd>
+
+
 <dt>files</dt>
 <dd><p><code>character</code> with the (full) file name(s) of the MassBank file(s)
 from which MS/MS data should be imported.</p></dd>
+
+
 <dt>metaBlocks</dt>
 <dd><p><code>data.frame</code> indicating which metadata shall
 be imported. Default is <code><a href="metaDataBlocks.html">metaDataBlocks()</a></code>.</p></dd>
+
+
 <dt>nonStop</dt>
 <dd><p><code>logical(1)</code> whether import should be stopped if an
 xml file does not contain all required fields. Defaults to
 <code>nonStop = FALSE</code>.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Currently ignored.</p></dd>
+
+
 <dt>BPPARAM</dt>
 <dd><p>Parameter object defining the parallel processing
 setup to import data in parallel. Defaults to <code>BPPARAM = bpparam()</code>. See <code>bpparam()</code> for more information.</p></dd>
+
+
 <dt>format</dt>
 <dd><p>for <code>spectraVariableMapping</code>: <code>character(1)</code> defining the
 format to be used. Currently only <code>format = "Massbank"</code> is supported.</p></dd>
+
+
 <dt>x</dt>
 <dd><p><code>Spectra()</code> object that should be exported.</p></dd>
+
+
 <dt>file</dt>
 <dd><p>for <code>export</code>: <code>character(1)</code> defining the output file.</p></dd>
+
+
 <dt>mapping</dt>
 <dd><p>for <code>export</code>: named <code>character</code> vector
 allowing to specify how fields from the Massbank file should be renamed.
 Names are supposed to be the spectra variable name and values of the
 vector the field names in the Massbank file. See output of
 <code>spectraVariableMapping(MsBackendMassbank())</code> for the expected format.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p><code>backendInitialize</code> and <code>MsBackendMassbank</code> return an instance of
+    
+
+<p><code>backendInitialize</code> and <code>MsBackendMassbank</code> return an instance of
 <code>MsBackendMassbank-class</code>.</p>
     </div>
     <div class="section level2">
@@ -166,14 +187,14 @@ vector the field names in the Massbank file. See output of
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="co">## Create an MsBackendMassbank backend and import data from a test file.</span></span>
-<span class="r-in"><span class="va">fls</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">dir</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, package <span class="op">=</span> <span class="st">"MsBackendMassbank"</span><span class="op">)</span>,</span>
-<span class="r-in">    full.names <span class="op">=</span> <span class="cn">TRUE</span>, pattern <span class="op">=</span> <span class="st">"txt$"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">be</span> <span class="op">&lt;-</span> <span class="fu">backendInitialize</span><span class="op">(</span><span class="fu">MsBackendMassbank</span><span class="op">(</span><span class="op">)</span>, <span class="va">fls</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Create an MsBackendMassbank backend and import data from a test file.</span></span></span>
+<span class="r-in"><span><span class="va">fls</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">dir</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, package <span class="op">=</span> <span class="st">"MsBackendMassbank"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    full.names <span class="op">=</span> <span class="cn">TRUE</span>, pattern <span class="op">=</span> <span class="st">"txt$"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">be</span> <span class="op">&lt;-</span> <span class="fu">backendInitialize</span><span class="op">(</span><span class="fu">MsBackendMassbank</span><span class="op">(</span><span class="op">)</span>, <span class="va">fls</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Start data import from 8 files ... </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> done</span>
-<span class="r-in"><span class="va">be</span></span>
+<span class="r-in"><span><span class="va">be</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> MsBackendMassbank with 10 spectra</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      msLevel     rtime scanIndex</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;integer&gt; &lt;numeric&gt; &lt;integer&gt;</span>
@@ -188,10 +209,10 @@ vector the field names in the Massbank file. See output of
 <span class="r-out co"><span class="r-pr">#&gt;</span> 9          2    143.94         1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10         2    143.94         1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  ... 28 more variables/columns.</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">be</span><span class="op">$</span><span class="va">msLevel</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">be</span><span class="op">$</span><span class="va">msLevel</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 2 2 2 2 2 2 2 2 2 2</span>
-<span class="r-in"><span class="va">be</span><span class="op">$</span><span class="va">intensity</span></span>
+<span class="r-in"><span><span class="va">be</span><span class="op">$</span><span class="va">intensity</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NumericList of length 10</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [["intensity"]] 12461 2208 2394 40390 2816 3122 ... 6937 2914 6059 1871 9233</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[""]] 646 980 2114 20052 1248 7628 2036 494048 75708</span>
@@ -203,7 +224,7 @@ vector the field names in the Massbank file. See output of
 <span class="r-out co"><span class="r-pr">#&gt;</span> [["intensity"]] 150 200 32 232 80 12162</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [["intensity"]] 460 3630 658 74 28 190 44 142 50 52 634</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [["intensity"]] 282 424</span>
-<span class="r-in"><span class="va">be</span><span class="op">$</span><span class="va">mz</span></span>
+<span class="r-in"><span><span class="va">be</span><span class="op">$</span><span class="va">mz</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NumericList of length 10</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [["mz"]] 84.1 105.1 107.1 114.1 115.1 119.1 ... 393.3 396.3 410.3 411.3 414.3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[""]] 74.0233 132.0807 144.0805 146.0598 ... 170.0597 188.0699 205.0965</span>
@@ -215,10 +236,10 @@ vector the field names in the Massbank file. See output of
 <span class="r-out co"><span class="r-pr">#&gt;</span> [["mz"]] 72.0095 116.0517 117.0554 159.0935 186.0558 203.0826</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [["mz"]] 72.0094 74.0253 116.0511 117.0539 ... 162.0307 186.0548 203.0818</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [["mz"]] 74.0253 116.0508</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Initializing a backend reading additional metadata columns/information</span></span>
-<span class="r-in"><span class="va">mb</span> <span class="op">&lt;-</span> <span class="fu"><a href="metaDataBlocks.html">metaDataBlocks</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">mb</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Initializing a backend reading additional metadata columns/information</span></span></span>
+<span class="r-in"><span><span class="va">mb</span> <span class="op">&lt;-</span> <span class="fu"><a href="metaDataBlocks.html">metaDataBlocks</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">mb</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   metadata  read</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1       ac FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2       ch FALSE</span>
@@ -227,12 +248,12 @@ vector the field names in the Massbank file. See output of
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5   record FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6       pk FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 7  comment FALSE</span>
-<span class="r-in"><span class="va">mb</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">be</span> <span class="op">&lt;-</span> <span class="fu">backendInitialize</span><span class="op">(</span><span class="fu">MsBackendMassbank</span><span class="op">(</span><span class="op">)</span>, <span class="va">fls</span>, metaBlocks <span class="op">=</span> <span class="va">mb</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="va">mb</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">be</span> <span class="op">&lt;-</span> <span class="fu">backendInitialize</span><span class="op">(</span><span class="fu">MsBackendMassbank</span><span class="op">(</span><span class="op">)</span>, <span class="va">fls</span>, metaBlocks <span class="op">=</span> <span class="va">mb</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Start data import from 8 files ... </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> done</span>
-<span class="r-in"><span class="fu">spectraVariables</span><span class="op">(</span><span class="va">be</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">spectraVariables</span><span class="op">(</span><span class="va">be</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "msLevel"                    "rtime"                     </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [3] "acquisitionNum"             "scanIndex"                 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [5] "mz"                         "intensity"                 </span>
@@ -269,7 +290,7 @@ vector the field names in the Massbank file. See output of
 <span class="r-out co"><span class="r-pr">#&gt;</span> [67] "ims_instrument_type"        "ims_drift_gas"             </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [69] "ims_drift_time"             "ims_ccs"                   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [71] "general_conc"              </span>
-<span class="r-in"><span class="va">be</span><span class="op">$</span><span class="va">instrument</span></span>
+<span class="r-in"><span><span class="va">be</span><span class="op">$</span><span class="va">instrument</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                instrument </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                   "Bruker maXis ESI-QTOF" </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                           </span>
@@ -301,7 +322,7 @@ vector the field names in the Massbank file. See output of
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
 </div>
 
     </footer></div>
