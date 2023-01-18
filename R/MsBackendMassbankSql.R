@@ -512,6 +512,6 @@ setReplaceMethod("$", "MsBackendMassbankSql", function(x, name, value) {
 #' @importMethodsFrom Spectra precScanNum
 #' @export
 setMethod("precScanNum", "MsBackendMassbankSql", function(object) {
-    warning("precursor scan numbers not available")
+    message("precursor scan numbers not available")
     rep(NA_integer_, length(object))
 })
