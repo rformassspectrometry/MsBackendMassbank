@@ -596,7 +596,8 @@ metaDataBlocks <- function() {
                         value <- "POSITIVE"
                     }
                 } else if (entry == "AC$CHROMATOGRAPHY: RETENTION_TIME") {
-                    value <- paste0(value / 60, " min")
+                    if (!is.na(value))
+                        value <- paste0(value / 60, " min")
                 }
                 if (!is.na(value)) {
                     if (is.list(value)) {
