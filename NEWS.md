@@ -1,3 +1,9 @@
+# MsBackendMassbank 1.6
+
+## Changes in 1.6.1
+
+- Avoid export of retention time if missing.
+
 # MsBackendMassbank 1.3
 
 ## Changes in 1.3.5
