@@ -272,6 +272,15 @@
     ac$ms_source_temp <- substring(
         grep("AC$MASS_SPECTROMETRY: SOURCE_TEMPERATURE", mb, value = TRUE,
              fixed = TRUE), 42)
+    ac$ms_kinetic_energy <- substring(
+      grep("AC$MASS_SPECTROMETRY: KINETIC_ENERGY", mb, value = TRUE,
+           fixed = TRUE), 38)
+    ac$ms_electron_current <- substring(
+      grep("AC$MASS_SPECTROMETRY: ELECTRON_CURRENT", mb, value = TRUE,
+           fixed = TRUE), 40)
+    ac$ms_reaction_time <- substring(
+      grep("AC$MASS_SPECTROMETRY: REACTION_TIME", mb, value = TRUE,
+           fixed = TRUE), 37)
 
     ## analytical chemistry information, chromatography ------------------------
     ac$chrom_carrier_gas <- substring(grep("AC$CHROMATOGRAPHY: CARRIER_GAS",
@@ -682,6 +691,9 @@ metaDataBlocks <- function() {
         "AC$MASS_SPECTROMETRY: RESOLUTION",
         "AC$MASS_SPECTROMETRY: SCANNING_SETTING",
         "AC$MASS_SPECTROMETRY: SOURCE_TEMPERATURE",
+        "AC$MASS_SPECTROMETRY: KINETIC_ENERGY",
+        "AC$MASS_SPECTROMETRY: ELECTRON_CURRENT",
+        "AC$MASS_SPECTROMETRY: REACTION_TIME",
         "AC$CHROMATOGRAPHY: CARRIER_GAS",
         "AC$CHROMATOGRAPHY: COLUMN_NAME",
         "AC$CHROMATOGRAPHY: COLUMN_TEMPERATURE",
