@@ -25,7 +25,7 @@ test_that("backendInitialize,MsBackendMassbank works", {
     expect_identical(res_single$dataStorage, rep("<memory>", 3))
     expect_identical(res_single$dataOrigin, rep(normalizePath(fls[1]), 3))
     expect_identical(res_single$msLevel, rep(2L, 3))
-    expect_identical(length(spectraVariables(res_single)), 111L)
+    expect_identical(length(spectraVariables(res_single)), 114L)
 
     ## Import multiple files, single entries
     fls <- dir(system.file("extdata", package = "MsBackendMassbank"),
