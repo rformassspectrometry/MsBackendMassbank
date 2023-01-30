@@ -1,5 +1,9 @@
 # MsBackendMassbank 1.7
 
+## Changes in 1.7.3
+
+- Add support for EAD parameter.
+
 ## Changes in 1.7.2
 
 - Avoid export of retention time data if not available.
