@@ -203,6 +203,9 @@ setMethod(
                    ms_scan_setting = "AC$MASS_SPECTROMETRY: SCANNING_SETTING",
                    ms_source_temp = "AC$MASS_SPECTROMETRY: SOURCE_TEMPERATURE",
                    ms_frag_mode = "AC$MASS_SPECTROMETRY: FRAGMENTATION_MODE",
+                   ms_kinetic_energy = "AC$MASS_SPECTROMETRY: KINETIC_ENERGY",
+                   ms_electron_current = "AC$MASS_SPECTROMETRY: ELECTRON_CURRENT",
+                   ms_reaction_time = "AC$MASS_SPECTROMETRY: REACTION_TIME",
 
                    ## ims information
                    ims_instrument_type = "AC$ION_MOBILITY: INSTRUMENT_TYPE",

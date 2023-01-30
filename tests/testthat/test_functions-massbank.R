@@ -59,7 +59,7 @@ test_that(".extract_mb_spectrum works", {
 test_that(".extract_mb_ac works", {
     res <- MsBackendMassbank:::.extract_mb_ac(mb)
     expect_true(is.list(res))
-    expect_true(length(res) == 40L)
+    expect_true(length(res) == 43L)
     expect_true(is.character(res$instrument))
 })
 
