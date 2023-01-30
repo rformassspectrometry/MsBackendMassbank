@@ -98,7 +98,7 @@ document.addEventListener("DOMContentLoaded", function() {
 </script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.17/MsBackendMassbank" class="external-link">MsBackendMassbank</a></em><br><strong>Authors</strong>: RforMassSpectrometry Package Maintainer [cre],
 Michael Witting [aut] (<a href="https://orcid.org/0000-0002-1462-4426" class="external-link uri">https://orcid.org/0000-0002-1462-4426</a>), Johannes Rainer
 [aut] (<a href="https://orcid.org/0000-0002-6977-7147" class="external-link uri">https://orcid.org/0000-0002-6977-7147</a>), Michael Stravs
-[ctb]<br><strong>Compiled</strong>: Wed Jan 18 13:38:08 2023</p>
+[ctb]<br><strong>Compiled</strong>: Mon Jan 30 08:35:56 2023</p>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
@@ -237,38 +237,39 @@ skipped which reduces import time. This requires to define an additional
 <span><span class="co">##  [41] "ms_matrix"                   "ms_mass_accuracy"           </span></span>
 <span><span class="co">##  [43] "ms_mass_range"               "ms_reagent_gas"             </span></span>
 <span><span class="co">##  [45] "ms_resolution"               "ms_scan_setting"            </span></span>
-<span><span class="co">##  [47] "ms_source_temp"              "chrom_carrier_gas"          </span></span>
-<span><span class="co">##  [49] "chrom_column"                "chrom_column_temp"          </span></span>
-<span><span class="co">##  [51] "chrom_column_temp_gradient"  "chrom_flow_gradient"        </span></span>
-<span><span class="co">##  [53] "chrom_flow_rate"             "chrom_inj_temp"             </span></span>
-<span><span class="co">##  [55] "chrom_inj_temp_gradient"     "chrom_rti_kovats"           </span></span>
-<span><span class="co">##  [57] "chrom_rti_lee"               "chrom_rti_naps"             </span></span>
-<span><span class="co">##  [59] "chrom_rti_uoa"               "chrom_rti_uoa_pred"         </span></span>
-<span><span class="co">##  [61] "chrom_rt"                    "chrom_rt_uoa_pred"          </span></span>
-<span><span class="co">##  [63] "chrom_solvent"               "chrom_transfer_temp"        </span></span>
-<span><span class="co">##  [65] "ims_instrument_type"         "ims_drift_gas"              </span></span>
-<span><span class="co">##  [67] "ims_drift_time"              "ims_ccs"                    </span></span>
-<span><span class="co">##  [69] "general_conc"                "compound_class"             </span></span>
-<span><span class="co">##  [71] "link_cayman"                 "link_chebi"                 </span></span>
-<span><span class="co">##  [73] "link_chembl"                 "link_chempdb"               </span></span>
-<span><span class="co">##  [75] "link_chemspider"             "link_comptox"               </span></span>
-<span><span class="co">##  [77] "link_hmdb"                   "link_kappaview"             </span></span>
-<span><span class="co">##  [79] "link_kegg"                   "link_knapsack"              </span></span>
-<span><span class="co">##  [81] "link_lipidbank"              "link_lipidmaps"             </span></span>
-<span><span class="co">##  [83] "link_nikkaji"                "link_pubchem"               </span></span>
-<span><span class="co">##  [85] "link_zinc"                   "scientific_name"            </span></span>
-<span><span class="co">##  [87] "lineage"                     "link"                       </span></span>
-<span><span class="co">##  [89] "sample"                      "focus_base_peak"            </span></span>
-<span><span class="co">##  [91] "focus_derivative_form"       "focus_derivative_mass"      </span></span>
-<span><span class="co">##  [93] "focus_derivative_type"       "focus_ion_type"             </span></span>
-<span><span class="co">##  [95] "data_processing_comment"     "data_processing_deprofile"  </span></span>
-<span><span class="co">##  [97] "data_processing_find"        "data_processing_reanalyze"  </span></span>
-<span><span class="co">##  [99] "data_processing_recalibrate" "data_processing_whole"      </span></span>
-<span><span class="co">## [101] "deprecated"                  "date"                       </span></span>
-<span><span class="co">## [103] "authors"                     "license"                    </span></span>
-<span><span class="co">## [105] "copyright"                   "publication"                </span></span>
-<span><span class="co">## [107] "project"                     "pknum"                      </span></span>
-<span><span class="co">## [109] "comment"</span></span></code></pre>
+<span><span class="co">##  [47] "ms_source_temp"              "ms_kinetic_energy"          </span></span>
+<span><span class="co">##  [49] "ms_electron_current"         "ms_reaction_time"           </span></span>
+<span><span class="co">##  [51] "chrom_carrier_gas"           "chrom_column"               </span></span>
+<span><span class="co">##  [53] "chrom_column_temp"           "chrom_column_temp_gradient" </span></span>
+<span><span class="co">##  [55] "chrom_flow_gradient"         "chrom_flow_rate"            </span></span>
+<span><span class="co">##  [57] "chrom_inj_temp"              "chrom_inj_temp_gradient"    </span></span>
+<span><span class="co">##  [59] "chrom_rti_kovats"            "chrom_rti_lee"              </span></span>
+<span><span class="co">##  [61] "chrom_rti_naps"              "chrom_rti_uoa"              </span></span>
+<span><span class="co">##  [63] "chrom_rti_uoa_pred"          "chrom_rt"                   </span></span>
+<span><span class="co">##  [65] "chrom_rt_uoa_pred"           "chrom_solvent"              </span></span>
+<span><span class="co">##  [67] "chrom_transfer_temp"         "ims_instrument_type"        </span></span>
+<span><span class="co">##  [69] "ims_drift_gas"               "ims_drift_time"             </span></span>
+<span><span class="co">##  [71] "ims_ccs"                     "general_conc"               </span></span>
+<span><span class="co">##  [73] "compound_class"              "link_cayman"                </span></span>
+<span><span class="co">##  [75] "link_chebi"                  "link_chembl"                </span></span>
+<span><span class="co">##  [77] "link_chempdb"                "link_chemspider"            </span></span>
+<span><span class="co">##  [79] "link_comptox"                "link_hmdb"                  </span></span>
+<span><span class="co">##  [81] "link_kappaview"              "link_kegg"                  </span></span>
+<span><span class="co">##  [83] "link_knapsack"               "link_lipidbank"             </span></span>
+<span><span class="co">##  [85] "link_lipidmaps"              "link_nikkaji"               </span></span>
+<span><span class="co">##  [87] "link_pubchem"                "link_zinc"                  </span></span>
+<span><span class="co">##  [89] "scientific_name"             "lineage"                    </span></span>
+<span><span class="co">##  [91] "link"                        "sample"                     </span></span>
+<span><span class="co">##  [93] "focus_base_peak"             "focus_derivative_form"      </span></span>
+<span><span class="co">##  [95] "focus_derivative_mass"       "focus_derivative_type"      </span></span>
+<span><span class="co">##  [97] "focus_ion_type"              "data_processing_comment"    </span></span>
+<span><span class="co">##  [99] "data_processing_deprofile"   "data_processing_find"       </span></span>
+<span><span class="co">## [101] "data_processing_reanalyze"   "data_processing_recalibrate"</span></span>
+<span><span class="co">## [103] "data_processing_whole"       "deprecated"                 </span></span>
+<span><span class="co">## [105] "date"                        "authors"                    </span></span>
+<span><span class="co">## [107] "license"                     "copyright"                  </span></span>
+<span><span class="co">## [109] "publication"                 "project"                    </span></span>
+<span><span class="co">## [111] "pknum"                       "comment"</span></span></code></pre>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># all NA columns can be dropped</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">spectraVariables</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/hidden_aliases.html" class="external-link">dropNaSpectraVariables</a></span><span class="op">(</span><span class="va">sps</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -538,7 +539,7 @@ annotation table.</p>
 </h2>
 <div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## R Under development (unstable) (2023-01-11 r83598)</span></span>
+<pre><code><span><span class="co">## R Under development (unstable) (2023-01-26 r83699)</span></span>
 <span><span class="co">## Platform: x86_64-pc-linux-gnu (64-bit)</span></span>
 <span><span class="co">## Running under: Ubuntu 22.04.1 LTS</span></span>
 <span><span class="co">## </span></span>
@@ -563,26 +564,26 @@ annotation table.</p>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
 <span><span class="co">## [1] MsCoreUtils_1.11.3      RSQLite_2.2.20          MsBackendMassbank_1.7.2</span></span>
-<span><span class="co">## [4] Spectra_1.9.6           ProtGenerics_1.29.1     BiocParallel_1.33.9    </span></span>
-<span><span class="co">## [7] S4Vectors_0.37.3        BiocGenerics_0.45.0     BiocStyle_2.27.0       </span></span>
+<span><span class="co">## [4] Spectra_1.9.7           ProtGenerics_1.29.1     BiocParallel_1.33.9    </span></span>
+<span><span class="co">## [7] S4Vectors_0.37.3        BiocGenerics_0.45.0     BiocStyle_2.27.1       </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
-<span><span class="co">##  [1] sass_0.4.4          stringi_1.7.12      digest_0.6.31      </span></span>
+<span><span class="co">##  [1] sass_0.4.5          stringi_1.7.12      digest_0.6.31      </span></span>
 <span><span class="co">##  [4] magrittr_2.0.3      evaluate_0.20       bookdown_0.32      </span></span>
 <span><span class="co">##  [7] fastmap_1.1.0       blob_1.2.3          rprojroot_2.0.3    </span></span>
 <span><span class="co">## [10] jsonlite_1.8.4      DBI_1.1.3           BiocManager_1.30.19</span></span>
 <span><span class="co">## [13] purrr_1.0.1         codetools_0.2-18    textshaping_0.3.6  </span></span>
 <span><span class="co">## [16] jquerylib_0.1.4     cli_3.6.0           rlang_1.0.6        </span></span>
-<span><span class="co">## [19] bit64_4.0.5         cachem_1.0.6        yaml_2.3.6         </span></span>
+<span><span class="co">## [19] bit64_4.0.5         cachem_1.0.6        yaml_2.3.7         </span></span>
 <span><span class="co">## [22] tools_4.3.0         parallel_4.3.0      memoise_2.0.1      </span></span>
-<span><span class="co">## [25] vctrs_0.5.1         R6_2.5.1            lifecycle_1.0.3    </span></span>
-<span><span class="co">## [28] stringr_1.5.0       fs_1.5.2            IRanges_2.33.0     </span></span>
-<span><span class="co">## [31] bit_4.0.5           clue_0.3-63         MASS_7.3-58.1      </span></span>
+<span><span class="co">## [25] vctrs_0.5.2         R6_2.5.1            lifecycle_1.0.3    </span></span>
+<span><span class="co">## [28] stringr_1.5.0       fs_1.6.0            IRanges_2.33.0     </span></span>
+<span><span class="co">## [31] bit_4.0.5           clue_0.3-63         MASS_7.3-58.2      </span></span>
 <span><span class="co">## [34] ragg_1.2.5          cluster_2.1.4       pkgconfig_2.0.3    </span></span>
 <span><span class="co">## [37] desc_1.4.2          pkgdown_2.0.7.9000  bslib_0.4.2        </span></span>
-<span><span class="co">## [40] glue_1.6.2          Rcpp_1.0.9          systemfonts_1.0.4  </span></span>
-<span><span class="co">## [43] highr_0.10          xfun_0.36           knitr_1.41         </span></span>
-<span><span class="co">## [46] htmltools_0.5.4     rmarkdown_2.19      compiler_4.3.0</span></span></code></pre>
+<span><span class="co">## [40] glue_1.6.2          Rcpp_1.0.10         systemfonts_1.0.4  </span></span>
+<span><span class="co">## [43] highr_0.10          xfun_0.36           knitr_1.42         </span></span>
+<span><span class="co">## [46] htmltools_0.5.4     rmarkdown_2.20      compiler_4.3.0</span></span></code></pre>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
