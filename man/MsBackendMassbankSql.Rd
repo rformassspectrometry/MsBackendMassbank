@@ -20,6 +20,7 @@
 \alias{compounds,MsBackendMassbankSql-method}
 \alias{$<-,MsBackendMassbankSql-method}
 \alias{precScanNum,MsBackendMassbankSql-method}
+\alias{backendBpparam,MsBackendMassbankSql-method}
 \title{MS backend accessing the MassBank MySQL database}
 \usage{
 MsBackendMassbankSql()
@@ -53,6 +54,8 @@ MsBackendMassbankSql()
 \S4method{$}{MsBackendMassbankSql}(x, name) <- value
 
 \S4method{precScanNum}{MsBackendMassbankSql}(object)
+
+\S4method{backendBpparam}{MsBackendMassbankSql}(object, BPPARAM = bpparam())
 }
 \arguments{
 \item{object}{Object extending \code{MsBackendMassbankSql}.}
@@ -88,6 +91,9 @@ total ion current should be (re)calculated on the actual data
 \item{name}{name of the variable to replace for \verb{<-} methods. See individual
 method description or expected data type.}
 
+\item{BPPARAM}{for \code{backendBpparam}: \code{BiocParallel} parallel processing
+setup. See \code{\link[=bpparam]{bpparam()}} for more information.}
+
 \item{spectraVariables}{For \code{selectSpectraVariables}: \code{character} with the
 names of the spectra variables to which the backend should be subsetted.}
 }
@@ -113,11 +119,18 @@ reported for some spectra can not be converted to a \code{numeric} and hence \co
 is reported with the spectra variable \code{precursorMz} for these spectra. The
 variable \code{"precursor_mz_text"} can be used to get the \emph{original} precursor
 m/z reported in MassBank.
+
+Finally, \code{MsBackendMassbankSql} does \strong{not support} parallel processing
+because the database connection stored within the object can not be
+shared acrcoss parallel processes. All functions on \code{Spectra} objects
+with a \code{MsBackendMassbankSql} will (silently) disable parallel processing
+even if the user provides a dedicated parallel processing setup with
+the \code{BPPARAM} parameter.
 }
 \section{Supported Backend functions}{
 
 
-The following functions are supported by the \code{MsBackendMassbankSqlMassbankDb}.
+The following functions are supported by the \code{MsBackendMassbankSql}.
 \itemize{
 \item \code{[}: subset the backend. Only subsetting by element (\emph{row}/\code{i}) is
 allowed
@@ -132,6 +145,11 @@ the list is a \code{matrix} with columns \code{"mz"} and \code{"intensity"}. For
 spectrum, a \code{matrix} with 0 rows and two columns (named \code{mz} and
 \code{intensity}) is returned. Parameter \code{columns} allows to select which peaks
 variables to return, but supports currently only \code{"mz"} and \code{"intensity"}.
+\item \code{backendBpparam}: whether the backend supports parallel processing. Takes
+a \code{MsBackendMassbankSql} and a parallel processing setup (see \code{\link[=bpparam]{bpparam()}}
+for details) as input and \strong{always} returns a \code{\link[=SerialParam]{SerialParam()}}. This
+function can be used to test whether a provided parallel processing setup
+is supported by the backend and returns the supported setup.
 \item \code{backendInitialize}: initialises the backend by retrieving the IDs of all
 spectra in the database. Parameter \code{dbcon} with the connection to the
 MassBank MySQL database is required.

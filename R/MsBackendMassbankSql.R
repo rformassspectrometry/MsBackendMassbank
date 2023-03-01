@@ -23,6 +23,16 @@
 #' variable `"precursor_mz_text"` can be used to get the *original* precursor
 #' m/z reported in MassBank.
 #'
+#' Finally, `MsBackendMassbankSql` does **not support** parallel processing
+#' because the database connection stored within the object can not be
+#' shared acrcoss parallel processes. All functions on `Spectra` objects
+#' with a `MsBackendMassbankSql` will (silently) disable parallel processing
+#' even if the user provides a dedicated parallel processing setup with
+#' the `BPPARAM` parameter.
+#'
+#' @param BPPARAM for `backendBpparam`: `BiocParallel` parallel processing
+#'     setup. See [bpparam()] for more information.
+#'
 #' @param dbcon For `backendInitialize,MsBackendMassbankSql`: SQL database
 #'     connection to the MassBank (MariaDb) database.
 #'
@@ -62,7 +72,7 @@
 #'
 #' @section Supported Backend functions:
 #'
-#' The following functions are supported by the `MsBackendMassbankSqlMassbankDb`.
+#' The following functions are supported by the `MsBackendMassbankSql`.
 #'
 #' - `[`: subset the backend. Only subsetting by element (*row*/`i`) is
 #'   allowed
@@ -80,6 +90,12 @@
 #'   spectrum, a `matrix` with 0 rows and two columns (named `mz` and
 #'   `intensity`) is returned. Parameter `columns` allows to select which peaks
 #'   variables to return, but supports currently only `"mz"` and `"intensity"`.
+#'
+#' - `backendBpparam`: whether the backend supports parallel processing. Takes
+#'   a `MsBackendMassbankSql` and a parallel processing setup (see [bpparam()]
+#'   for details) as input and **always** returns a [SerialParam()]. This
+#'   function can be used to test whether a provided parallel processing setup
+#'   is supported by the backend and returns the supported setup.
 #'
 #' - `backendInitialize`: initialises the backend by retrieving the IDs of all
 #'   spectra in the database. Parameter `dbcon` with the connection to the
@@ -515,3 +531,14 @@ setMethod("precScanNum", "MsBackendMassbankSql", function(object) {
     message("precursor scan numbers not available")
     rep(NA_integer_, length(object))
 })
+
+#' @importMethodsFrom Spectra backendBpparam
+#'
+#' @importFrom BiocParallel SerialParam bpparam
+#'
+#' @rdname MsBackendMassbankSql
+setMethod(
+    "backendBpparam", signature = "MsBackendMassbankSql",
+    function(object, BPPARAM = bpparam()) {
+        SerialParam()
+    })

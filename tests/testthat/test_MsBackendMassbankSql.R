@@ -587,3 +587,12 @@ test_that("precursorMz,Spectra works", {
     precursors_direct <- precursorMz(sps)
     expect_equal(precursors_cached, precursors_direct)
 })
+
+test_that("backendBpparam,MsBackendMassbankSql works", {
+    expect_s4_class(backendBpparam(MsBackendMassbank(),
+                                   BiocParallel::MulticoreParam(3)),
+                    "MulticoreParam")
+    expect_s4_class(backendBpparam(MsBackendMassbankSql(),
+                                   BiocParallel::MulticoreParam(3)),
+                    "SerialParam")
+})
