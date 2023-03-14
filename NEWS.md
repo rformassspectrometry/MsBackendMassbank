@@ -1,5 +1,11 @@
 # MsBackendMassbank 1.7
 
+## Changes in 1.7.4
+
+- Add `backendBpparam` for `MsBackendMassbankSql`; parallel processing of
+  `Spectra` with `MsBackendMassbankSql` will silently disable parallel
+  processing.
+
 ## Changes in 1.7.3
 
 - Add support for EAD parameter.

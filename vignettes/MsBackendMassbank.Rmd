@@ -268,6 +268,15 @@ mb_match <- mb[c(11, which.max(sims) + 1)]
 compounds(mb_match)
 ```
 
+Note that the `MsBackendMassbankSql` backend does not support parallel
+processing because the database connection within the backend can not be shared
+across parallel processes. Any function on a `Spectra` object that uses a
+`MsBackendMassbankSql` will thus (silently) disable any parallel processing,
+even if the user might have passed one along to the function using the `BPPARAM`
+parameter. In general, the `backendBpparam` function can be used on any
+`Spectra` object to test whether its backend supports the provided parallel
+processing setup (which might be helpful for developers).
+
 
 # Session information
 
