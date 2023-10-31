@@ -627,7 +627,7 @@ metaDataBlocks <- function() {
                     as.integer(peaksData(x[i])[[1]][,2] /
                                max(peaksData(x[i])[[1]][,2]) * 999),
                     collapse = "\n"))
-        .cat("\n//\n\n")
+        .cat("\n//\n")
     }
 }
 
