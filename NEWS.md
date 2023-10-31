@@ -1,3 +1,10 @@
+# MsBackendMassbank 1.10
+
+## Changes in 1.10.1
+
+- Drop additional new line in MassBank report exports ([issue
+  #49](https://github.com/rformassspectrometry/MsBackendMassbank/issues/49)).
+
 # MsBackendMassbank 1.7
 
 ## Changes in 1.7.4
