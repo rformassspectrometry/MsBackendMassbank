@@ -1,3 +1,10 @@
+# MsBackendMassbank 1.11
+
+## Changes in 1.11.1
+
+- Remove additional empty line at the end of exported MassBank records ([issue
+  #49](https://github.com/rformassspectrometry/MsBackendMassbank/issues/49)).
+
 # MsBackendMassbank 1.7
 
 ## Changes in 1.7.4
