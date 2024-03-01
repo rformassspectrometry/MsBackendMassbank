@@ -1,5 +1,10 @@
 # MsBackendMassbank 1.11
 
+## Changes in 1.11.2
+
+- Import method generics from `ProtGenerics`. This requires `ProtGenerics`
+  version 1.35.3.
+
 ## Changes in 1.11.1
 
 - Remove additional empty line at the end of exported MassBank records ([issue

@@ -355,9 +355,7 @@ setMethod("backendInitialize", "MsBackendMassbankSql", function(object,
     object
 })
 
-#' @importMethodsFrom Spectra peaksData
-#'
-#' @importMethodsFrom Spectra peaksVariables
+#' @importMethodsFrom ProtGenerics peaksData peaksVariables
 #'
 #' @exportMethod peaksData
 #'

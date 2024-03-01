@@ -1,6 +1,6 @@
 Package: MsBackendMassbank
 Title: Mass Spectrometry Data Backend for MassBank record Files
-Version: 1.11.1
+Version: 1.11.2
 Authors@R:
     c(person(given = "RforMassSpectrometry Package Maintainer",
              email = "maintainer@rformassspectrometry.org",
@@ -31,7 +31,7 @@ Imports:
     S4Vectors,
     IRanges,
     methods,
-    ProtGenerics,
+    ProtGenerics (>= 1.35.3),
     MsCoreUtils,
     DBI,
     utils
@@ -50,7 +50,7 @@ BugReports: https://github.com/RforMassSpectrometry/MsBackendMassbank/issues
 URL: https://github.com/RforMassSpectrometry/MsBackendMassbank
 biocViews: Infrastructure, MassSpectrometry, Metabolomics, DataImport
 Roxygen: list(markdown=TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 Collate:
     'hidden_aliases.R'
     'MsBackendMassbank.R'
