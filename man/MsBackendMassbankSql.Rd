@@ -16,6 +16,7 @@
 \alias{spectraNames<-,MsBackendMassbankSql-method}
 \alias{tic,MsBackendMassbankSql-method}
 \alias{[,MsBackendMassbankSql-method}
+\alias{extractByIndex,MsBackendMassbankSql,ANY-method}
 \alias{compounds,Spectra-method}
 \alias{compounds,MsBackendMassbankSql-method}
 \alias{$<-,MsBackendMassbankSql-method}
@@ -46,6 +47,8 @@ MsBackendMassbankSql()
 \S4method{tic}{MsBackendMassbankSql}(object, initial = TRUE)
 
 \S4method{[}{MsBackendMassbankSql}(x, i, j, ..., drop = FALSE)
+
+\S4method{extractByIndex}{MsBackendMassbankSql,ANY}(object, i)
 
 \S4method{compounds}{Spectra}(object, ...)
 
