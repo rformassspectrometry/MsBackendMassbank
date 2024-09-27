@@ -1,3 +1,9 @@
+# MsBackendMassbank 1.13
+
+## Changes in 1.13.1
+
+- Add `extractByIndex()` method.
+
 # MsBackendMassbank 1.11
 
 ## Changes in 1.11.2

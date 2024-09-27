@@ -218,8 +218,22 @@ test_that("selectSpectraVariables,MsBackendMassbankSql works", {
         unique(c(names(Spectra:::.SPECTRA_DATA_COLUMNS)), "rtime"))
 })
 
+test_that("extractByIndex,MsBackendMassbankSql works", {
+    be <- backendInitialize(MsBackendMassbankSql(), dbc)
+
+    res <- extractByIndex(be, 2:3)
+    expect_true(length(res) == 2)
+    expect_equal(res@spectraIds, be@spectraIds[2:3])
+    expect_equal(res@spectraIds, res$spectrum_id)
+    expect_equal(be$mz[2:3], res$mz)
+
+})
+
 test_that("[,MsBackendMassbankSql works", {
     be <- backendInitialize(MsBackendMassbankSql(), dbc)
+
+    res <- be[]
+    expect_equal(res, be)
 
     res <- be[2:3]
     expect_true(length(res) == 2)

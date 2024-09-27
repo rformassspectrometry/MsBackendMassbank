@@ -477,10 +477,20 @@ setMethod("[", "MsBackendMassbankSql", function(x, i, j, ..., drop = FALSE) {
     if (missing(i))
         return(x)
     i <- i2index(i, length(x), x@spectraIds)
-    slot(x, "spectraIds", check = FALSE) <- x@spectraIds[i]
-    x <- callNextMethod(x, i = i)
-    x
+    extractByIndex(x, i)
 })
+
+
+#' @rdname MsBackendMassbankSql
+#'
+#' @importMethodsFrom Spectra extractByIndex
+#'
+#' @export
+setMethod("extractByIndex", c("MsBackendMassbankSql", "ANY"),
+          function(object, i) {
+              slot(object, "spectraIds", check = FALSE) <- object@spectraIds[i]
+              callNextMethod(object, i = i)
+          })
 
 #' @rdname MsBackendMassbankSql
 #'
