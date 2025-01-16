@@ -2,10 +2,14 @@
 #'
 #' @export MsBackendMassbankSql
 MsBackendMassbankSql <- function() {
-    if (!requireNamespace("DBI", quietly = TRUE))
+    if (!.has_dbi_package())
         stop("'MsBackendMassbankSql' requires package 'DBI'. Please ",
              "install with 'install.packages(\"DBI\")'")
     new("MsBackendMassbankSql")
+}
+
+.has_dbi_package <- function() {
+    requireNamespace("DBI", quietly = TRUE)
 }
 
 #' @importFrom DBI dbListTables
@@ -74,10 +78,6 @@ MsBackendMassbankSql <- function() {
             res$intensity <- NumericList(ints, compress = FALSE)
         }
     }
-    if (!all(columns %in% colnames(res)))
-        stop("Column(s) ", paste0(columns[!columns %in% names(res)],
-                                  collapse = ", "), " not available.",
-             call. = FALSE)
     extractCOLS(res, columns)
 }
 
@@ -124,7 +124,8 @@ MsBackendMassbankSql <- function() {
     precursorIntensity = "precursor_intensity",
     precursorMz = "precursor_mz_text",
     msLevel = "ms_level",
-    compound_id = "msms_spectrum.compound_id"
+    compound_id = "msms_spectrum.compound_id",
+    collisionEnergy = "collision_energy_text"
 )
 
 .map_spectraVariables_to_sql <- function(x) {
@@ -193,7 +194,7 @@ MsBackendMassbankSql <- function() {
         suppressWarnings(
             res$precursorMz <- as.numeric(res$precursor_mz_text))
         if (!any(columns == "precursor_mz_text"))
-            res$precursor_intensity_text <- NULL
+            res$precursor_mz_text <- NULL
     }
     if (any(columns == "collisionEnergy")) {
         suppressWarnings(

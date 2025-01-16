@@ -31,7 +31,7 @@
 #' the `BPPARAM` parameter.
 #'
 #' @param BPPARAM for `backendBpparam`: `BiocParallel` parallel processing
-#'     setup. See [bpparam()] for more information.
+#'     setup. See [BiocParallel::bpparam()] for more information.
 #'
 #' @param dbcon For `backendInitialize,MsBackendMassbankSql`: SQL database
 #'     connection to the MassBank (MariaDb) database.
@@ -92,10 +92,11 @@
 #'   variables to return, but supports currently only `"mz"` and `"intensity"`.
 #'
 #' - `backendBpparam`: whether the backend supports parallel processing. Takes
-#'   a `MsBackendMassbankSql` and a parallel processing setup (see [bpparam()]
-#'   for details) as input and **always** returns a [SerialParam()]. This
-#'   function can be used to test whether a provided parallel processing setup
-#'   is supported by the backend and returns the supported setup.
+#'   a `MsBackendMassbankSql` and a parallel processing setup (see
+#'   [BiocParallel::bpparam()] for details) as input and **always** returns a
+#'   [BiocParallel::SerialParam()]. This function can be used to test whether
+#'   a provided parallel processing setup is supported by the backend and
+#'   returns the supported setup.
 #'
 #' - `backendInitialize`: initialises the backend by retrieving the IDs of all
 #'   spectra in the database. Parameter `dbcon` with the connection to the
@@ -125,7 +126,7 @@
 #'   variable `"collisionEnergyText"`.
 #'
 #' - `intensity`: gets the intensity values from the spectra. Returns
-#'   a [NumericList()] of `numeric` vectors (intensity values for each
+#'   a [IRanges::NumericList()] of `numeric` vectors (intensity values for each
 #'   spectrum). The length of the `list` is equal to the number of
 #'   `spectra` in `object`.
 #'
@@ -167,8 +168,8 @@
 #'   level for each spectrum (or `NA_integer_` if not available).
 #'
 #' - `mz`: gets the mass-to-charge ratios (m/z) from the
-#'   spectra. Returns a [NumericList()] or length equal to the number of
-#'   spectra, each element a `numeric` vector with the m/z values of
+#'   spectra. Returns a [IRanges::NumericList()] or length equal to the
+#'   number of spectra, each element a `numeric` vector with the m/z values of
 #'   one spectrum.
 #'
 #' - `polarity`, `polarity<-`: gets or sets the polarity for each
@@ -329,9 +330,9 @@ setMethod("backendInitialize", "MsBackendMassbankSql", function(object,
     if (missing(dbcon))
         stop("Parameter 'dbcon' is required for 'MsBackendMassbankSql'")
     msg <- .valid_dbcon(dbcon)
-    object@dbcon <- dbcon
     if (length(msg))
         stop(msg)
+    object@dbcon <- dbcon
 
     res <- dbGetQuery(
         dbcon, "select spectrum_id, precursor_mz_text from msms_spectrum")
@@ -366,16 +367,18 @@ setMethod(
         if (!all(columns %in% c("mz", "intensity")))
             stop("'peaksData' for 'MsBackendMassbankSql' does only support",
                  " columns \"mz\" and \"intensity\"", call. = FALSE)
-        pks <- .fetch_peaks_sql(object, columns = columns)
+        pks <- MsBackendMassbank:::.fetch_peaks_sql(object, columns = columns)
         f <- factor(pks$spectrum_id)        # using levels does not work because we can have duplicates
-        pks <- unname(split.data.frame(pks, f)[as.character(object@spectraIds)])
-        idx <- seq_along(columns) + 1
-        lapply(pks, function(z) {
-            if (nrow(z))
-                as.matrix(z[, idx, drop = FALSE], rownames.force = FALSE)
-            else matrix(NA_real_, ncol = length(columns), nrow = 0,
-                        dimnames = list(character(), columns))
-        })
+
+        pks <- split.data.frame(
+            as.matrix(pks[, seq(2, (length(columns) + 1)),
+                          drop = FALSE]), f)[as.character(object@spectraIds)]
+        emat <- matrix(NA_real_, ncol = length(columns), nrow = 0,
+                       dimnames = list(character(), columns))
+        el <- which(lengths(pks) == 0)
+        if (length(el))
+            pks[el] <- replicate(length(el), emat)
+        unname(pks)
     })
 
 #' @exportMethod dataStorage
@@ -526,7 +529,7 @@ setMethod("compounds", "MsBackendMassbankSql", function(object, ...) {
 #' @export
 setReplaceMethod("$", "MsBackendMassbankSql", function(x, name, value) {
     if (name %in% c("spectrum_id"))
-        stop("Spectra IDs can not be changes.", call. = FALSE)
+        stop("Spectra IDs can not be changed.", call. = FALSE)
     callNextMethod()
 })
 

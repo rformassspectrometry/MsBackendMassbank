@@ -27,8 +27,13 @@
 
     begin <- grep("ACCESSION:", mb)
     end <- grep("^//$", mb)
-    if (!length(begin) || length(begin) != length(end))
-        stop("Unexpected file format")
+    if (!length(begin) || length(begin) != length(end)) {
+        if (nonStop) {
+            warning("Unexpected file format: ", basename(f))
+            return(DataFrame())
+        } else
+            stop("Unexpected file format: ", basename(f))
+    }
 
     n <- length(begin)
     spec <- vector("list", length = n)
@@ -42,22 +47,22 @@
 
     for (i in seq(along = spec)) {
         mb_sub <- mb[begin[i]:end[i]]
-        spec[[i]] <- .extract_mb_spectrum(mb_sub)
+        spec[[i]] <- MsBackendMassbank:::.extract_mb_spectrum(mb_sub)
         if (metaBlocks$read[which(metaBlocks$metadata == "ac")])
-            ac[[i]] <- .extract_mb_ac(mb_sub)
+            ac[[i]] <- MsBackendMassbank:::.extract_mb_ac(mb_sub)
         if (metaBlocks$read[which(metaBlocks$metadata == "ch")])
-            ch[[i]] <- .extract_mb_ch(mb_sub)
+            ch[[i]] <- MsBackendMassbank:::.extract_mb_ch(mb_sub)
         if (metaBlocks$read[which(metaBlocks$metadata == "sp")])
-            sp[[i]] <- .extract_mb_sp(mb_sub)
+            sp[[i]] <- MsBackendMassbank:::.extract_mb_sp(mb_sub)
         if (metaBlocks$read[which(metaBlocks$metadata == "ms")])
-            ms[[i]] <- .extract_mb_ms(mb_sub)
+            ms[[i]] <- MsBackendMassbank:::.extract_mb_ms(mb_sub)
         if (metaBlocks$read[which(metaBlocks$metadata == "record")])
-            record[[i]] <- .extract_mb_record(mb_sub)
+            record[[i]] <- MsBackendMassbank:::.extract_mb_record(mb_sub)
         if (metaBlocks$read[which(metaBlocks$metadata == "pk")])
-            pk[[i]] <- .extract_mb_pk(mb_sub)
+            pk[[i]] <- MsBackendMassbank:::.extract_mb_pk(mb_sub)
         if (metaBlocks$read[which(metaBlocks$metadata == "comment")])
             cmt[[i]] <- list(
-                comment = .extract_mb_comment(mb_sub))
+                comment = MsBackendMassbank:::.extract_mb_comment(mb_sub))
     }
 
     res <- DataFrame(do.call(rbind, spec))
@@ -96,6 +101,8 @@
 
 ##' @param mb `character()` of lines defining a spectrum in mgf
 ##'     format.
+##'
+##' @param nonStop `logical(1)` not used.
 ##'
 ##' @importFrom utils tail type.convert
 ##'
@@ -152,12 +159,15 @@
     ## clean NA values
     meta <- .cleanParsing(meta)
     ## type conversion
-    if(!is.na(meta$collisionEnergy))
-        meta$collisionEnergy <- as.numeric(regmatches(
+    ce <- NA_real_
+    if (length(meta$collisionEnergy)) {
+        ce <- as.numeric(regmatches(
             meta$collisionEnergy, regexpr("[[:digit:]]+\\.*[[:digit:]]*",
                                           meta$collisionEnergy)))
-    else
-        meta$collisionEnergy <- NA_real_
+        if (!length(ce))
+            ce <- NA_real_
+    }
+    meta$collisionEnergy <- ce
 
     ## convert rtime
     if(!is.na(meta$rtime_string)) {

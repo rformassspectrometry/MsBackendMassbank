@@ -12,7 +12,16 @@ test_that("backendInitialize,MsBackendMassbank works", {
     expect_identical(res_single$msLevel, rep(2L, 3))
     expect_identical(length(spectraVariables(res_single)), 31L)
 
-
+    ## nonStop and missing file.
+    tmpf <- tempfile()
+    writeLines(c("some line:", "abc"), con = tmpf)
+    expect_error(backendInitialize(be, c(fls, tmpf)), "file format")
+    expect_warning(
+        res <- backendInitialize(be, c(fls, tmpf), nonStop = TRUE),
+        "Import failed for some files"
+    )
+    file.remove(tmpf)
+    expect_equal(res$dataOrigin, res_single$dataOrigin)
     ## Import a single file with multiple record, only spectrum
     metaDataBlocks <- data.frame(
         metadata = c("ac", "ch", "sp", "ms", "record", "pk", "comment"),
@@ -33,7 +42,7 @@ test_that("backendInitialize,MsBackendMassbank works", {
 
     res_multiple <- backendInitialize(be, fls)
 
-    expect_true(length(res_multiple) == 6)
+    expect_equal(length(res_multiple), length(fls))
     expect_true(all(res_multiple$msLevel == 2L))
     expect_identical(res_multiple$dataOrigin, normalizePath(fls))
     expect_true(is.integer(res_multiple@spectraData$msLevel))
@@ -53,4 +62,19 @@ test_that("backendInitialize,MsBackendMassbank works", {
     expect_error(backendInitialize(be), "'files' is mandatory")
     expect_error(backendInitialize(be, 4), "expected to be a character")
     expect_error(backendInitialize(be, "a"), "a not found")
+})
+
+test_that("export,MsBackendMassbank works", {
+    fls <- system.file("extdata","MassBankRecords.txt",
+                       package = "MsBackendMassbank")
+    be <- MsBackendMassbank()
+
+    res <- backendInitialize(be, fls)
+    tmpf <- tempfile()
+    export(MsBackendMassbank(), res, tmpf)
+    res_2 <- backendInitialize(be, tmpf)
+    expect_equal(res$msLevel, res_2$msLevel)
+    expect_equal(res$rtime, res_2$rtime)
+    expect_equal(res$collisionEnergy, res_2$collisionEnergy)
+    expect_equal(mz(res), mz(res_2))
 })

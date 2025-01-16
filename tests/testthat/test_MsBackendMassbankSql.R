@@ -14,6 +14,9 @@ test_that("backendInitialize,MsBackendMassbankSql works", {
     expect_true(length(be@spectraIds) > 0)
     expect_true(length(be@spectraVariables) > 0)
     expect_output(show(be), "MsBackendMassbankSql")
+
+    expect_error(backendInitialize(MsBackendMassbankSql(), dbcon = "43"),
+                 "connection to a database")
 })
 
 test_that("length,MsBackendMassbankSql works", {
@@ -92,6 +95,8 @@ test_that("$<-,MsBackendMassbankSql works", {
     ## Test errors with m/z etc.
     expect_error(be$rtime <- c(1, 2), "length 1 or")
     expect_error(be$mz <- 1:3, "Replacing m/z and intensity")
+
+    expect_error(be$spectrum_id <- "a", "be changed.")
 })
 
 test_that("acquisitionNum,MsBackendMassbankSql works", {
@@ -176,6 +181,20 @@ test_that("peaksData,MsBackendMassbankSql works", {
     ## columns
     expect_error(peaksData(be, columns = c("intensity", "other")),
                  "only support columns")
+
+    ## No mass peaks for a spectrum.
+    tmpf <- tempfile()
+    file.copy(system.file("sql", "minimassbank.sqlite",
+                          package = "MsBackendMassbank"), tmpf)
+    tmp_con <- dbConnect(SQLite(), tmpf)
+    dbExecute(
+        tmp_con,
+        "delete from msms_spectrum_peak where spectrum_id = 'MCH00005'")
+    be <- backendInitialize(be, dbcon = tmp_con)
+    res <- peaksData(be)
+    expect_true(nrow(res[[which(be$spectrum_id == "MCH00005")]]) == 0)
+    dbDisconnect(tmp_con)
+    file.remove(tmpf)
 })
 
 test_that("dataOrigin, dataOrigin<-,MsBackendMassbankSql works", {
@@ -587,6 +606,11 @@ test_that("compounds,MsBackendMassbankSql works", {
     res <- compounds(be)
     expect_equal(res$compound_id, be$compound_id)
     expect_equal(res$formula[1], res$formula[3])
+
+    with_mocked_bindings(
+        "spectraVariables" = function(object, ...) "msLevel",
+        code = expect_error(compounds(be), "not present")
+    )
 })
 
 test_that("compounds,Spectra works", {
