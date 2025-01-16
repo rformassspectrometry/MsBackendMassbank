@@ -27,8 +27,13 @@
 
     begin <- grep("ACCESSION:", mb)
     end <- grep("^//$", mb)
-    if (!length(begin) || length(begin) != length(end))
-        stop("Unexpected file format")
+    if (!length(begin) || length(begin) != length(end)) {
+        if (nonStop) {
+            warning("Unexpected file format: ", basename(f))
+            return(DataFrame())
+        } else
+            stop("Unexpected file format: ", basename(f))
+    }
 
     n <- length(begin)
     spec <- vector("list", length = n)
@@ -97,6 +102,8 @@
 ##' @param mb `character()` of lines defining a spectrum in mgf
 ##'     format.
 ##'
+##' @param nonStop `logical(1)` not used.
+##'
 ##' @importFrom utils tail type.convert
 ##'
 ##' @author Michael Witting
@@ -152,12 +159,15 @@
     ## clean NA values
     meta <- .cleanParsing(meta)
     ## type conversion
-    if(!is.na(meta$collisionEnergy))
-        meta$collisionEnergy <- as.numeric(regmatches(
+    ce <- NA_real_
+    if (length(meta$collisionEnergy)) {
+        ce <- as.numeric(regmatches(
             meta$collisionEnergy, regexpr("[[:digit:]]+\\.*[[:digit:]]*",
                                           meta$collisionEnergy)))
-    else
-        meta$collisionEnergy <- NA_real_
+        if (!length(ce))
+            ce <- NA_real_
+    }
+    meta$collisionEnergy <- ce
 
     ## convert rtime
     if(!is.na(meta$rtime_string)) {

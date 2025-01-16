@@ -95,7 +95,7 @@ total ion current should be (re)calculated on the actual data
 method description or expected data type.}
 
 \item{BPPARAM}{for \code{backendBpparam}: \code{BiocParallel} parallel processing
-setup. See \code{\link[=bpparam]{bpparam()}} for more information.}
+setup. See \code{\link[BiocParallel:register]{BiocParallel::bpparam()}} for more information.}
 
 \item{spectraVariables}{For \code{selectSpectraVariables}: \code{character} with the
 names of the spectra variables to which the backend should be subsetted.}
@@ -149,10 +149,11 @@ spectrum, a \code{matrix} with 0 rows and two columns (named \code{mz} and
 \code{intensity}) is returned. Parameter \code{columns} allows to select which peaks
 variables to return, but supports currently only \code{"mz"} and \code{"intensity"}.
 \item \code{backendBpparam}: whether the backend supports parallel processing. Takes
-a \code{MsBackendMassbankSql} and a parallel processing setup (see \code{\link[=bpparam]{bpparam()}}
-for details) as input and \strong{always} returns a \code{\link[=SerialParam]{SerialParam()}}. This
-function can be used to test whether a provided parallel processing setup
-is supported by the backend and returns the supported setup.
+a \code{MsBackendMassbankSql} and a parallel processing setup (see
+\code{\link[BiocParallel:register]{BiocParallel::bpparam()}} for details) as input and \strong{always} returns a
+\code{\link[BiocParallel:SerialParam-class]{BiocParallel::SerialParam()}}. This function can be used to test whether
+a provided parallel processing setup is supported by the backend and
+returns the supported setup.
 \item \code{backendInitialize}: initialises the backend by retrieving the IDs of all
 spectra in the database. Parameter \code{dbcon} with the connection to the
 MassBank MySQL database is required.
@@ -176,7 +177,7 @@ returns a \code{numeric} with length equal to the number of spectra
 the collision energy description from MassBank are provided as spectra
 variable \code{"collisionEnergyText"}.
 \item \code{intensity}: gets the intensity values from the spectra. Returns
-a \code{\link[=NumericList]{NumericList()}} of \code{numeric} vectors (intensity values for each
+a \code{\link[IRanges:AtomicList-class]{IRanges::NumericList()}} of \code{numeric} vectors (intensity values for each
 spectrum). The length of the \code{list} is equal to the number of
 \code{spectra} in \code{object}.
 \item \code{ionCount}: returns a \code{numeric} with the sum of intensities for
@@ -207,8 +208,8 @@ number of spectra). For empty spectra, \code{0} is returned.
 vector (of length equal to the number of spectra) with the MS
 level for each spectrum (or \code{NA_integer_} if not available).
 \item \code{mz}: gets the mass-to-charge ratios (m/z) from the
-spectra. Returns a \code{\link[=NumericList]{NumericList()}} or length equal to the number of
-spectra, each element a \code{numeric} vector with the m/z values of
+spectra. Returns a \code{\link[IRanges:AtomicList-class]{IRanges::NumericList()}} or length equal to the
+number of spectra, each element a \code{numeric} vector with the m/z values of
 one spectrum.
 \item \code{polarity}, \verb{polarity<-}: gets or sets the polarity for each
 spectrum.  \code{polarity} returns an \code{integer} vector (length equal

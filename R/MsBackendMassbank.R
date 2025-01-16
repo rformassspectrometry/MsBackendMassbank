@@ -11,8 +11,9 @@ NULL
 #' MS/MS spectrum data from
 #' [Massbank](https://github.com/MassBank/MassBank-data)
 #' files. After initial import, the full MS data is kept in
-#' memory. `MsBackendMassbank` extends the [MsBackendDataFrame()] backend
-#' directly and supports thus the [applyProcessing()] function to make
+#' memory. `MsBackendMassbank` extends the
+#' [Spectra::MsBackendDataFrame()] backend
+#' directly and supports thus the [Spectra::applyProcessing()] function to make
 #' data manipulations persistent.
 #'
 #' New objects are created with the `MsBackendMassbank` function. The
@@ -50,9 +51,9 @@ NULL
 #'
 #' @param BPPARAM Parameter object defining the parallel processing
 #'     setup to import data in parallel. Defaults to `BPPARAM =
-#'     bpparam()`. See [bpparam()] for more information.
+#'     bpparam()`. See [BiocParallel::bpparam()] for more information.
 #'
-#' @param x [Spectra()] object that should be exported.
+#' @param x [Spectra::Spectra()] object that should be exported.
 #'
 #' @param ... Currently ignored.
 #'
@@ -132,12 +133,10 @@ setMethod("backendInitialize", signature = "MsBackendMassbank",
                               metaBlocks = metaBlocks,
                               nonStop = nonStop, BPPARAM = BPPARAM)
               message("done")
+              if (nonStop && any(lengths(res) == 0))
+                  warning("Import failed for some files")
               res <- bindROWS(DataFrame(), objects = res, use.names = FALSE,
                               ignore.mcols = TRUE, check = FALSE)
-              if (nonStop && length(files) > nrow(res)) {
-                  warning("Import failed for ", length(files) - nrow(res),
-                          " files")
-              }
               spectraData(object) <- res
               object$dataStorage <- "<memory>"
               validObject(object)

@@ -45,12 +45,12 @@ xml file does not contain all required fields. Defaults to
 \item{...}{Currently ignored.}
 
 \item{BPPARAM}{Parameter object defining the parallel processing
-setup to import data in parallel. Defaults to \code{BPPARAM = bpparam()}. See \code{\link[=bpparam]{bpparam()}} for more information.}
+setup to import data in parallel. Defaults to \code{BPPARAM = bpparam()}. See \code{\link[BiocParallel:register]{BiocParallel::bpparam()}} for more information.}
 
 \item{format}{for \code{spectraVariableMapping}: \code{character(1)} defining the
 format to be used. Currently only \code{format = "Massbank"} is supported.}
 
-\item{x}{\code{\link[=Spectra]{Spectra()}} object that should be exported.}
+\item{x}{\code{\link[Spectra:Spectra]{Spectra::Spectra()}} object that should be exported.}
 
 \item{file}{for \code{export}: \code{character(1)} defining the output file.}
 
@@ -69,8 +69,9 @@ The \code{MsBackendMassbank} class supports import of MS/MS spectra data from
 MS/MS spectrum data from
 \href{https://github.com/MassBank/MassBank-data}{Massbank}
 files. After initial import, the full MS data is kept in
-memory. \code{MsBackendMassbank} extends the \code{\link[=MsBackendDataFrame]{MsBackendDataFrame()}} backend
-directly and supports thus the \code{\link[=applyProcessing]{applyProcessing()}} function to make
+memory. \code{MsBackendMassbank} extends the
+\code{\link[Spectra:MsBackend]{Spectra::MsBackendDataFrame()}} backend
+directly and supports thus the \code{\link[Spectra:addProcessing]{Spectra::applyProcessing()}} function to make
 data manipulations persistent.
 
 New objects are created with the \code{MsBackendMassbank} function. The

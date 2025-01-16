@@ -1,12 +1,27 @@
 test_that(".valid_dbcon works", {
     expect_true(length(.valid_dbcon(dbc)) == 0)
     expect_true(length(.valid_dbcon(4)) == 1)
+
+    ## mock database.
+    tmpf <- tempfile()
+    tmp <- dbConnect(SQLite(), tmpf)
+    dbWriteTable(tmp, "dummy_table", data.frame(a = 1:3, b = "c"))
+    dbWriteTable(tmp, "numbers", data.frame(d = 1:3, e = 1:3))
+    expect_true(length(.valid_dbcon(tmp)) == 1)
+    dbDisconnect(tmp)
+    file.remove(tmpf)
 })
 
 test_that("MsBackendMassbankSql works", {
     res <- MsBackendMassbankSql()
     expect_true(validObject(res))
     expect_true(is(res, "MsBackendMassbankSql"))
+
+    with_mocked_bindings(
+        ".has_dbi_package" = function(x) return(FALSE),
+        code = expect_error(MsBackendMassbankSql(), "requires package")
+    )
+
 })
 
 test_that(".fetch_peaks_sql works", {
@@ -60,6 +75,11 @@ test_that(".fetch_spectra_data_sql works", {
     expect_true(nrow(res) > 0)
     expect_true(colnames(res) == "spectrum_id")
 
+    res <- MsBackendMassbank:::.fetch_spectra_data_sql(be, columns = "collisionEnergy")
+    expect_true(nrow(res) > 0)
+    expect_true(colnames(res) == "collisionEnergy")
+    expect_true(is.numeric(res$collisionEnergy))
+
     res <- .fetch_spectra_data_sql(be, columns = "msLevel")
     expect_true(all(res$msLevel %in% c(NA_integer_, 2L)))
 
@@ -108,7 +128,7 @@ test_that(".spectra_data_massbank_sql works", {
 
     be <- backendInitialize(MsBackendMassbankSql(), dbc)
     ## Full data.
-    expect_error(.spectra_data_massbank_sql(be, columns = "other"), "available")
+    expect_error(MsBackendMassbank:::.spectra_data_massbank_sql(be, columns = "other"), "available")
     res <- .spectra_data_massbank_sql(be)
     expect_true(is(res, "DataFrame"))
     expect_equal(colnames(res), spectraVariables(be))
@@ -176,7 +196,7 @@ test_that(".map_spectraVariables_to_sql works", {
     res <- .map_spectraVariables_to_sql("msLevel")
     expect_equal(res, "ms_level")
     res <- .map_spectraVariables_to_sql(c("mz", "collisionEnergy", "ms_level"))
-    expect_equal(res, c("mz", "collisionEnergy", "ms_level"))
+    expect_equal(res, c("mz", "collision_energy_text", "ms_level"))
 })
 
 test_that(".map_sql_to_spectraVariables works", {
