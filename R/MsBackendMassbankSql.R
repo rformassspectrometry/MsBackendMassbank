@@ -486,7 +486,7 @@ setMethod("[", "MsBackendMassbankSql", function(x, i, j, ..., drop = FALSE) {
 
 #' @rdname MsBackendMassbankSql
 #'
-#' @importMethodsFrom Spectra extractByIndex
+#' @importMethodsFrom ProtGenerics extractByIndex
 #'
 #' @export
 setMethod("extractByIndex", c("MsBackendMassbankSql", "ANY"),
