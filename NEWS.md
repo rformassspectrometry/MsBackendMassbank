@@ -1,5 +1,9 @@
 # MsBackendMassbank 1.15
 
+## Changes in 1.15.2
+
+- Import `extractByIndex()` from ProtGenerics.
+
 ## Changes in 1.15.1
 
 - Complete unit test coverage.
