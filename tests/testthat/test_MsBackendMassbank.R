@@ -53,7 +53,7 @@ test_that("backendInitialize,MsBackendMassbank works", {
 
     res_single <- backendInitialize(be, fls)
 
-    expect_identical(res_single$rtime, c(rtime = NA_real_))
+    expect_identical(res_single$rtime, c(NA_real_))
 
     ## TODO: Import with failing file.
     ## TODO: Import with failing file and nonStop = TRUE

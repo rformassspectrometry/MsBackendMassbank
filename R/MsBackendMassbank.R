@@ -135,9 +135,15 @@ setMethod("backendInitialize", signature = "MsBackendMassbank",
               message("done")
               if (nonStop && any(lengths(res) == 0))
                   warning("Import failed for some files")
-              res <- bindROWS(DataFrame(), objects = res, use.names = FALSE,
-                              ignore.mcols = TRUE, check = FALSE)
-              spectraData(object) <- res
+              ## res <- bindROWS(DataFrame(), objects = res, use.names = FALSE,
+              ##                 ignore.mcols = TRUE, check = FALSE)
+              ## spectraData(object) <- res
+              message("Merging results ...", appendLF = FALSE)
+              res <- as(do.call(rbind, res), "DataFrame")
+              res$mz <- NumericList(res$mz, compress = FALSE)
+              res$intensity <- NumericList(res$intensity, compress = FALSE)
+              object@spectraData <- res
+              message("done")
               object$dataStorage <- "<memory>"
               validObject(object)
               object
@@ -301,3 +307,15 @@ setMethod("export", "MsBackendMassbank",
                    mapping = spectraVariableMapping(MsBackendMassbank()), ...) {
               .export_massbank(x = x, con = file, mapping = mapping)
           })
+
+
+## #' tests...
+## p <- "/home/jo/Projects/compounds/MassBank/text/MassBank-data-2024.11"
+## fls <- dir(p, pattern = "txt$", recursive = TRUE, full.names = TRUE)
+
+## library(Spectra)
+## mb_spectra <- Spectra(fls,
+##                       source = MsBackendMassbank(),
+##                       backend = MsBackendDataFrame(),
+##                       nonStop = TRUE,
+##                       BPPARAM = SerialParam())
