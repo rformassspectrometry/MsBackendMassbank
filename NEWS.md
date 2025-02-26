@@ -1,5 +1,12 @@
 # MsBackendMassbank 1.15
 
+## Changes in 1.15.3
+
+- Fix import from MassBank txt files:
+  - force ordered m/z values
+  - skip import of deprecated records
+  - introduce sanity checks on spectra variables.
+
 ## Changes in 1.15.2
 
 - Import `extractByIndex()` from ProtGenerics.

@@ -4,18 +4,39 @@ mb <- scan(fls, what = "", sep = "\n", quote = "",
            allowEscapes = FALSE, quiet = TRUE)
 mb <- mb[seq_len(53)]
 
+test_that(".valid_result works", {
+    x <- data.frame(a = 3, b = 4, c = "d")
+    expect_equal(.valid_result(x), NULL)
+    x$mz <- list(c(11, 3, 4))
+    expect_equal(.valid_result(x), NULL)
+    x$other_col <- list(c(4, 4, 1))
+    res <- .valid_result(x)
+    expect_match(res, "other_col")
+})
+
 test_that(".read_massbank works", {
+    f <- system.file("extdata", "multi_precursor_mz.txt",
+                     package = "MsBackendMassbank")
+    res <- .read_massbank(f)
+    expect_equal(res, data.frame())
+    expect_warning(
+        res <- .read_massbank(f, skipDeprecated = FALSE, nonStop = TRUE),
+        "Unexpected format")
+    expect_equal(res, data.frame())
+    expect_error(.read_massbank(f, skipDeprecated = FALSE, nonStop = FALSE),
+                 "Unexpected format")
+
     expect_error(.read_massbank(c(fls, fls)), "single")
 
     fail <- dir(system.file("extdata", package = "MsBackendMassbank"),
-                 pattern = "metadata_blocks.csv",
+                pattern = "metadata_blocks.csv",
                 full.names = TRUE)
     expect_error(.read_massbank(fail), "Unexpected file format")
     res <- expect_warning(.read_massbank(fail, nonStop = TRUE), "Unexpected")
-    expect_equal(res, DataFrame())
+    expect_equal(res, data.frame())
 
     res <- .read_massbank(fls)
-    expect_true(is(res, "DataFrame"))
+    expect_true(is.data.frame(res))
     expect_true(nrow(res) == 3L)
     expect_true(all(res$msLevel == 2L))
 
@@ -50,12 +71,17 @@ test_that(".read_massbank works", {
 })
 
 test_that(".extract_mb_spectrum works", {
-    res <- .extract_mb_spectrum(mb)
+    res <- MsBackendMassbank:::.extract_mb_spectrum(mb)
     expect_true(is.list(res))
     expect_true(is.integer(res$polarity))
     expect_true(is.numeric(res$rtime))
     expect_true(is.character(res$title))
-    expect_true(is.list(res$name))
+    expect_true(is.character(res$name))
+    expect_true(length(res$name) > 1)
+    expect_true(is.numeric(res$mz))
+    expect_true(length(res$mz) > 1)
+    expect_true(is.numeric(res$intensity))
+    expect_equal(length(res$mz), length(res$intensity))
 
     fl <- system.file("extdata", "RP000501_mod.txt",
                       package = "MsBackendMassbank")

@@ -18,19 +18,26 @@
 ##'
 ##' @noRd
 .read_massbank <- function(f, msLevel = 2L, metaBlocks = metaDataBlocks(),
-                           nonStop = FALSE, ...) {
+                           nonStop = FALSE,
+                           listColumns = c("mz", "intensity", "name",
+                                           "chrom_solvent", "comment"),
+                           skipDeprecated = TRUE, ...) {
     requireNamespace("MsBackendMassbank", quietly = TRUE)
     if (length(f) != 1L)
         stop("Please provide a single Massbank file.")
     mb <- scan(file = f, what = "", sep = "\n", quote = "",
                allowEscapes = FALSE, quiet = TRUE)
+    if (skipDeprecated && any(grepl("^DEPRECATED:", mb))) {
+        message("Skipping deprecated file ", basename(f))
+        return(data.frame())
+    }
 
     begin <- grep("ACCESSION:", mb)
     end <- grep("^//$", mb)
     if (!length(begin) || length(begin) != length(end)) {
         if (nonStop) {
             warning("Unexpected file format: ", basename(f))
-            return(DataFrame())
+            return(data.frame())
         } else
             stop("Unexpected file format: ", basename(f))
     }
@@ -65,38 +72,51 @@
                 comment = MsBackendMassbank:::.extract_mb_comment(mb_sub))
     }
 
-    res <- DataFrame(do.call(rbind, spec))
-    res_ac <- DataFrame(do.call(rbind, ac))
-    res_ch <- DataFrame(do.call(rbind, ch))
-    res_sp <- DataFrame(do.call(rbind, sp))
-    res_ms <- DataFrame(do.call(rbind, ms))
-    res_record <- DataFrame(do.call(rbind, record))
-    res_pk <- DataFrame(do.call(rbind, pk))
-    res_cmt <- DataFrame(do.call(rbind, cmt))
+    res <- as.data.frame(do.call(rbind, spec))
+    res_ac <- as.data.frame(do.call(rbind, ac))
+    res_ch <- as.data.frame(do.call(rbind, ch))
+    res_sp <- as.data.frame(do.call(rbind, sp))
+    res_ms <- as.data.frame(do.call(rbind, ms))
+    res_record <- as.data.frame(do.call(rbind, record))
+    res_pk <- as.data.frame(do.call(rbind, pk))
+    res_cmt <- as.data.frame(do.call(rbind, cmt))
 
     if (length(res_ac))
-        res <- cbind.DataFrame(res, res_ac)
+        res <- cbind(res, res_ac)
     if (length(res_ch))
-        res <- cbind.DataFrame(res, res_ch)
+        res <- cbind(res, res_ch)
     if (length(res_sp))
-        res <- cbind.DataFrame(res, res_sp)
+        res <- cbind(res, res_sp)
     if (length(res_ms))
-        res <- cbind.DataFrame(res, res_ms)
+        res <- cbind(res, res_ms)
     if (length(res_record))
-        res <- cbind.DataFrame(res, res_record)
+        res <- cbind(res, res_record)
     if (length(res_pk))
-        res <- cbind.DataFrame(res, res_pk)
+        res <- cbind(res, res_pk)
     if (length(res_cmt))
-        res <- cbind.DataFrame(res, res_cmt)
+        res <- cbind(res, res_cmt)
     for (i in seq_along(res)) {
         if (all(lengths(res[[i]]) == 1))
             res[[i]] <- unlist(res[[i]])
     }
-    res$mz <- IRanges::NumericList(res$mz, compress = FALSE)
-    res$intensity <- IRanges::NumericList(res$intensity, compress = FALSE)
     res$dataOrigin <- f
     res$msLevel <- as.integer(msLevel)
+    if (length(m <- .valid_result(res, list_cols = listColumns))) {
+        if (nonStop) {
+            warning("Unexpected format in file: ", f, ": ", m)
+            return(data.frame())
+        } else
+            stop("Unexpected format in file ", f, ": ", m, call. = FALSE)
+    }
     res
+}
+
+.valid_result <- function(x, list_cols = c("mz", "intensity", "name")) {
+    l <- vapply(x, is.list, NA)
+    if (length(n <- setdiff(colnames(x)[l], list_cols)))
+        paste0("Data field(s) ", paste0("\"", n, "\"", collapse = ", "),
+               " have more than 1 element.")
+    else NULL
 }
 
 ##' @param mb `character()` of lines defining a spectrum in mgf
@@ -125,14 +145,16 @@
     spectrum <- as.data.frame(spectrum, stringsAsFactors = FALSE)
     spectrum[] <- lapply(spectrum, type.convert, as.is = TRUE)
     colnames(spectrum) <- c("mz", "intensity", "rel.intensity")
+    if (is.unsorted(spectrum$mz))
+        spectrum <- spectrum[order(spectrum$mz), , drop = FALSE]
 
     ## isolate Accession, name etc...
     meta <- list()
 
     meta$accession <-
         substring(grep("ACCESSION:", mb, value = TRUE, fixed = TRUE), 12)
-    meta$name <- as.list(substring(grep("CH$NAME:", mb, value = TRUE,
-                                        fixed = TRUE), 10))
+    meta$name <- substring(grep("CH$NAME:", mb, value = TRUE, fixed = TRUE), 10)
+    ## was meta$name <- as.list(...) but not sure we need that additional list.
     meta$smiles <- substring(grep("CH$SMILES:", mb, value = TRUE,
                                   fixed = TRUE), 12)
     meta$exactmass <- as.numeric(
