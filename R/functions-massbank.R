@@ -20,7 +20,8 @@
 .read_massbank <- function(f, msLevel = 2L, metaBlocks = metaDataBlocks(),
                            nonStop = FALSE,
                            listColumns = c("mz", "intensity", "name",
-                                           "chrom_solvent", "comment"),
+                                           "chrom_solvent", "comment",
+                                           "data_processing_comment"),
                            skipDeprecated = TRUE, ...) {
     requireNamespace("MsBackendMassbank", quietly = TRUE)
     if (length(f) != 1L)
@@ -111,8 +112,11 @@
     res
 }
 
-.valid_result <- function(x, list_cols = c("mz", "intensity", "name")) {
+.valid_result <- function(x, list_cols = c("mz", "intensity", "name",
+                                           "data_processing_comment",
+                                           "comment")) {
     l <- vapply(x, is.list, NA)
+    
     if (length(n <- setdiff(colnames(x)[l], list_cols)))
         paste0("Data field(s) ", paste0("\"", n, "\"", collapse = ", "),
                " have more than 1 element.")
