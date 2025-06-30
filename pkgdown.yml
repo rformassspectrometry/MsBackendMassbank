@@ -1,9 +1,9 @@
-pandoc: 3.6.3
-pkgdown: 2.1.1.9000
-pkgdown_sha: de95b13f1ca3d09bee29f2f2742692bf30a28f8d
+pandoc: 3.7.0.2
+pkgdown: 2.1.3.9000
+pkgdown_sha: 824ab4a4f20ecd895282b434d8652120e1f62ba4
 articles:
   MsBackendMassbank: MsBackendMassbank.html
-last_built: 2025-02-26T12:47Z
+last_built: 2025-06-30T11:05Z
 urls:
   reference: https://rformassspectrometry.github.io/MsBackendMassbank/reference
   article: https://rformassspectrometry.github.io/MsBackendMassbank/articles
