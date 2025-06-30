@@ -1,3 +1,10 @@
+# MsBackendMassbank 1.17
+
+## Changes in 1.17.1
+
+- Allow columns/fields "comment" and "data_processing_comment" to have multiple
+  values.
+
 # MsBackendMassbank 1.15
 
 ## Changes in 1.15.3
