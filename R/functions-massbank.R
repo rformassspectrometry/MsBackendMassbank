@@ -116,7 +116,7 @@
                                            "data_processing_comment",
                                            "comment")) {
     l <- vapply(x, is.list, NA)
-    
+
     if (length(n <- setdiff(colnames(x)[l], list_cols)))
         paste0("Data field(s) ", paste0("\"", n, "\"", collapse = ", "),
                " have more than 1 element.")
@@ -200,6 +200,7 @@
         rtime <- as.numeric(regmatches(
             meta$rtime_string, regexpr("[[:digit:]]+\\.*[[:digit:]]*",
                                        meta$rtime_string)))
+        if (!length(rtime)) rtime <- NA_real_
         if(grepl("min", meta$rtime_string)) rtime <- rtime * 60
     } else
         rtime <- NA_real_
@@ -231,8 +232,8 @@
     list(acquistionNum = 1L,
          centroided = TRUE,
          collisionEnergy = meta$collisionEnergy,
-         intensity = spectrum$intensity,
-         mz = spectrum$mz,
+         intensity = unname(spectrum$intensity),
+         mz = unname(spectrum$mz),
          polarity = meta$polarity,
          precursorCharge = as.integer(0),
          precursorIntensity = precursorIntensity,
@@ -240,7 +241,7 @@
          rtime = rtime,
          scanIndex = as.integer(1),
          accession = meta$accession,
-         name = meta$name,
+         name = unname(meta$name),
          smiles = meta$smiles,
          exactmass = meta$exactmass,
          formula = meta$formula,

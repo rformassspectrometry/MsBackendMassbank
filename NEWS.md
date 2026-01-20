@@ -1,3 +1,7 @@
+## Changes in
+
+- Avoid error when `"N/A"` is reported as retention time.
+
 # MsBackendMassbank 1.17
 
 ## Changes in 1.17.1

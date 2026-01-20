@@ -14,6 +14,13 @@ test_that(".valid_result works", {
     expect_match(res, "other_col")
 })
 
+test_that(".read_massbank works with N/A as retention time", {
+    f <- system.file("extdata", "MSBNK-UFZ-UA000101.txt",
+                     package = "MsBackendMassbank")
+    res <- .read_massbank(f)
+    expect_equal(res$rtime, NA_real_)
+})
+
 test_that(".read_massbank works", {
     f <- system.file("extdata", "multi_precursor_mz.txt",
                      package = "MsBackendMassbank")
