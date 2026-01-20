@@ -1,3 +1,11 @@
+# MsBackendMassbank 1.19
+
+## Changes in 1.19.1
+
+- Avoid error when `"N/A"` is reported as retention time.
+- Performance improvement: use `data.table::rbindlist()` for merging and
+  importing records from files in MassBank format.
+
 # MsBackendMassbank 1.17
 
 ## Changes in 1.17.1
