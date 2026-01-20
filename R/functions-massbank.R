@@ -116,7 +116,7 @@
                                            "data_processing_comment",
                                            "comment")) {
     l <- vapply(x, is.list, NA)
-    
+
     if (length(n <- setdiff(colnames(x)[l], list_cols)))
         paste0("Data field(s) ", paste0("\"", n, "\"", collapse = ", "),
                " have more than 1 element.")
@@ -200,6 +200,7 @@
         rtime <- as.numeric(regmatches(
             meta$rtime_string, regexpr("[[:digit:]]+\\.*[[:digit:]]*",
                                        meta$rtime_string)))
+        if (!length(rtime)) rtime <- NA_real_
         if(grepl("min", meta$rtime_string)) rtime <- rtime * 60
     } else
         rtime <- NA_real_
