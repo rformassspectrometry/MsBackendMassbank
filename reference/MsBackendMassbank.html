@@ -37,7 +37,7 @@ will abort import regardless of parameter nonStop."><meta property="og:image" co
 
     <a class="navbar-brand me-2" href="../index.html">MsBackendMassbank</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.17.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.19.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -180,57 +180,57 @@ vector the field names in the Massbank file. See output of
 <span class="r-in"><span><span class="va">fls</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">dir</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, package <span class="op">=</span> <span class="st">"MsBackendMassbank"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>    full.names <span class="op">=</span> <span class="cn">TRUE</span>, pattern <span class="op">=</span> <span class="st">"txt$"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">be</span> <span class="op">&lt;-</span> <span class="fu">backendInitialize</span><span class="op">(</span><span class="fu">MsBackendMassbank</span><span class="op">(</span><span class="op">)</span>, <span class="va">fls</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Start data import from 10 files ... </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Start data import from 11 files ... </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> done</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Merging results ...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> done</span>
 <span class="r-in"><span><span class="va">be</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> MsBackendMassbank with 11 spectra</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      msLevel     rtime scanIndex</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    &lt;integer&gt; &lt;numeric&gt; &lt;integer&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1          2        NA         1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2          2    142.14         1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3          2    142.14         1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4          2    142.14         1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5          2    142.14         1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6          2    142.14         1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7          2    142.14         1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8          2    142.14         1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9          2    143.94         1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10         2    143.94         1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11         2    143.94         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> MsBackendMassbank with 12 spectra</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       msLevel     rtime scanIndex</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;integer&gt; &lt;numeric&gt; &lt;integer&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1           2        NA         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2           2        NA         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3           2    142.14         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4           2    142.14         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5           2    142.14         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ...       ...       ...       ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8           2    142.14         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9           2    142.14         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10          2    143.94         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11          2    143.94         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12          2    143.94         1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  ... 28 more variables/columns.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">be</span><span class="op">$</span><span class="va">msLevel</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 2 2 2 2 2 2 2 2 2 2 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 2 2 2 2 2 2 2 2 2 2 2 2</span>
 <span class="r-in"><span><span class="va">be</span><span class="op">$</span><span class="va">intensity</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NumericList of length 11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [["intensity"]] 12461 2208 2394 40390 2816 3122 ... 6937 2914 6059 1871 9233</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [[""]] 646 980 2114 20052 1248 7628 2036 494048 75708</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [[""]] 10186 142 142 750 138 490 126 ... 14266 1478 1600 16504 1446 109762</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [[""]] 324 184 138 3770 500 800 7214 3238 ... 2802 206 898 162 166 814 250 1840</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [["intensity"]] 646 980 2114 20052 1248 7628 2036 494048 75708</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [["intensity"]] 646 980 2114 20052 1248 7628 2036 494048 75708</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [["intensity"]] 10186 142 142 750 138 490 ... 14266 1478 1600 16504 1446 109762</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [["intensity"]] 324 184 138 3770 500 800 7214 ... 206 898 162 166 814 250 1840</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [["intensity"]] 150 200 32 232 80 12162</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [["intensity"]] 460 3630 658 74 28 190 44 142 50 52 634</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NumericList of length 12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[1]] 12461 2208 2394 40390 2816 3122 2233 ... 23807 6937 2914 6059 1871 9233</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[2]] 650.7 14157.3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[3]] 646 980 2114 20052 1248 7628 2036 494048 75708</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[4]] 10186 142 142 750 138 490 126 ... 11254 14266 1478 1600 16504 1446 109762</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[5]] 324 184 138 3770 500 800 7214 3238 ... 2802 206 898 162 166 814 250 1840</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[6]] 646 980 2114 20052 1248 7628 2036 494048 75708</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[7]] 646 980 2114 20052 1248 7628 2036 494048 75708</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[8]] 10186 142 142 750 138 490 126 ... 11254 14266 1478 1600 16504 1446 109762</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[9]] 324 184 138 3770 500 800 7214 3238 ... 2802 206 898 162 166 814 250 1840</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[10]] 150 200 32 232 80 12162</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;1 more element&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;2 more elements&gt;</span>
 <span class="r-in"><span><span class="va">be</span><span class="op">$</span><span class="va">mz</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NumericList of length 11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [["mz"]] 84.1 105.1 107.1 114.1 115.1 119.1 ... 393.3 396.3 410.3 411.3 414.3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [[""]] 74.0233 132.0807 144.0805 146.0598 ... 170.0597 188.0699 205.0965</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [[""]] 74.0232 77.0381 86.0027 91.0539 ... 160.0947 170.0596 171.0625 188.07</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [[""]] 53.0019 53.0383 63.0225 65.0381 ... 158.0817 159.0921 160.0755 170.06</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [["mz"]] 74.0233 132.0807 144.0805 146.0598 ... 170.0597 188.0699 205.0965</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [["mz"]] 74.0233 132.0807 144.0805 146.0598 ... 170.0597 188.0699 205.0965</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [["mz"]] 74.0232 77.0381 86.0027 91.0539 ... 160.0947 170.0596 171.0625 188.07</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [["mz"]] 53.0019 53.0383 63.0225 65.0381 ... 158.0817 159.0921 160.0755 170.06</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [["mz"]] 72.0095 116.0517 117.0554 159.0935 186.0558 203.0826</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [["mz"]] 72.0094 74.0253 116.0511 117.0539 ... 162.0307 186.0548 203.0818</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NumericList of length 12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[1]] 84.1 105.1 107.1 114.1 115.1 119.1 ... 393.3 396.3 410.3 411.3 414.3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[2]] 115.0167 168.0809</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[3]] 74.0233 132.0807 144.0805 146.0598 ... 170.0597 188.0699 205.0965</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[4]] 74.0232 77.0381 86.0027 91.0539 ... 160.0947 170.0596 171.0625 188.07</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[5]] 53.0019 53.0383 63.0225 65.0381 ... 158.0817 159.0921 160.0755 170.06</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[6]] 74.0233 132.0807 144.0805 146.0598 ... 170.0597 188.0699 205.0965</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[7]] 74.0233 132.0807 144.0805 146.0598 ... 170.0597 188.0699 205.0965</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[8]] 74.0232 77.0381 86.0027 91.0539 ... 160.0947 170.0596 171.0625 188.07</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[9]] 53.0019 53.0383 63.0225 65.0381 ... 158.0817 159.0921 160.0755 170.06</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[10]] 72.0095 116.0517 117.0554 159.0935 186.0558 203.0826</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;1 more element&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;2 more elements&gt;</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Initializing a backend reading additional metadata columns/information</span></span></span>
 <span class="r-in"><span><span class="va">mb</span> <span class="op">&lt;-</span> <span class="fu"><a href="metaDataBlocks.html">metaDataBlocks</a></span><span class="op">(</span><span class="op">)</span></span></span>
@@ -246,7 +246,7 @@ vector the field names in the Massbank file. See output of
 <span class="r-in"><span><span class="va">mb</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">be</span> <span class="op">&lt;-</span> <span class="fu">backendInitialize</span><span class="op">(</span><span class="fu">MsBackendMassbank</span><span class="op">(</span><span class="op">)</span>, <span class="va">fls</span>, metaBlocks <span class="op">=</span> <span class="va">mb</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Start data import from 10 files ... </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Start data import from 11 files ... </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> done</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Merging results ...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> done</span>
@@ -290,7 +290,7 @@ vector the field names in the Massbank file. See output of
 <span class="r-out co"><span class="r-pr">#&gt;</span> [73] "ims_ccs"                    "general_conc"              </span>
 <span class="r-in"><span><span class="va">be</span><span class="op">$</span><span class="va">instrument</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "Bruker maXis ESI-QTOF"                  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [2] "maXis plus UHR-ToF-MS, Bruker Daltonics"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [2] "LTQ Orbitrap XL Thermo Scientific"      </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [3] "maXis plus UHR-ToF-MS, Bruker Daltonics"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [4] "maXis plus UHR-ToF-MS, Bruker Daltonics"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [5] "maXis plus UHR-ToF-MS, Bruker Daltonics"</span>
@@ -300,6 +300,7 @@ vector the field names in the Massbank file. See output of
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [9] "maXis plus UHR-ToF-MS, Bruker Daltonics"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [10] "maXis plus UHR-ToF-MS, Bruker Daltonics"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [11] "maXis plus UHR-ToF-MS, Bruker Daltonics"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [12] "maXis plus UHR-ToF-MS, Bruker Daltonics"</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -311,7 +312,7 @@ vector the field names in the Massbank file. See output of
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.9000.</p>
 </div>
 
     </footer></div>
