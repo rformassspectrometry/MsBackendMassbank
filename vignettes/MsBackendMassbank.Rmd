@@ -69,7 +69,8 @@ with multiple library spectra.
 ```{r import}
 sps <- Spectra(fls[1],
                source = MsBackendMassbank(),
-               backend = MsBackendDataFrame())
+               backend = MsBackendDataFrame(),
+               nonStop = TRUE)
 ```
 
 With that we have now full access to all imported spectra variables
@@ -85,7 +86,8 @@ spectrum.
 ```{r import2}
 sps <- Spectra(fls[-1],
                source = MsBackendMassbank(),
-               backend = MsBackendDataFrame())
+               backend = MsBackendDataFrame(),
+               nonStop = TRUE)
 
 spectraVariables(sps)
 ```
@@ -105,7 +107,8 @@ metaDataBlocks <- data.frame(metadata = c("ac", "ch", "sp", "ms",
 sps <- Spectra(fls[-1],
                source = MsBackendMassbank(),
                backeend = MsBackendDataFrame(),
-               metaBlock = metaDataBlocks)
+               metaBlock = metaDataBlocks,
+               nonStop = TRUE)
 
 # all spectraVariables possible in MassBank are read
 spectraVariables(sps)
@@ -132,9 +135,8 @@ mz(sps)
 intensity(sps)
 ```
 
-When importing a large number of mgf files, setting `nonStop = TRUE`
-prevents the call to stop whenever problematic mgf files are
-encountered.
+When importing a large number of files, setting `nonStop = TRUE` prevents the
+call to stop whenever problematic files are encountered.
 
 ```{r all-import, eval = FALSE}
 sps <- Spectra(fls, source = MsBackendMassbank(), nonStop = TRUE)
