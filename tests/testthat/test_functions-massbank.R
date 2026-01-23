@@ -118,14 +118,14 @@ test_that(".extract_mb_spectrum works", {
 test_that(".extract_mb_ac works", {
     res <- .extract_mb_ac(mb)
     expect_true(is.list(res))
-    expect_true(length(res) == 43L)
+    expect_equal(length(res), 44L)
     expect_true(is.character(res$instrument))
 })
 
 test_that(".extract_mb_ch works", {
     res <- .extract_mb_ch(mb)
     expect_true(is.list(res))
-    expect_true(length(res) == 16L)
+    expect_equal(length(res), 16L)
 })
 
 test_that(".extract_mb_sp works", {
@@ -161,6 +161,34 @@ test_that("metaDataBlocks works", {
     res <- metaDataBlocks()
     expect_true(is.data.frame(res))
     expect_true(all(res$read == FALSE))
+
+    res <- metaDataBlocks(ac = TRUE)
+    expect_true(res[res$metadata == "ac", "read"])
+    expect_true(all(res[res$metadata != "ac", "read"] == FALSE))
+
+    res <- metaDataBlocks(ch = TRUE)
+    expect_true(res[res$metadata == "ch", "read"])
+    expect_true(all(res[res$metadata != "ch", "read"] == FALSE))
+
+    res <- metaDataBlocks(sp = TRUE)
+    expect_true(res[res$metadata == "sp", "read"])
+    expect_true(all(res[res$metadata != "sp", "read"] == FALSE))
+
+    res <- metaDataBlocks(ms = TRUE)
+    expect_true(res[res$metadata == "ms", "read"])
+    expect_true(all(res[res$metadata != "ms", "read"] == FALSE))
+
+    res <- metaDataBlocks(record = TRUE)
+    expect_true(res[res$metadata == "record", "read"])
+    expect_true(all(res[res$metadata != "record", "read"] == FALSE))
+
+    res <- metaDataBlocks(pk = TRUE)
+    expect_true(res[res$metadata == "pk", "read"])
+    expect_true(all(res[res$metadata != "pk", "read"] == FALSE))
+
+    res <- metaDataBlocks(comment = TRUE)
+    expect_true(res[res$metadata == "comment", "read"])
+    expect_true(all(res[res$metadata != "comment", "read"] == FALSE))
 })
 
 test_that(".cleanParsing works", {

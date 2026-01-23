@@ -8,23 +8,45 @@ NULL
 #' @description
 #'
 #' The `MsBackendMassbank` class supports import of MS/MS spectra data from
-#' MS/MS spectrum data from
-#' [Massbank](https://github.com/MassBank/MassBank-data)
-#' files. After initial import, the full MS data is kept in
-#' memory. `MsBackendMassbank` extends the
-#' [Spectra::MsBackendDataFrame()] backend
+#' files in [Massbank](https://github.com/MassBank/MassBank-data) format.
+#' After import, the full MS data is kept in memory. `MsBackendMassbank`
+#' extends the [Spectra::MsBackendDataFrame()] backend
 #' directly and supports thus the [Spectra::applyProcessing()] function to make
 #' data manipulations persistent.
 #'
-#' New objects are created with the `MsBackendMassbank` function. The
-#' `backendInitialize` method has to be subsequently called to
+#' New objects are created with the `MsBackendMassbank()` function. The
+#' `backendInitialize()` method has to be subsequently called to
 #' initialize the object and import MS/MS data from (one or more) MassBank
-#' files. Optional parameter `nonStop` allows to specify whether the
-#' import returns with an error if one of the text files lacks required
-#' data, such as `mz` and `intensity` values (default `nonStop =
+#' files. Parameter `metaBlocks` allows to configure the sets of spectrum
+#' metadata that should be imported. Optional parameter `nonStop` allows to
+#' specify whether the import returns with an error if one of the text files
+#' lacks required data, such as `mz` and `intensity` values (default `nonStop =
 #' FALSE`), or whether only affected file(s) is(are) skipped and a
 #' warning is shown (`nonStop = TRUE`). Note that any other error
 #' will abort import regardless of parameter `nonStop`.
+#'
+#' MassBank supports multiple values for some metadata fields. For a spectrum
+#' it is for example possible to define more than one compound name. The
+#' respective spectra variables for these metadata fields are therefore returned
+#' as a `list` (see examples for more information). The fields supporting
+#' multiple values, i.e., spectra variables stored as a `list` are:
+#'
+#' - `"name"`
+#'
+#' - `"chrom_solvent"`, returned for `metaBlocks = metaDataBlocks(ac = TRUE)`
+#'
+#' - `"comment"`, returned for `metaBlocks = metaDataBlocks(comment = TRUE)`
+#'
+#' - `"data_processing_comment", returned for
+#'   `metaBlocks = metaDataBlocks(ms = TRUE)`
+#'
+#' - `"data_processing_reanalyze"`, returned for
+#'   `metaBlocks = metaDataBlocks(ms = TRUE)`
+#'
+#' - `"data_processing_whole"`, returned for
+#'   `metaBlocks = metaDataBlocks(ms = TRUE)`
+#'
+#' - `"sample"`, returned for `metaBlocks = metaDataBlocks(sp = TRUE)`
 #'
 #' @param object Instance of `MsBackendMassbank` class.
 #'
@@ -33,17 +55,18 @@ NULL
 #' @param files `character` with the (full) file name(s) of the MassBank file(s)
 #'     from which MS/MS data should be imported.
 #'
-#' @param format for `spectraVariableMapping`: `character(1)` defining the
+#' @param format for `spectraVariableMapping()`: `character(1)` defining the
 #'     format to be used. Currently only `format = "Massbank"` is supported.
 #'
-#' @param mapping for `export`: named `character` vector
+#' @param mapping for `export()`: named `character` vector
 #'     allowing to specify how fields from the Massbank file should be renamed.
 #'     Names are supposed to be the spectra variable name and values of the
 #'     vector the field names in the Massbank file. See output of
 #'     `spectraVariableMapping(MsBackendMassbank())` for the expected format.
 #'
-#' @param metaBlocks `data.frame` indicating which metadata shall
-#'     be imported. Default is [metaDataBlocks()].
+#' @param metaBlocks `data.frame` defining the MassBank *metadata blocks*
+#'     (i.e., sets of spectra metadata) that should be imported from the
+#'     MassBank record files. See [metaDataBlocks()] for more information.
 #'
 #' @param nonStop `logical(1)` whether import should be stopped if an
 #'     xml file does not contain all required fields. Defaults to
@@ -65,29 +88,43 @@ NULL
 #'
 #' @name MsBackendMassbank
 #'
-#' @return `backendInitialize` and `MsBackendMassbank` return an instance of
-#'     `MsBackendMassbank-class`.
+#' @return `backendInitialize()` and `MsBackendMassbank()` return an instance of
+#'     `MsBackendMassbank`.
 #'
 #' @examples
 #'
-#' ## Create an MsBackendMassbank backend and import data from a test file.
+#' ## Create an MsBackendMassbank backend and import data from files in
+#' ## MassBank format.
 #' fls <- dir(system.file("extdata", package = "MsBackendMassbank"),
 #'     full.names = TRUE, pattern = "txt$")
 #' be <- backendInitialize(MsBackendMassbank(), fls)
 #' be
 #'
+#' ## spectra variable `"name"` is of type `list` and provides one or multiple
+#' ## compound names/aliases per spectrum:
+#' be$name
+#'
 #' be$msLevel
 #' be$intensity
 #' be$mz
 #'
+#' ## spectra variables imported by default:
+#' spectraVariables(be)
+#'
 #' ## Initializing a backend reading additional metadata columns/information
-#' mb <- metaDataBlocks()
+#' mb <- metaDataBlocks(ms = TRUE, ac = TRUE)
 #' mb
-#' mb[1, 2] <- TRUE
 #'
 #' be <- backendInitialize(MsBackendMassbank(), fls, metaBlocks = mb)
+#'
+#' ## additional spectra variables are now available
 #' spectraVariables(be)
+#'
+#' ## for example information on the instrument used
 #' be$instrument
+#'
+#' ## or the software/workflow used to process the data
+#' be$data_processing_whole
 NULL
 
 setClass("MsBackendMassbank",
@@ -232,7 +269,7 @@ setMethod(
                    ## data processing information
                    data_processing_comment = "MS$DATA_PROCESSING: COMMENT",
                    data_processing_deprofile = "MS$DATA_PROCESSING: DEPROFILE",
-                   data_processing_find = "MS$DATA_PROCESSING: FIND_PEAK",
+                   data_processing_find_peak = "MS$DATA_PROCESSING: FIND_PEAK",
                    data_processing_reanalyze = "MS$DATA_PROCESSING: REANALYZE",
                    data_processing_recalibrate =
                        "MS$DATA_PROCESSING: RECALIBRATE",
@@ -309,15 +346,3 @@ setMethod("export", "MsBackendMassbank",
                    mapping = spectraVariableMapping(MsBackendMassbank()), ...) {
               .export_massbank(x = x, con = file, mapping = mapping)
           })
-
-
-## #' tests...
-## p <- "/home/jo/Projects/compounds/MassBank/text/MassBank-data-2024.11"
-## fls <- dir(p, pattern = "txt$", recursive = TRUE, full.names = TRUE)
-
-## library(Spectra)
-## mb_spectra <- Spectra(fls,
-##                       source = MsBackendMassbank(),
-##                       backend = MsBackendDataFrame(),
-##                       nonStop = TRUE,
-##                       BPPARAM = SerialParam())

@@ -1,10 +1,10 @@
 ---
-title: "Description and usage of MsBackendMassbank"
+title: "Description and Usage of MsBackendMassbank"
 output:
     BiocStyle::html_document:
         toc_float: true
 vignette: >
-    %\VignetteIndexEntry{Description and usage of MsBackendMassbank}
+    %\VignetteIndexEntry{Description and Usage of MsBackendMassbank}
     %\VignetteEngine{knitr::rmarkdown}
     %\VignetteEncoding{UTF-8}
     %\VignettePackage{Spectra}
@@ -27,30 +27,33 @@ library(BiocStyle)
 
 # Introduction
 
-The `Spectra` package provides a central infrastructure for the handling of Mass
-Spectrometry (MS) data. The package supports interchangeable use of different
-*backends* to import MS data from a variety of sources (such as mzML files). The
-`MsBackendMassbank` package allows import and handling MS/MS spectrum data from
+The `r Biocpkg("Spectra")` package provides a central infrastructure for the
+handling of mass spectrometry (MS) data. The package supports interchangeable
+use of different *backends* to import MS data from a variety of sources (such as
+mzML files). The `r Biocpkg("MsBackendMassbank")` package allows import and
+handling MS/MS spectrum data from
 [Massbank](https://massbank.eu/MassBank/). This vignette illustrates the usage
-of the `MsBackendMassbank` package to include MassBank data into MS data
-analysis workflow with the `Spectra` package in R.
-
+of the *MsBackendMassbank* package to include MassBank data into MS data
+analysis workflow with the *Spectra* package in R.
 
 # Installation
 
-The package can be installed with the `BiocManager` package. To
-install `BiocManager` use `install.packages("BiocManager")` and, after that,
+The package can be installed with the *BiocManager* package. To
+install *BiocManager* use `install.packages("BiocManager")` and, after that,
 `BiocManager::install("MsBackendMassbank")` to install this package.
-
 
 # Importing MS/MS data from MassBank files
 
-MassBank files (as provided by the [Massbank github
-repository](https://github.com/MassBank/MassBank-data)) store normally one
-library spectrum per file, typically centroided and of MS level 2. In our short
-example below, we load data from a file containing multiple library spectra per
-file or from files with each a single spectrum provided with this package. Below
-we first load all required packages and define the paths to the Massbank files.
+MassBank is an open-source, community managed spectral library. All data is
+available in the [MassBank GitHub](https://github.com/MassBank/MassBank-data)
+page, where releases are provided (which are also shared through Zenodo, with
+their own release-specific DOI). MassBank stores and shares data through
+individual text files (one file per spectrum) in a specific MassBank
+format. These files can be imported (as well as exported) with the
+`MsBackendMassbank` class of the `r Biocpkg("MsBackendMassbank")` package.
+
+In our example below we load the required libraries and define the (full) paths
+to example MassBank files available in this package.
 
 ```{r load-libs}
 library(Spectra)
@@ -60,88 +63,68 @@ fls <- dir(system.file("extdata", package = "MsBackendMassbank"),
 fls
 ```
 
-MS data can be accessed and analyzed through `Spectra` objects. Below
-we create a `Spectra` with the data from these mgf files. To this end
-we provide the file names and specify to use a `MsBackendMassbank()`
-backend as *source* to enable data import. First we import from a single file
-with multiple library spectra.
+MS data can be accessed and analyzed through `Spectra` objects. Below we create
+a `Spectra` object with the data from these MassBank files. To this end we
+provide the file names and specify to use a `MsBackendMassbank()` backend as
+*source* to enable data import.
 
-```{r import}
-sps <- Spectra(fls[1],
+```{r import, warning = FALSE}
+sps <- Spectra(fls,
                source = MsBackendMassbank(),
                backend = MsBackendDataFrame(),
                nonStop = TRUE)
 ```
 
-With that we have now full access to all imported spectra variables
-that we list below.
+With that we have now full access to all imported spectra variables (spectrum
+metadata fields) that we list below.
 
 ```{r spectravars}
 spectraVariables(sps)
 ```
 
-The same is possible with multiple files, each containing a library
-spectrum.
+We can for example access the *compound name* for each spectrum.
 
-```{r import2}
-sps <- Spectra(fls[-1],
-               source = MsBackendMassbank(),
-               backend = MsBackendDataFrame(),
-               nonStop = TRUE)
-
-spectraVariables(sps)
+```{r}
+sps$name
 ```
 
-By default the complete metadata is read together with the spectra. This can
-increase loading time. The different metadata blocks can be skipped which
-reduces import time. This requires to define an additional `data.frame`
-indicating what shall be read.
+MassBank allows defining more than one name for a compound and the result is
+thus returned as a `list` with all provided names and aliases per spectrum.
 
+By default only some of the metadata fields available in the MassBank files are
+imported. Through the `metaBlocks` parameter it is possible to enable also
+import of additional blocks of metadata fields (which results however in a
+slower data import). Below we use the `metaDataBlocks()` function to configure
+the blocks to import. We select to import the `$AC` and `$MS` fields:
 
 ```{r metadata}
-# create data frame to indicate with metadata blocks shall be read.
-metaDataBlocks <- data.frame(metadata = c("ac", "ch", "sp", "ms",
-                                          "record", "pk", "comment"),
-                             read = rep(TRUE, 7))
+#' define the metadata blocks to import
+mdb <- metaDataBlocks(ac = TRUE, ms = TRUE)
 
-sps <- Spectra(fls[-1],
+#' import the data
+sps <- Spectra(fls,
                source = MsBackendMassbank(),
-               backeend = MsBackendDataFrame(),
-               metaBlock = metaDataBlocks,
-               nonStop = TRUE)
+               metaBlock = mdb)
+```
 
-# all spectraVariables possible in MassBank are read
+A larger number of spectra variables is now available:
+
+```{r}
 spectraVariables(sps)
-
-# all NA columns can be dropped
-spectraVariables(dropNaSpectraVariables(sps))
 ```
 
+For some of these, however, no information might be provided. To remove spectra
+variables that have only missing values for **all** spectra, we can use the
+`dropNaSpectraVariables()` function:
 
-Besides default spectra variables, such as `msLevel`, `rtime`,
-`precursorMz`, we also have additional spectra variables such as the
-`title` of each spectrum in the mgf file.
-
-```{r instrument}
-sps$rtime
-sps$title
+```{r}
+sps <- dropNaSpectraVariables(sps)
+spectraVariables(sps)
 ```
 
-In addition we can also access the m/z and intensity values of each
-spectrum.
-
-```{r mz}
-mz(sps)
-intensity(sps)
-```
-
-When importing a large number of mgf files, setting `nonStop = TRUE`
-prevents the call to stop whenever problematic mgf files are
+When importing a large number of MassBank files, setting `nonStop = TRUE`
+prevents the call to stop whenever problematic MassBank files are
 encountered.
-
-```{r all-import, eval = FALSE}
-sps <- Spectra(fls, source = MsBackendMassbank(), nonStop = TRUE)
-```
 
 # Accessing the MassBank MySQL database
 
@@ -156,9 +139,8 @@ within this package.
 At present it is not possible to directly connect to the main MassBank
 *production* MySQL server, thus, to use the `MsBackendMassbankSql` backend it is
 required to install the database locally. The MySQL database dump for each
-MassBank release can be downloaded from [here](). This dump could be imported to
-a local MySQL server.
-
+MassBank release can be downloaded the MassBank GitHub repository (for most
+releases). This dump could be imported to a local MySQL server.
 
 ## Direct access to the MassBank database
 
@@ -197,7 +179,7 @@ analysis. Note that the `Spectra` object itself does not contain any data from
 MassBank. Any data will be fetched on demand from the database backend.
 
 To get a listing of all available annotations for each spectrum (the so-called
-*spectra variables*) we can use the `spectraVariables` function.
+*spectra variables*) we can use the `spectraVariables()` function.
 
 ```{r}
 spectraVariables(mb)
@@ -207,7 +189,7 @@ Through the `MsBackendMassbankSql` we can thus access spectra information as
 well as its annotation.
 
 We can access *core* spectra variables, such as the MS level with the
-corresponding function `msLevel`.
+corresponding function `msLevel()`.
 
 ```{r}
 head(msLevel(mb))
@@ -221,7 +203,7 @@ head(mb$msLevel)
 ```
 
 In addition to spectra variables, we can also get the actual peaks (i.e. m/z and
-intensity values) with the `mz` and `intensity` functions:
+intensity values) with the `mz()` and `intensity()` functions:
 
 ```{r}
 mz(mb)
@@ -245,7 +227,7 @@ length(mb)
 
 As a simple example to illustrate the `Spectra` functionality we next calculate
 spectra similarity between one spectrum against all other spectra in the
-database. To this end we use the `compareSpectra` function with the normalized
+database. To this end we use the `compareSpectra()` function with the normalized
 dot product as similarity function and allowing 20 ppm difference in m/z between
 matching peaks
 
@@ -262,7 +244,7 @@ plotSpectraMirror(mb[11], mb[(which.max(sims) + 1)], ppm = 40)
 ```
 
 We can also retrieve the *compound* information for these two best matching
-spectra. Note that this `compounds` function works only with the
+spectra. Note that this `compounds()` function works only with the
 `MsBackendMassbankSql` backend as it retrieves the corresponding information
 from the database's compound annotation table.
 
@@ -276,10 +258,9 @@ processing because the database connection within the backend can not be shared
 across parallel processes. Any function on a `Spectra` object that uses a
 `MsBackendMassbankSql` will thus (silently) disable any parallel processing,
 even if the user might have passed one along to the function using the `BPPARAM`
-parameter. In general, the `backendBpparam` function can be used on any
+parameter. In general, the `backendBpparam()` function can be used on any
 `Spectra` object to test whether its backend supports the provided parallel
 processing setup (which might be helpful for developers).
-
 
 # Session information
 

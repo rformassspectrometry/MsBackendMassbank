@@ -21,7 +21,10 @@
                            nonStop = FALSE,
                            listColumns = c("mz", "intensity", "name",
                                            "chrom_solvent", "comment",
-                                           "data_processing_comment"),
+                                           "data_processing_comment",
+                                           "sample",
+                                           "data_processing_reanalyze",
+                                           "data_processing_whole"),
                            skipDeprecated = TRUE, ...) {
     requireNamespace("MsBackendMassbank", quietly = TRUE)
     if (length(f) != 1L)
@@ -253,20 +256,14 @@
          title = title)
 }
 
-##' @param mb `character()` of lines defining a spectrum in mgf
-##'     format.
-##'
-##' @author Michael Witting
-##'
-##' @noRd
 .extract_mb_ac <- function(mb) {
     ## create empty list
     ac <- list()
     ## analytical chemistry information, MS instrument -------------------------
     ac$instrument <- substring(grep("AC$INSTRUMENT:", mb, value = TRUE,
                                     fixed = TRUE), 16)
-    ac$instrument_type <- substring(grep("AC$INSTRUMENT_TYPE:", mb,
-                                         value = TRUE, fixed = TRUE), 21)
+    ac$instrument_type <- substring(grep("^AC\\$INSTRUMENT_TYPE", mb,
+                                         value = TRUE), 21)
 
     ## analytical chemistry information, MS settings ---------------------------
     ac$ms_ms_type <- substring(grep("AC$MASS_SPECTROMETRY: MS_TYPE", mb,
@@ -286,11 +283,15 @@
         grep("AC$MASS_SPECTROMETRY: FRAGMENTATION_MODE", mb, value = TRUE,
              fixed = TRUE), 42)
     ac$ms_ionization <- substring(
-        grep("AC$MASS_SPECTROMETRY: IONIZATION", mb, value = TRUE,
+        grep("AC$MASS_SPECTROMETRY: IONIZATION ", mb, value = TRUE,
              fixed = TRUE), 34)
+    ## is that field IONIZATION_ENERGY or IONIZATION_VOLTAGE?
     ac$ms_ionization_energy <- substring(
-        grep("AC$MASS_SPECTROMETRY: IONIZATION_ENERGY", mb, value = TRUE,
+        grep("AC$MASS_SPECTROMETRY: IONIZATION_ENERGY ", mb, value = TRUE,
              fixed = TRUE), 41)
+    ac$ms_ionization_voltage <- substring(
+        grep("AC$MASS_SPECTROMETRY: IONIZATION_VOLTAGE ", mb, value = TRUE,
+             fixed = TRUE), 42)
     ac$ms_laser <- substring(grep("AC$MASS_SPECTROMETRY: LASER", mb,
                                   value = TRUE, fixed = TRUE), 29)
     ac$ms_matrix <- substring(grep("AC$MASS_SPECTROMETRY: MATRIX", mb,
@@ -325,7 +326,7 @@
     ac$chrom_column <- substring(grep("AC$CHROMATOGRAPHY: COLUMN_NAME", mb,
                                       value = TRUE, fixed = TRUE), 32)
     ac$chrom_column_temp <- substring(
-        grep("AC$CHROMATOGRAPHY: COLUMN_TEMPERATURE", mb, value = TRUE,
+        grep("AC$CHROMATOGRAPHY: COLUMN_TEMPERATURE ", mb, value = TRUE,
              fixed = TRUE), 39)
     ac$chrom_column_temp_gradient <- substring(
         grep("AC$CHROMATOGRAPHY: COLUMN_TEMPERATURE_GRADIENT", mb,
@@ -336,7 +337,7 @@
     ac$chrom_flow_rate <- substring(grep("AC$CHROMATOGRAPHY: FLOW_RATE",
                                          mb, value = TRUE, fixed = TRUE), 30)
     ac$chrom_inj_temp <- substring(
-        grep("AC$CHROMATOGRAPHY: INJECTION_TEMPERATURE", mb, value = TRUE,
+        grep("AC$CHROMATOGRAPHY: INJECTION_TEMPERATURE ", mb, value = TRUE,
              fixed = TRUE), 42)
     ac$chrom_inj_temp_gradient <- substring(
         grep("AC$CHROMATOGRAPHY: INJECTION_TEMPERATURE_GRADIENT", mb,
@@ -383,7 +384,7 @@
     ac
 }
 
-##' @param mb `character()` of lines defining a spectrum in mgf
+##' @param mb `character()` of lines defining a spectrum in MassBank
 ##'     format.
 ##'
 ##' @author Michael Witting
@@ -429,7 +430,7 @@
     ch
 }
 
-##' @param mb `character()` of lines defining a spectrum in mgf
+##' @param mb `character()` of lines defining a spectrum in MassBank
 ##'     format.
 ##'
 ##' @author Michael Witting
@@ -450,7 +451,7 @@
     sp
 }
 
-##' @param mb `character()` of lines defining a spectrum in mgf
+##' @param mb `character()` of lines defining a spectrum in MassBank
 ##'     format.
 ##'
 ##' @author Michael Witting
@@ -476,12 +477,14 @@
                                         value = TRUE, fixed = TRUE), 26)
 
     ## MS data processing
+    ## ms$data_processing <- substring(
+    ##     grep("MS$DATA_PROCESSING:", mb, value = TRUE, fixed = TRUE), 21)
     ms$data_processing_comment <- substring(
         grep("MS$DATA_PROCESSING: COMMENT", mb, value = TRUE, fixed = TRUE), 29)
     ms$data_processing_deprofile <- substring(
         grep("MS$DATA_PROCESSING: DEPROFILE", mb, value = TRUE, fixed = TRUE),
         31)
-    ms$data_processing_find <- substring(
+    ms$data_processing_find_peak <- substring(
         grep("MS$DATA_PROCESSING: FIND_PEAK", mb, value = TRUE, fixed = TRUE),
         31)
     ms$data_processing_reanalyze <- substring(
@@ -490,6 +493,10 @@
     ms$data_processing_recalibrate <- substring(
         grep("MS$DATA_PROCESSING: RECALIBRATE", mb, value = TRUE, fixed = TRUE),
         33)
+    ## REMOVE_PEAK present, but not described in documentation
+    ## ms$data_processing_remove_peak <- substring(
+    ##     grep("MS$DATA_PROCESSING: REMOVE_PEAK", mb, value = TRUE, fixed = TRUE),
+    ##     33)
     ms$data_processing_whole <- substring(
         grep("MS$DATA_PROCESSING: WHOLE", mb, value = TRUE, fixed = TRUE), 27)
     ms <- .cleanParsing(ms)
@@ -497,7 +504,7 @@
     ms
 }
 
-##' @param mb `character()` of lines defining a spectrum in mgf
+##' @param mb `character()` of lines defining a spectrum in MassBank
 ##'     format.
 ##'
 ##' @author Michael Witting
@@ -525,7 +532,7 @@
     recordinfo
 }
 
-##' @param mb `character()` of lines defining a spectrum in mgf
+##' @param mb `character()` of lines defining a spectrum in MassBank
 ##'     format.
 ##'
 ##' @author Michael Witting
@@ -551,30 +558,47 @@
     comment
 }
 
-##' @title Metadata blocks to be read
-##'
-##' @description
-##'
-##' `metaDataBlocks` returns a `data.frame` with the MassBank metadata blocks
-##' and whether they should be imported by default from the MassBank text files.
-##'
-##' @return A `data.frame` with metadata blocks.
-##'
-##' @author Michael Witting
-##'
-##' @importFrom utils read.csv
-##'
-##' @export
-##'
-##' @examples
-##'
-##' metaDataBlocks()
-metaDataBlocks <- function() {
-    read.csv(dir(system.file("extdata", package = "MsBackendMassbank"),
-                 pattern = "metadata_blocks.csv",
-                 full.names = TRUE),
-             header = TRUE, as.is = TRUE,
-             stringsAsFactors = FALSE)
+#' @title Metadata blocks to be read
+#'
+#' @description
+#'
+#' `metaDataBlocks()` allows to define the metadata *blocks* to imported from
+#' the MassBank record files.
+#'
+#' @param ac `logical(1)`: read and parse the `"AC$"` entries. These include
+#'     information on the mass spectrometry instrument, ionization applied,
+#'     fragmentation mode etc.
+#'
+#' @param ch `logical(1)`: read and parse the `"CH$"` entries with compound
+#'     related information/annotation, such as IDs to external databases.
+#'
+#' @param sp `logical(1)`: read and parse the `"SP$"` entries with sample
+#'     related information.
+#'
+#' @param ms `logical(1)`: read and parse the `"MS$"` entries with mass
+#'     spectrometry related information and data processing applied.
+#'
+#' @param record `logical(1)`: read and parse *record* related information such
+#'     as the authors, the date, license etc.
+#'
+#' @param pk `logical(1)`: read the number of peaks.
+#'
+#' @param comment `logical(1)`: read optional comments.
+#'
+#' @return A `data.frame` with information which metadata blocks should be
+#'     mported.
+#'
+#' @author Michael Witting
+#'
+#' @export
+#'
+#' @examples
+#'
+#' metaDataBlocks()
+metaDataBlocks <- function(ac = FALSE, ch = FALSE, sp = FALSE, ms = FALSE,
+                           record = FALSE, pk = FALSE, comment = FALSE) {
+    data.frame(metadata = c("ac", "ch", "sp", "ms", "record", "pk", "comment"),
+               read = c(ac, ch, sp, ms, record, pk, comment))
 }
 
 ##' Clean parsing
