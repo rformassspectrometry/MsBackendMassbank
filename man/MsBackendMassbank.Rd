@@ -35,8 +35,9 @@ MsBackendMassbank()
 \item{files}{\code{character} with the (full) file name(s) of the MassBank file(s)
 from which MS/MS data should be imported.}
 
-\item{metaBlocks}{\code{data.frame} indicating which metadata shall
-be imported. Default is \code{\link[=metaDataBlocks]{metaDataBlocks()}}.}
+\item{metaBlocks}{\code{data.frame} defining the MassBank \emph{metadata blocks}
+(i.e., sets of spectra metadata) that should be imported from the
+MassBank record files. See \code{\link[=metaDataBlocks]{metaDataBlocks()}} for more information.}
 
 \item{nonStop}{\code{logical(1)} whether import should be stopped if an
 xml file does not contain all required fields. Defaults to
@@ -47,62 +48,92 @@ xml file does not contain all required fields. Defaults to
 \item{BPPARAM}{Parameter object defining the parallel processing
 setup to import data in parallel. Defaults to \code{BPPARAM = bpparam()}. See \code{\link[BiocParallel:register]{BiocParallel::bpparam()}} for more information.}
 
-\item{format}{for \code{spectraVariableMapping}: \code{character(1)} defining the
+\item{format}{for \code{spectraVariableMapping()}: \code{character(1)} defining the
 format to be used. Currently only \code{format = "Massbank"} is supported.}
 
 \item{x}{\code{\link[Spectra:Spectra]{Spectra::Spectra()}} object that should be exported.}
 
 \item{file}{for \code{export}: \code{character(1)} defining the output file.}
 
-\item{mapping}{for \code{export}: named \code{character} vector
+\item{mapping}{for \code{export()}: named \code{character} vector
 allowing to specify how fields from the Massbank file should be renamed.
 Names are supposed to be the spectra variable name and values of the
 vector the field names in the Massbank file. See output of
 \code{spectraVariableMapping(MsBackendMassbank())} for the expected format.}
 }
 \value{
-\code{backendInitialize} and \code{MsBackendMassbank} return an instance of
-\code{MsBackendMassbank-class}.
+\code{backendInitialize()} and \code{MsBackendMassbank()} return an instance of
+\code{MsBackendMassbank}.
 }
 \description{
 The \code{MsBackendMassbank} class supports import of MS/MS spectra data from
-MS/MS spectrum data from
-\href{https://github.com/MassBank/MassBank-data}{Massbank}
-files. After initial import, the full MS data is kept in
-memory. \code{MsBackendMassbank} extends the
-\code{\link[Spectra:MsBackend]{Spectra::MsBackendDataFrame()}} backend
+files in \href{https://github.com/MassBank/MassBank-data}{Massbank} format.
+After import, the full MS data is kept in memory. \code{MsBackendMassbank}
+extends the \code{\link[Spectra:MsBackend]{Spectra::MsBackendDataFrame()}} backend
 directly and supports thus the \code{\link[Spectra:addProcessing]{Spectra::applyProcessing()}} function to make
 data manipulations persistent.
 
-New objects are created with the \code{MsBackendMassbank} function. The
-\code{backendInitialize} method has to be subsequently called to
+New objects are created with the \code{MsBackendMassbank()} function. The
+\code{backendInitialize()} method has to be subsequently called to
 initialize the object and import MS/MS data from (one or more) MassBank
-files. Optional parameter \code{nonStop} allows to specify whether the
-import returns with an error if one of the text files lacks required
-data, such as \code{mz} and \code{intensity} values (default \code{nonStop = FALSE}), or whether only affected file(s) is(are) skipped and a
+files. Parameter \code{metaBlocks} allows to configure the sets of spectrum
+metadata that should be imported. Optional parameter \code{nonStop} allows to
+specify whether the import returns with an error if one of the text files
+lacks required data, such as \code{mz} and \code{intensity} values (default \code{nonStop = FALSE}), or whether only affected file(s) is(are) skipped and a
 warning is shown (\code{nonStop = TRUE}). Note that any other error
 will abort import regardless of parameter \code{nonStop}.
+
+MassBank supports multiple values for some metadata fields. For a spectrum
+it is for example possible to define more than one compound name. The
+respective spectra variables for these metadata fields are therefore returned
+as a \code{list} (see examples for more information). The fields supporting
+multiple values, i.e., spectra variables stored as a \code{list} are:
+\itemize{
+\item \code{"name"}
+\item \code{"chrom_solvent"}, returned for \code{metaBlocks = metaDataBlocks(ac = TRUE)}
+\item \code{"comment"}, returned for \code{metaBlocks = metaDataBlocks(comment = TRUE)}
+\item \verb{"data_processing_comment", returned for }metaBlocks = metaDataBlocks(ms = TRUE)`
+\item \code{"data_processing_reanalyze"}, returned for
+\code{metaBlocks = metaDataBlocks(ms = TRUE)}
+\item \code{"data_processing_whole"}, returned for
+\code{metaBlocks = metaDataBlocks(ms = TRUE)}
+\item \code{"sample"}, returned for \code{metaBlocks = metaDataBlocks(sp = TRUE)}
+}
 }
 \examples{
 
-## Create an MsBackendMassbank backend and import data from a test file.
+## Create an MsBackendMassbank backend and import data from files in
+## MassBank format.
 fls <- dir(system.file("extdata", package = "MsBackendMassbank"),
     full.names = TRUE, pattern = "txt$")
 be <- backendInitialize(MsBackendMassbank(), fls)
 be
 
+## spectra variable `"name"` is of type `list` and provides one or multiple
+## compound names/aliases per spectrum:
+be$name
+
 be$msLevel
 be$intensity
 be$mz
 
+## spectra variables imported by default:
+spectraVariables(be)
+
 ## Initializing a backend reading additional metadata columns/information
-mb <- metaDataBlocks()
+mb <- metaDataBlocks(ms = TRUE, ac = TRUE)
 mb
-mb[1, 2] <- TRUE
 
 be <- backendInitialize(MsBackendMassbank(), fls, metaBlocks = mb)
+
+## additional spectra variables are now available
 spectraVariables(be)
+
+## for example information on the instrument used
 be$instrument
+
+## or the software/workflow used to process the data
+be$data_processing_whole
 }
 \author{
 Michael Witting

@@ -4,14 +4,44 @@
 \alias{metaDataBlocks}
 \title{Metadata blocks to be read}
 \usage{
-metaDataBlocks()
+metaDataBlocks(
+  ac = FALSE,
+  ch = FALSE,
+  sp = FALSE,
+  ms = FALSE,
+  record = FALSE,
+  pk = FALSE,
+  comment = FALSE
+)
+}
+\arguments{
+\item{ac}{\code{logical(1)}: read and parse the \code{"AC$"} entries. These include
+information on the mass spectrometry instrument, ionization applied,
+fragmentation mode etc.}
+
+\item{ch}{\code{logical(1)}: read and parse the \code{"CH$"} entries with compound
+related information/annotation, such as IDs to external databases.}
+
+\item{sp}{\code{logical(1)}: read and parse the \code{"SP$"} entries with sample
+related information.}
+
+\item{ms}{\code{logical(1)}: read and parse the \code{"MS$"} entries with mass
+spectrometry related information and data processing applied.}
+
+\item{record}{\code{logical(1)}: read and parse \emph{record} related information such
+as the authors, the date, license etc.}
+
+\item{pk}{\code{logical(1)}: read the number of peaks.}
+
+\item{comment}{\code{logical(1)}: read optional comments.}
 }
 \value{
-A \code{data.frame} with metadata blocks.
+A \code{data.frame} with information which metadata blocks should be
+mported.
 }
 \description{
-\code{metaDataBlocks} returns a \code{data.frame} with the MassBank metadata blocks
-and whether they should be imported by default from the MassBank text files.
+\code{metaDataBlocks()} allows to define the metadata \emph{blocks} to imported from
+the MassBank record files.
 }
 \examples{
 
