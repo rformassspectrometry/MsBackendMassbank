@@ -1,5 +1,18 @@
 # MsBackendMassbank 1.19
 
+## Changes in 1.19.2
+
+- Refactor `metaDataBlocks()` adding parameters for the individual metadata
+  blocks simplifying configuration of data import.
+- Fix importing issues of individual optional blocks. Import was validated
+  using MassBank releases *2025.05.1* and *2025.10*. Several fields/spectra
+  variables now return a `list` to support records with multiple values per
+  field. These are: `"name"`, `"chrom_solvent"`, `"comment"`,
+  `"data_processing_comment"`, `"sample"`, `"data_processing_reanalyze"`,
+  `"data_processing_whole"`.
+- Map field `MS$DATA_PROCESSING: FIND_PEAK` to a spectra variable with name
+  `"data_processing_find_peak"` (was `"data_processing_find"`).
+
 ## Changes in 1.19.1
 
 - Avoid error when `"N/A"` is reported as retention time.

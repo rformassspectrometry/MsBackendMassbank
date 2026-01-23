@@ -68,7 +68,7 @@ connection to the MassBank (MariaDb) database.}
 
 \item{...}{Additional arguments.}
 
-\item{columns}{For \code{spectraData} accessor: optional \code{character} with column
+\item{columns}{For \code{spectraData()} accessor: optional \code{character} with column
 names (spectra variables) that should be included in the
 returned \code{DataFrame}. By default, all columns are returned.
 For \code{peaksData} accessor: optional \code{character} with requested columns in
@@ -94,10 +94,10 @@ total ion current should be (re)calculated on the actual data
 \item{name}{name of the variable to replace for \verb{<-} methods. See individual
 method description or expected data type.}
 
-\item{BPPARAM}{for \code{backendBpparam}: \code{BiocParallel} parallel processing
+\item{BPPARAM}{for \code{backendBpparam()}: \code{BiocParallel} parallel processing
 setup. See \code{\link[BiocParallel:register]{BiocParallel::bpparam()}} for more information.}
 
-\item{spectraVariables}{For \code{selectSpectraVariables}: \code{character} with the
+\item{spectraVariables}{For \code{selectSpectraVariables()}: \code{character} with the
 names of the spectra variables to which the backend should be subsetted.}
 }
 \value{
@@ -139,120 +139,120 @@ The following functions are supported by the \code{MsBackendMassbankSql}.
 allowed
 \item \code{$}, \verb{$<-}: access or set/add a single spectrum variable (column) in the
 backend.
-\item \code{acquisitionNum}: returns the acquisition number of each
+\item \code{acquisitionNum()}: returns the acquisition number of each
 spectrum. Returns an \code{integer} of length equal to the number of
 spectra (with \code{NA_integer_} if not available).
-\item \code{peaksData} returns a \code{list} with the spectras' peak data. The length of
+\item \code{peaksData()} returns a \code{list} with the spectras' peak data. The length of
 the list is equal to the number of spectra in \code{object}. Each element of
 the list is a \code{matrix} with columns \code{"mz"} and \code{"intensity"}. For an empty
 spectrum, a \code{matrix} with 0 rows and two columns (named \code{mz} and
 \code{intensity}) is returned. Parameter \code{columns} allows to select which peaks
 variables to return, but supports currently only \code{"mz"} and \code{"intensity"}.
-\item \code{backendBpparam}: whether the backend supports parallel processing. Takes
+\item \code{backendBpparam()}: whether the backend supports parallel processing. Takes
 a \code{MsBackendMassbankSql} and a parallel processing setup (see
 \code{\link[BiocParallel:register]{BiocParallel::bpparam()}} for details) as input and \strong{always} returns a
 \code{\link[BiocParallel:SerialParam-class]{BiocParallel::SerialParam()}}. This function can be used to test whether
 a provided parallel processing setup is supported by the backend and
 returns the supported setup.
-\item \code{backendInitialize}: initialises the backend by retrieving the IDs of all
+\item \code{backendInitialize()}: initialises the backend by retrieving the IDs of all
 spectra in the database. Parameter \code{dbcon} with the connection to the
 MassBank MySQL database is required.
-\item \code{dataOrigin}: gets a \code{character} of length equal to the number of spectra
+\item \code{dataOrigin()}: gets a \code{character} of length equal to the number of spectra
 in \code{object} with the \emph{data origin} of each spectrum. This could e.g. be
 the mzML file from which the data was read.
-\item \code{dataStorage}: returns \code{"<MassBank>"} for all spectra.
-\item \code{centroided}, \verb{centroided<-}: gets or sets the centroiding
-information of the spectra. \code{centroided} returns a \code{logical}
+\item \code{dataStorage()}: returns \code{"<MassBank>"} for all spectra.
+\item \code{centroided()}, \verb{centroided<-}: gets or sets the centroiding
+information of the spectra. \code{centroided()} returns a \code{logical}
 vector of length equal to the number of spectra with \code{TRUE} if a
 spectrum is centroided, \code{FALSE} if it is in profile mode and \code{NA}
-if it is undefined. See also \code{isCentroided} for estimating from
+if it is undefined. See also \code{isCentroided()} for estimating from
 the spectrum data whether the spectrum is centroided.  \code{value}
 for \verb{centroided<-} is either a single \code{logical} or a \code{logical} of
 length equal to the number of spectra in \code{object}.
-\item \code{collisionEnergy}, \verb{collisionEnergy<-}: gets or sets the
+\item \code{collisionEnergy()}, \verb{collisionEnergy<-}: gets or sets the
 collision energy for all spectra in \code{object}. \code{collisionEnergy}
 returns a \code{numeric} with length equal to the number of spectra
 (\code{NA_real_} if not present/defined), \verb{collisionEnergy<-} takes a
 \code{numeric} of length equal to the number of spectra in \code{object}. Note that
 the collision energy description from MassBank are provided as spectra
 variable \code{"collisionEnergyText"}.
-\item \code{intensity}: gets the intensity values from the spectra. Returns
+\item \code{intensity()}: gets the intensity values from the spectra. Returns
 a \code{\link[IRanges:AtomicList-class]{IRanges::NumericList()}} of \code{numeric} vectors (intensity values for each
 spectrum). The length of the \code{list} is equal to the number of
 \code{spectra} in \code{object}.
-\item \code{ionCount}: returns a \code{numeric} with the sum of intensities for
-each spectrum. If the spectrum is empty (see \code{isEmpty}),
+\item \code{ionCount()}: returns a \code{numeric} with the sum of intensities for
+each spectrum. If the spectrum is empty (see \code{isEmpty()}),
 \code{NA_real_} is returned.
-\item \code{isCentroided}: a heuristic approach assessing if the spectra in
+\item \code{isCentroided()}: a heuristic approach assessing if the spectra in
 \code{object} are in profile or centroided mode. The function takes
 the \code{qtl} th quantile top peaks, then calculates the difference
 between adjacent m/z value and returns \code{TRUE} if the first
 quartile is greater than \code{k}. (See \code{Spectra:::.isCentroided} for
 the code.)
-\item \code{isEmpty}: checks whether a spectrum in \code{object} is empty
+\item \code{isEmpty()}: checks whether a spectrum in \code{object} is empty
 (i.e. does not contain any peaks). Returns a \code{logical} vector of
 length equal number of spectra.
-\item \code{isolationWindowLowerMz}, \verb{isolationWindowLowerMz<-}: gets or sets the
+\item \code{isolationWindowLowerMz()}, \verb{isolationWindowLowerMz<-}: gets or sets the
 lower m/z boundary of the isolation window.
-\item \code{isolationWindowTargetMz}, \verb{isolationWindowTargetMz<-}: gets or sets the
+\item \code{isolationWindowTargetMz()}, \verb{isolationWindowTargetMz<-}: gets or sets the
 target m/z of the isolation window.
-\item \code{isolationWindowUpperMz}, \verb{isolationWindowUpperMz<-}: gets or sets the
+\item \code{isolationWindowUpperMz()}, \verb{isolationWindowUpperMz<-}: gets or sets the
 upper m/z boundary of the isolation window.
-\item \code{isReadOnly}: returns a \code{logical(1)} whether the backend is \emph{read
+\item \code{isReadOnly()}: returns a \code{logical(1)} whether the backend is \emph{read
 only} or does allow also to write/update data.
-\item \code{length}: returns the number of spectra in the object.
-\item \code{lengths}: gets the number of peaks (m/z-intensity values) per
+\item \code{length()}: returns the number of spectra in the object.
+\item \code{lengths()}: gets the number of peaks (m/z-intensity values) per
 spectrum.  Returns an \code{integer} vector (length equal to the
 number of spectra). For empty spectra, \code{0} is returned.
-\item \code{msLevel}: gets the spectra's MS level. Returns an \code{integer}
+\item \code{msLevel()}: gets the spectra's MS level. Returns an \code{integer}
 vector (of length equal to the number of spectra) with the MS
 level for each spectrum (or \code{NA_integer_} if not available).
-\item \code{mz}: gets the mass-to-charge ratios (m/z) from the
+\item \code{mz()}: gets the mass-to-charge ratios (m/z) from the
 spectra. Returns a \code{\link[IRanges:AtomicList-class]{IRanges::NumericList()}} or length equal to the
 number of spectra, each element a \code{numeric} vector with the m/z values of
 one spectrum.
-\item \code{polarity}, \verb{polarity<-}: gets or sets the polarity for each
+\item \code{polarity()}, \verb{polarity<-}: gets or sets the polarity for each
 spectrum.  \code{polarity} returns an \code{integer} vector (length equal
 to the number of spectra), with \code{0} and \code{1} representing negative
 and positive polarities, respectively. \verb{polarity<-} expects an
 integer vector of length 1 or equal to the number of spectra.
-\item \code{precursorCharge}, \code{precursorIntensity}, \code{precursorMz},
-\code{precScanNum}, \code{precAcquisitionNum}: get the charge (\code{integer}),
+\item \code{precursorCharge90}, \code{precursorIntensity()}, \code{precursorMz()},
+\code{precScanNum()}, \code{precAcquisitionNum()}: get the charge (\code{integer}),
 intensity (\code{numeric}), m/z (\code{numeric}), scan index (\code{integer})
 and acquisition number (\code{interger}) of the precursor for MS level
 2 and above spectra from the object. Returns a vector of length equal to
 the number of spectra in \code{object}. \code{NA} are reported for MS1
 spectra of if no precursor information is available.
-\item \code{reset}: restores the backend to its original state, i.e. deletes all
+\item \code{reset()}: restores the backend to its original state, i.e. deletes all
 locally modified data and reinitializes the backend to the full data
 available in the database.
-\item \code{rtime}, \verb{rtime<-}: gets or sets the retention times for each
+\item \code{rtime()}, \verb{rtime<-}: gets or sets the retention times for each
 spectrum (in seconds). \code{rtime} returns a \code{numeric} vector (length equal to
 the number of spectra) with the retention time for each spectrum.
 \verb{rtime<-} expects a numeric vector with length equal to the
 number of spectra.
-\item \code{scanIndex}: returns an \code{integer} vector with the \emph{scan index}
+\item \code{scanIndex()}: returns an \code{integer} vector with the \emph{scan index}
 for each spectrum. This represents the relative index of the
 spectrum within each file. Note that this can be different to the
 \code{acquisitionNum} of the spectrum which is the index of the
 spectrum as reported in the mzML file.
-\item \code{selectSpectraVariables}: reduces the information within the backend to
+\item \code{selectSpectraVariables()}: reduces the information within the backend to
 the selected spectra variables.
-\item \code{smoothed},\verb{smoothed<-}: gets or sets whether a spectrum is
+\item \code{smoothed()},\verb{smoothed<-}: gets or sets whether a spectrum is
 \emph{smoothed}. \code{smoothed} returns a \code{logical} vector of length equal
 to the number of spectra. \verb{smoothed<-} takes a \code{logical} vector
 of length 1 or equal to the number of spectra in \code{object}.
-\item \code{spectraData}: gets general spectrum metadata (annotation, also called
+\item \code{spectraData()}: gets general spectrum metadata (annotation, also called
 header).  \code{spectraData} returns a \code{DataFrame}. Note that replacing the
 spectra data with \verb{spectraData<-} is not supported.
-\item \code{spectraNames}: returns a \code{character} vector with the names of
+\item \code{spectraNames()}: returns a \code{character} vector with the names of
 the spectra in \code{object}.
-\item \code{spectraVariables}: returns a \code{character} vector with the
+\item \code{spectraVariables()}: returns a \code{character} vector with the
 available spectra variables (columns, fields or attributes)
 available in \code{object}. This should return \strong{all} spectra variables which
 are present in \code{object}, also \code{"mz"} and \code{"intensity"} (which are by
 default not returned by the \verb{spectraVariables,Spectra} method).
-\item \code{tic}: gets the total ion current/count (sum of signal of a
+\item \code{tic()}: gets the total ion current/count (sum of signal of a
 spectrum) for all spectra in \code{object}. By default, the value
 reported in the original raw data file is returned. For an empty
 spectrum, \code{NA_real_} is returned.
@@ -265,16 +265,16 @@ spectrum, \code{NA_real_} is returned.
 The following functions are not supported by the \code{MsBackendMassbankSql} since
 the original data can not be changed.
 
-\code{backendMerge}, \code{export}, \code{filterDataStorage}, \code{filterPrecursorScan},
-\verb{peaksData<-}, \code{filterAcquisitionNum}, \verb{intensity<-}, \verb{mz<-}, \code{precScanNum},
-\verb{spectraData<-}, \verb{spectraNames<-}.
+\code{backendMerge()}, \code{export()}, \code{filterDataStorage()}, \code{filterPrecursorScan()},
+\verb{peaksData<-}, \code{filterAcquisitionNum()}, \verb{intensity<-}, \verb{mz<-},
+\code{precScanNum()}, \verb{spectraData<-}, \verb{spectraNames<-}.
 }
 
 \section{Retrieving compound annotations for spectra}{
 
 
-While compound annotations are also provided \emph{via} the \code{spectraVariables} of
-the backend, it would also be possible to use the \code{compounds} function on
+While compound annotations are also provided \emph{via} the \code{spectraVariables()}
+of the backend, it would also be possible to use the \code{compounds} function on
 a \code{Spectra} object (that uses a \code{MsBackendMassbankSql} backend) to retrieve
 compound annotations for the specific spectra.
 }
