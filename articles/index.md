@@ -2,5 +2,5 @@
 
 ### All vignettes
 
-- [Description and usage of
+- [Description and Usage of
   MsBackendMassbank](https://rformassspectrometry.github.io/MsBackendMassbank/articles/MsBackendMassbank.md):

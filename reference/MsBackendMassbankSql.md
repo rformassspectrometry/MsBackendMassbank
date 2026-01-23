@@ -101,7 +101,7 @@ backendBpparam(object, BPPARAM = bpparam())
 
 - columns:
 
-  For `spectraData` accessor: optional `character` with column names
+  For `spectraData()` accessor: optional `character` with column names
   (spectra variables) that should be included in the returned
   `DataFrame`. By default, all columns are returned. For `peaksData`
   accessor: optional `character` with requested columns in the
@@ -142,13 +142,13 @@ backendBpparam(object, BPPARAM = bpparam())
 
 - BPPARAM:
 
-  for `backendBpparam`: `BiocParallel` parallel processing setup. See
+  for `backendBpparam()`: `BiocParallel` parallel processing setup. See
   [`BiocParallel::bpparam()`](https://rdrr.io/pkg/BiocParallel/man/register.html)
   for more information.
 
 - spectraVariables:
 
-  For `selectSpectraVariables`: `character` with the names of the
+  For `selectSpectraVariables()`: `character` with the names of the
   spectra variables to which the backend should be subsetted.
 
 ## Value
@@ -165,19 +165,19 @@ The following functions are supported by the `MsBackendMassbankSql`.
 - `$`, `$<-`: access or set/add a single spectrum variable (column) in
   the backend.
 
-- `acquisitionNum`: returns the acquisition number of each spectrum.
+- `acquisitionNum()`: returns the acquisition number of each spectrum.
   Returns an `integer` of length equal to the number of spectra (with
   `NA_integer_` if not available).
 
-- `peaksData` returns a `list` with the spectras' peak data. The length
-  of the list is equal to the number of spectra in `object`. Each
+- `peaksData()` returns a `list` with the spectras' peak data. The
+  length of the list is equal to the number of spectra in `object`. Each
   element of the list is a `matrix` with columns `"mz"` and
   `"intensity"`. For an empty spectrum, a `matrix` with 0 rows and two
   columns (named `mz` and `intensity`) is returned. Parameter `columns`
   allows to select which peaks variables to return, but supports
   currently only `"mz"` and `"intensity"`.
 
-- `backendBpparam`: whether the backend supports parallel processing.
+- `backendBpparam()`: whether the backend supports parallel processing.
   Takes a `MsBackendMassbankSql` and a parallel processing setup (see
   [`BiocParallel::bpparam()`](https://rdrr.io/pkg/BiocParallel/man/register.html)
   for details) as input and **always** returns a
@@ -186,26 +186,26 @@ The following functions are supported by the `MsBackendMassbankSql`.
   processing setup is supported by the backend and returns the supported
   setup.
 
-- `backendInitialize`: initialises the backend by retrieving the IDs of
-  all spectra in the database. Parameter `dbcon` with the connection to
-  the MassBank MySQL database is required.
+- `backendInitialize()`: initialises the backend by retrieving the IDs
+  of all spectra in the database. Parameter `dbcon` with the connection
+  to the MassBank MySQL database is required.
 
-- `dataOrigin`: gets a `character` of length equal to the number of
+- `dataOrigin()`: gets a `character` of length equal to the number of
   spectra in `object` with the *data origin* of each spectrum. This
   could e.g. be the mzML file from which the data was read.
 
-- `dataStorage`: returns `"<MassBank>"` for all spectra.
+- `dataStorage()`: returns `"<MassBank>"` for all spectra.
 
-- `centroided`, `centroided<-`: gets or sets the centroiding information
-  of the spectra. `centroided` returns a `logical` vector of length
-  equal to the number of spectra with `TRUE` if a spectrum is
+- `centroided()`, `centroided<-`: gets or sets the centroiding
+  information of the spectra. `centroided()` returns a `logical` vector
+  of length equal to the number of spectra with `TRUE` if a spectrum is
   centroided, `FALSE` if it is in profile mode and `NA` if it is
-  undefined. See also `isCentroided` for estimating from the spectrum
+  undefined. See also `isCentroided()` for estimating from the spectrum
   data whether the spectrum is centroided. `value` for `centroided<-` is
   either a single `logical` or a `logical` of length equal to the number
   of spectra in `object`.
 
-- `collisionEnergy`, `collisionEnergy<-`: gets or sets the collision
+- `collisionEnergy()`, `collisionEnergy<-`: gets or sets the collision
   energy for all spectra in `object`. `collisionEnergy` returns a
   `numeric` with length equal to the number of spectra (`NA_real_` if
   not present/defined), `collisionEnergy<-` takes a `numeric` of length
@@ -213,122 +213,126 @@ The following functions are supported by the `MsBackendMassbankSql`.
   energy description from MassBank are provided as spectra variable
   `"collisionEnergyText"`.
 
-- `intensity`: gets the intensity values from the spectra. Returns a
+- `intensity()`: gets the intensity values from the spectra. Returns a
   [`IRanges::NumericList()`](https://rdrr.io/pkg/IRanges/man/AtomicList-class.html)
   of `numeric` vectors (intensity values for each spectrum). The length
   of the `list` is equal to the number of `spectra` in `object`.
 
-- `ionCount`: returns a `numeric` with the sum of intensities for each
-  spectrum. If the spectrum is empty (see `isEmpty`), `NA_real_` is
+- `ionCount()`: returns a `numeric` with the sum of intensities for each
+  spectrum. If the spectrum is empty (see `isEmpty()`), `NA_real_` is
   returned.
 
-- `isCentroided`: a heuristic approach assessing if the spectra in
+- `isCentroided()`: a heuristic approach assessing if the spectra in
   `object` are in profile or centroided mode. The function takes the
   `qtl` th quantile top peaks, then calculates the difference between
   adjacent m/z value and returns `TRUE` if the first quartile is greater
   than `k`. (See `Spectra:::.isCentroided` for the code.)
 
-- `isEmpty`: checks whether a spectrum in `object` is empty (i.e. does
+- `isEmpty()`: checks whether a spectrum in `object` is empty (i.e. does
   not contain any peaks). Returns a `logical` vector of length equal
   number of spectra.
 
-- `isolationWindowLowerMz`, `isolationWindowLowerMz<-`: gets or sets the
-  lower m/z boundary of the isolation window.
+- `isolationWindowLowerMz()`, `isolationWindowLowerMz<-`: gets or sets
+  the lower m/z boundary of the isolation window.
 
-- `isolationWindowTargetMz`, `isolationWindowTargetMz<-`: gets or sets
+- `isolationWindowTargetMz()`, `isolationWindowTargetMz<-`: gets or sets
   the target m/z of the isolation window.
 
-- `isolationWindowUpperMz`, `isolationWindowUpperMz<-`: gets or sets the
-  upper m/z boundary of the isolation window.
+- `isolationWindowUpperMz()`, `isolationWindowUpperMz<-`: gets or sets
+  the upper m/z boundary of the isolation window.
 
-- `isReadOnly`: returns a `logical(1)` whether the backend is *read
+- `isReadOnly()`: returns a `logical(1)` whether the backend is *read
   only* or does allow also to write/update data.
 
-- `length`: returns the number of spectra in the object.
+- [`length()`](https://rdrr.io/r/base/length.html): returns the number
+  of spectra in the object.
 
-- `lengths`: gets the number of peaks (m/z-intensity values) per
-  spectrum. Returns an `integer` vector (length equal to the number of
-  spectra). For empty spectra, `0` is returned.
+- [`lengths()`](https://rdrr.io/r/base/lengths.html): gets the number of
+  peaks (m/z-intensity values) per spectrum. Returns an `integer` vector
+  (length equal to the number of spectra). For empty spectra, `0` is
+  returned.
 
-- `msLevel`: gets the spectra's MS level. Returns an `integer` vector
+- `msLevel()`: gets the spectra's MS level. Returns an `integer` vector
   (of length equal to the number of spectra) with the MS level for each
   spectrum (or `NA_integer_` if not available).
 
-- `mz`: gets the mass-to-charge ratios (m/z) from the spectra. Returns a
+- `mz()`: gets the mass-to-charge ratios (m/z) from the spectra. Returns
+  a
   [`IRanges::NumericList()`](https://rdrr.io/pkg/IRanges/man/AtomicList-class.html)
   or length equal to the number of spectra, each element a `numeric`
   vector with the m/z values of one spectrum.
 
-- `polarity`, `polarity<-`: gets or sets the polarity for each spectrum.
-  `polarity` returns an `integer` vector (length equal to the number of
-  spectra), with `0` and `1` representing negative and positive
-  polarities, respectively. `polarity<-` expects an integer vector of
-  length 1 or equal to the number of spectra.
+- `polarity()`, `polarity<-`: gets or sets the polarity for each
+  spectrum. `polarity` returns an `integer` vector (length equal to the
+  number of spectra), with `0` and `1` representing negative and
+  positive polarities, respectively. `polarity<-` expects an integer
+  vector of length 1 or equal to the number of spectra.
 
-- `precursorCharge`, `precursorIntensity`, `precursorMz`, `precScanNum`,
-  `precAcquisitionNum`: get the charge (`integer`), intensity
-  (`numeric`), m/z (`numeric`), scan index (`integer`) and acquisition
-  number (`interger`) of the precursor for MS level 2 and above spectra
-  from the object. Returns a vector of length equal to the number of
-  spectra in `object`. `NA` are reported for MS1 spectra of if no
-  precursor information is available.
+- `precursorCharge90`, `precursorIntensity()`, `precursorMz()`,
+  `precScanNum()`, `precAcquisitionNum()`: get the charge (`integer`),
+  intensity (`numeric`), m/z (`numeric`), scan index (`integer`) and
+  acquisition number (`interger`) of the precursor for MS level 2 and
+  above spectra from the object. Returns a vector of length equal to the
+  number of spectra in `object`. `NA` are reported for MS1 spectra of if
+  no precursor information is available.
 
-- `reset`: restores the backend to its original state, i.e. deletes all
-  locally modified data and reinitializes the backend to the full data
-  available in the database.
+- `reset()`: restores the backend to its original state, i.e. deletes
+  all locally modified data and reinitializes the backend to the full
+  data available in the database.
 
-- `rtime`, `rtime<-`: gets or sets the retention times for each spectrum
-  (in seconds). `rtime` returns a `numeric` vector (length equal to the
-  number of spectra) with the retention time for each spectrum.
-  `rtime<-` expects a numeric vector with length equal to the number of
-  spectra.
+- `rtime()`, `rtime<-`: gets or sets the retention times for each
+  spectrum (in seconds). `rtime` returns a `numeric` vector (length
+  equal to the number of spectra) with the retention time for each
+  spectrum. `rtime<-` expects a numeric vector with length equal to the
+  number of spectra.
 
-- `scanIndex`: returns an `integer` vector with the *scan index* for
+- `scanIndex()`: returns an `integer` vector with the *scan index* for
   each spectrum. This represents the relative index of the spectrum
   within each file. Note that this can be different to the
   `acquisitionNum` of the spectrum which is the index of the spectrum as
   reported in the mzML file.
 
-- `selectSpectraVariables`: reduces the information within the backend
+- `selectSpectraVariables()`: reduces the information within the backend
   to the selected spectra variables.
 
-- `smoothed`,`smoothed<-`: gets or sets whether a spectrum is
+- `smoothed()`,`smoothed<-`: gets or sets whether a spectrum is
   *smoothed*. `smoothed` returns a `logical` vector of length equal to
   the number of spectra. `smoothed<-` takes a `logical` vector of length
   1 or equal to the number of spectra in `object`.
 
-- `spectraData`: gets general spectrum metadata (annotation, also called
-  header). `spectraData` returns a `DataFrame`. Note that replacing the
-  spectra data with `spectraData<-` is not supported.
+- `spectraData()`: gets general spectrum metadata (annotation, also
+  called header). `spectraData` returns a `DataFrame`. Note that
+  replacing the spectra data with `spectraData<-` is not supported.
 
-- `spectraNames`: returns a `character` vector with the names of the
+- `spectraNames()`: returns a `character` vector with the names of the
   spectra in `object`.
 
-- `spectraVariables`: returns a `character` vector with the available
+- `spectraVariables()`: returns a `character` vector with the available
   spectra variables (columns, fields or attributes) available in
   `object`. This should return **all** spectra variables which are
   present in `object`, also `"mz"` and `"intensity"` (which are by
   default not returned by the `spectraVariables,Spectra` method).
 
-- `tic`: gets the total ion current/count (sum of signal of a spectrum)
-  for all spectra in `object`. By default, the value reported in the
-  original raw data file is returned. For an empty spectrum, `NA_real_`
-  is returned.
+- `tic()`: gets the total ion current/count (sum of signal of a
+  spectrum) for all spectra in `object`. By default, the value reported
+  in the original raw data file is returned. For an empty spectrum,
+  `NA_real_` is returned.
 
 ## Not supported Backend functions
 
 The following functions are not supported by the `MsBackendMassbankSql`
 since the original data can not be changed.
 
-`backendMerge`, `export`, `filterDataStorage`, `filterPrecursorScan`,
-`peaksData<-`, `filterAcquisitionNum`, `intensity<-`, `mz<-`,
-`precScanNum`, `spectraData<-`, `spectraNames<-`.
+`backendMerge()`, `export()`, `filterDataStorage()`,
+`filterPrecursorScan()`, `peaksData<-`, `filterAcquisitionNum()`,
+`intensity<-`, `mz<-`, `precScanNum()`, `spectraData<-`,
+`spectraNames<-`.
 
 ## Retrieving compound annotations for spectra
 
 While compound annotations are also provided *via* the
-`spectraVariables` of the backend, it would also be possible to use the
-`compounds` function on a `Spectra` object (that uses a
+`spectraVariables()` of the backend, it would also be possible to use
+the `compounds` function on a `Spectra` object (that uses a
 `MsBackendMassbankSql` backend) to retrieve compound annotations for the
 specific spectra.
 

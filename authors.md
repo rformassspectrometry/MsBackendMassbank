@@ -16,13 +16,13 @@ Source:
 [`DESCRIPTION`](https://github.com/RforMassSpectrometry/MsBackendMassbank/blob/main/DESCRIPTION)
 
 Witting M, Rainer J (2026). *MsBackendMassbank: Mass Spectrometry Data
-Backend for MassBank record Files*. R package version 1.19.1,
+Backend for MassBank record Files*. R package version 1.19.2,
 <https://github.com/RforMassSpectrometry/MsBackendMassbank>.
 
     @Manual{,
       title = {MsBackendMassbank: Mass Spectrometry Data Backend for MassBank record Files},
       author = {Michael Witting and Johannes Rainer},
       year = {2026},
-      note = {R package version 1.19.1},
+      note = {R package version 1.19.2},
       url = {https://github.com/RforMassSpectrometry/MsBackendMassbank},
     }

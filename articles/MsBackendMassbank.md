@@ -1,4 +1,4 @@
-# Description and usage of MsBackendMassbank
+# Description and Usage of MsBackendMassbank
 
 **Package**:
 *[MsBackendMassbank](https://bioconductor.org/packages/3.23/MsBackendMassbank)*  
@@ -6,34 +6,42 @@
 Witting \[aut\] (ORCID: <https://orcid.org/0000-0002-1462-4426>),
 Johannes Rainer \[aut\] (ORCID:
 <https://orcid.org/0000-0002-6977-7147>), Michael Stravs \[ctb\]  
-**Compiled**: Tue Jan 20 08:55:22 2026
+**Compiled**: Fri Jan 23 12:37:01 2026
 
 ## Introduction
 
-The `Spectra` package provides a central infrastructure for the handling
-of Mass Spectrometry (MS) data. The package supports interchangeable use
-of different *backends* to import MS data from a variety of sources
-(such as mzML files). The `MsBackendMassbank` package allows import and
-handling MS/MS spectrum data from
+The *[Spectra](https://bioconductor.org/packages/3.23/Spectra)* package
+provides a central infrastructure for the handling of mass spectrometry
+(MS) data. The package supports interchangeable use of different
+*backends* to import MS data from a variety of sources (such as mzML
+files). The
+*[MsBackendMassbank](https://bioconductor.org/packages/3.23/MsBackendMassbank)*
+package allows import and handling MS/MS spectrum data from
 [Massbank](https://massbank.eu/MassBank/). This vignette illustrates the
-usage of the `MsBackendMassbank` package to include MassBank data into
-MS data analysis workflow with the `Spectra` package in R.
+usage of the *MsBackendMassbank* package to include MassBank data into
+MS data analysis workflow with the *Spectra* package in R.
 
 ## Installation
 
-The package can be installed with the `BiocManager` package. To install
-`BiocManager` use `install.packages("BiocManager")` and, after that,
+The package can be installed with the *BiocManager* package. To install
+*BiocManager* use `install.packages("BiocManager")` and, after that,
 `BiocManager::install("MsBackendMassbank")` to install this package.
 
 ## Importing MS/MS data from MassBank files
 
-MassBank files (as provided by the [Massbank github
-repository](https://github.com/MassBank/MassBank-data)) store normally
-one library spectrum per file, typically centroided and of MS level 2.
-In our short example below, we load data from a file containing multiple
-library spectra per file or from files with each a single spectrum
-provided with this package. Below we first load all required packages
-and define the paths to the Massbank files.
+MassBank is an open-source, community managed spectral library. All data
+is available in the [MassBank
+GitHub](https://github.com/MassBank/MassBank-data) page, where releases
+are provided (which are also shared through Zenodo, with their own
+release-specific DOI). MassBank stores and shares data through
+individual text files (one file per spectrum) in a specific MassBank
+format. These files can be imported (as well as exported) with the
+`MsBackendMassbank` class of the
+*[MsBackendMassbank](https://bioconductor.org/packages/3.23/MsBackendMassbank)*
+package.
+
+In our example below we load the required libraries and define the
+(full) paths to example MassBank files available in this package.
 
 ``` r
 
@@ -57,22 +65,21 @@ fls
     ## [11] "/__w/_temp/Library/MsBackendMassbank/extdata/RP000513.txt"
 
 MS data can be accessed and analyzed through `Spectra` objects. Below we
-create a `Spectra` with the data from these mgf files. To this end we
-provide the file names and specify to use a
+create a `Spectra` object with the data from these MassBank files. To
+this end we provide the file names and specify to use a
 [`MsBackendMassbank()`](https://rformassspectrometry.github.io/MsBackendMassbank/reference/MsBackendMassbank.md)
-backend as *source* to enable data import. First we import from a single
-file with multiple library spectra.
+backend as *source* to enable data import.
 
 ``` r
 
-sps <- Spectra(fls[1],
+sps <- Spectra(fls,
                source = MsBackendMassbank(),
                backend = MsBackendDataFrame(),
                nonStop = TRUE)
 ```
 
-With that we have now full access to all imported spectra variables that
-we list below.
+With that we have now full access to all imported spectra variables
+(spectrum metadata fields) that we list below.
 
 ``` r
 
@@ -95,128 +102,142 @@ spectraVariables(sps)
     ## [27] "adduct"                  "splash"                 
     ## [29] "title"
 
-The same is possible with multiple files, each containing a library
-spectrum.
+We can for example access the *compound name* for each spectrum.
 
 ``` r
 
-sps <- Spectra(fls[-1],
-               source = MsBackendMassbank(),
-               backend = MsBackendDataFrame(),
-               nonStop = TRUE)
+sps$name
 ```
 
-    ## Warning in .local(object, ...): Import failed for some files
+    ## [[1]]
+    ## [1] "Veratramine"                                             
+    ## [2] "(3beta,23R)-14,15,16,17-Tetradehydroveratraman-3,23-diol"
+    ## 
+    ## [[2]]
+    ## [1] "L-Tryptophan"                                
+    ## [2] "(2S)-2-amino-3-(1H-indol-3-yl)propanoic acid"
+    ## 
+    ## [[3]]
+    ## [1] "L-Tryptophan"                                
+    ## [2] "(2S)-2-amino-3-(1H-indol-3-yl)propanoic acid"
+    ## 
+    ## [[4]]
+    ## [1] "L-Tryptophan"                                
+    ## [2] "(2S)-2-amino-3-(1H-indol-3-yl)propanoic acid"
+    ## 
+    ## [[5]]
+    ## [1] "Carbazole"    "9H-carbazole"
+    ## 
+    ## [[6]]
+    ## [1] "L-Tryptophan"                                
+    ## [2] "(2S)-2-amino-3-(1H-indol-3-yl)propanoic acid"
+    ## 
+    ## [[7]]
+    ## [1] "L-Tryptophan"                                
+    ## [2] "(2S)-2-amino-3-(1H-indol-3-yl)propanoic acid"
+    ## 
+    ## [[8]]
+    ## [1] "L-Tryptophan"                                
+    ## [2] "(2S)-2-amino-3-(1H-indol-3-yl)propanoic acid"
+    ## 
+    ## [[9]]
+    ## [1] "L-Tryptophan"                                
+    ## [2] "(2S)-2-amino-3-(1H-indol-3-yl)propanoic acid"
+    ## 
+    ## [[10]]
+    ## [1] "L-Tryptophan"
+    ## 
+    ## [[11]]
+    ## [1] "L-Tryptophan"                                
+    ## [2] "(2S)-2-amino-3-(1H-indol-3-yl)propanoic acid"
+    ## 
+    ## [[12]]
+    ## [1] "L-Tryptophan"                                
+    ## [2] "(2S)-2-amino-3-(1H-indol-3-yl)propanoic acid"
+
+MassBank allows defining more than one name for a compound and the
+result is thus returned as a `list` with all provided names and aliases
+per spectrum.
+
+By default only some of the metadata fields available in the MassBank
+files are imported. Through the `metaBlocks` parameter it is possible to
+enable also import of additional blocks of metadata fields (which
+results however in a slower data import). Below we use the
+[`metaDataBlocks()`](https://rformassspectrometry.github.io/MsBackendMassbank/reference/metaDataBlocks.md)
+function to configure the blocks to import. We select to import the
+`$AC` and `$MS` fields:
+
+``` r
+
+#' define the metadata blocks to import
+mdb <- metaDataBlocks(ac = TRUE, ms = TRUE)
+
+#' import the data
+sps <- Spectra(fls,
+               source = MsBackendMassbank(),
+               metaBlock = mdb)
+```
+
+A larger number of spectra variables is now available:
 
 ``` r
 
 spectraVariables(sps)
 ```
 
-    ##  [1] "msLevel"                 "rtime"                  
-    ##  [3] "acquisitionNum"          "scanIndex"              
-    ##  [5] "dataStorage"             "dataOrigin"             
-    ##  [7] "centroided"              "smoothed"               
-    ##  [9] "polarity"                "precScanNum"            
-    ## [11] "precursorMz"             "precursorIntensity"     
-    ## [13] "precursorCharge"         "collisionEnergy"        
-    ## [15] "isolationWindowLowerMz"  "isolationWindowTargetMz"
-    ## [17] "isolationWindowUpperMz"  "acquistionNum"          
-    ## [19] "accession"               "name"                   
-    ## [21] "smiles"                  "exactmass"              
-    ## [23] "formula"                 "inchi"                  
-    ## [25] "cas"                     "inchikey"               
-    ## [27] "adduct"                  "splash"                 
-    ## [29] "title"
+    ##  [1] "msLevel"                     "rtime"                      
+    ##  [3] "acquisitionNum"              "scanIndex"                  
+    ##  [5] "dataStorage"                 "dataOrigin"                 
+    ##  [7] "centroided"                  "smoothed"                   
+    ##  [9] "polarity"                    "precScanNum"                
+    ## [11] "precursorMz"                 "precursorIntensity"         
+    ## [13] "precursorCharge"             "collisionEnergy"            
+    ## [15] "isolationWindowLowerMz"      "isolationWindowTargetMz"    
+    ## [17] "isolationWindowUpperMz"      "acquistionNum"              
+    ## [19] "accession"                   "name"                       
+    ## [21] "smiles"                      "exactmass"                  
+    ## [23] "formula"                     "inchi"                      
+    ## [25] "cas"                         "inchikey"                   
+    ## [27] "adduct"                      "splash"                     
+    ## [29] "title"                       "instrument"                 
+    ## [31] "instrument_type"             "ms_ms_type"                 
+    ## [33] "ms_cap_voltage"              "ms_col_gas"                 
+    ## [35] "ms_desolv_gas_flow"          "ms_desolv_temp"             
+    ## [37] "ms_frag_mode"                "ms_ionization"              
+    ## [39] "ms_ionization_energy"        "ms_ionization_voltage"      
+    ## [41] "ms_laser"                    "ms_matrix"                  
+    ## [43] "ms_mass_accuracy"            "ms_mass_range"              
+    ## [45] "ms_reagent_gas"              "ms_resolution"              
+    ## [47] "ms_scan_setting"             "ms_source_temp"             
+    ## [49] "ms_kinetic_energy"           "ms_electron_current"        
+    ## [51] "ms_reaction_time"            "chrom_carrier_gas"          
+    ## [53] "chrom_column"                "chrom_column_temp"          
+    ## [55] "chrom_column_temp_gradient"  "chrom_flow_gradient"        
+    ## [57] "chrom_flow_rate"             "chrom_inj_temp"             
+    ## [59] "chrom_inj_temp_gradient"     "chrom_rti_kovats"           
+    ## [61] "chrom_rti_lee"               "chrom_rti_naps"             
+    ## [63] "chrom_rti_uoa"               "chrom_rti_uoa_pred"         
+    ## [65] "chrom_rt"                    "chrom_rt_uoa_pred"          
+    ## [67] "chrom_solvent"               "chrom_transfer_temp"        
+    ## [69] "ims_instrument_type"         "ims_drift_gas"              
+    ## [71] "ims_drift_time"              "ims_ccs"                    
+    ## [73] "general_conc"                "focus_base_peak"            
+    ## [75] "focus_derivative_form"       "focus_derivative_mass"      
+    ## [77] "focus_derivative_type"       "focus_ion_type"             
+    ## [79] "data_processing_comment"     "data_processing_deprofile"  
+    ## [81] "data_processing_find_peak"   "data_processing_reanalyze"  
+    ## [83] "data_processing_recalibrate" "data_processing_whole"
 
-By default the complete metadata is read together with the spectra. This
-can increase loading time. The different metadata blocks can be skipped
-which reduces import time. This requires to define an additional
-`data.frame` indicating what shall be read.
+For some of these, however, no information might be provided. To remove
+spectra variables that have only missing values for **all** spectra, we
+can use the
+[`dropNaSpectraVariables()`](https://rdrr.io/pkg/Spectra/man/filterMsLevel.html)
+function:
 
 ``` r
 
-# create data frame to indicate with metadata blocks shall be read.
-metaDataBlocks <- data.frame(metadata = c("ac", "ch", "sp", "ms",
-                                          "record", "pk", "comment"),
-                             read = rep(TRUE, 7))
-
-sps <- Spectra(fls[-1],
-               source = MsBackendMassbank(),
-               backeend = MsBackendDataFrame(),
-               metaBlock = metaDataBlocks,
-               nonStop = TRUE)
-```
-
-    ## Warning in .local(object, ...): Import failed for some files
-
-``` r
-
-# all spectraVariables possible in MassBank are read
+sps <- dropNaSpectraVariables(sps)
 spectraVariables(sps)
-```
-
-    ##   [1] "msLevel"                     "rtime"                      
-    ##   [3] "acquisitionNum"              "scanIndex"                  
-    ##   [5] "dataStorage"                 "dataOrigin"                 
-    ##   [7] "centroided"                  "smoothed"                   
-    ##   [9] "polarity"                    "precScanNum"                
-    ##  [11] "precursorMz"                 "precursorIntensity"         
-    ##  [13] "precursorCharge"             "collisionEnergy"            
-    ##  [15] "isolationWindowLowerMz"      "isolationWindowTargetMz"    
-    ##  [17] "isolationWindowUpperMz"      "acquistionNum"              
-    ##  [19] "accession"                   "name"                       
-    ##  [21] "smiles"                      "exactmass"                  
-    ##  [23] "formula"                     "inchi"                      
-    ##  [25] "cas"                         "inchikey"                   
-    ##  [27] "adduct"                      "splash"                     
-    ##  [29] "title"                       "instrument"                 
-    ##  [31] "instrument_type"             "ms_ms_type"                 
-    ##  [33] "ms_cap_voltage"              "ms_col_gas"                 
-    ##  [35] "ms_desolv_gas_flow"          "ms_desolv_temp"             
-    ##  [37] "ms_frag_mode"                "ms_ionization"              
-    ##  [39] "ms_ionization_energy"        "ms_laser"                   
-    ##  [41] "ms_matrix"                   "ms_mass_accuracy"           
-    ##  [43] "ms_mass_range"               "ms_reagent_gas"             
-    ##  [45] "ms_resolution"               "ms_scan_setting"            
-    ##  [47] "ms_source_temp"              "ms_kinetic_energy"          
-    ##  [49] "ms_electron_current"         "ms_reaction_time"           
-    ##  [51] "chrom_carrier_gas"           "chrom_column"               
-    ##  [53] "chrom_column_temp"           "chrom_column_temp_gradient" 
-    ##  [55] "chrom_flow_gradient"         "chrom_flow_rate"            
-    ##  [57] "chrom_inj_temp"              "chrom_inj_temp_gradient"    
-    ##  [59] "chrom_rti_kovats"            "chrom_rti_lee"              
-    ##  [61] "chrom_rti_naps"              "chrom_rti_uoa"              
-    ##  [63] "chrom_rti_uoa_pred"          "chrom_rt"                   
-    ##  [65] "chrom_rt_uoa_pred"           "chrom_solvent"              
-    ##  [67] "chrom_transfer_temp"         "ims_instrument_type"        
-    ##  [69] "ims_drift_gas"               "ims_drift_time"             
-    ##  [71] "ims_ccs"                     "general_conc"               
-    ##  [73] "compound_class"              "link_cayman"                
-    ##  [75] "link_chebi"                  "link_chembl"                
-    ##  [77] "link_chempdb"                "link_chemspider"            
-    ##  [79] "link_comptox"                "link_hmdb"                  
-    ##  [81] "link_kappaview"              "link_kegg"                  
-    ##  [83] "link_knapsack"               "link_lipidbank"             
-    ##  [85] "link_lipidmaps"              "link_nikkaji"               
-    ##  [87] "link_pubchem"                "link_zinc"                  
-    ##  [89] "scientific_name"             "lineage"                    
-    ##  [91] "link"                        "sample"                     
-    ##  [93] "focus_base_peak"             "focus_derivative_form"      
-    ##  [95] "focus_derivative_mass"       "focus_derivative_type"      
-    ##  [97] "focus_ion_type"              "data_processing_comment"    
-    ##  [99] "data_processing_deprofile"   "data_processing_find"       
-    ## [101] "data_processing_reanalyze"   "data_processing_recalibrate"
-    ## [103] "data_processing_whole"       "deprecated"                 
-    ## [105] "date"                        "authors"                    
-    ## [107] "license"                     "copyright"                  
-    ## [109] "publication"                 "project"                    
-    ## [111] "pknum"                       "comment"
-
-``` r
-
-# all NA columns can be dropped
-spectraVariables(dropNaSpectraVariables(sps))
 ```
 
     ##  [1] "msLevel"                     "rtime"                      
@@ -239,94 +260,12 @@ spectraVariables(dropNaSpectraVariables(sps))
     ## [35] "ms_resolution"               "chrom_column"               
     ## [37] "chrom_flow_gradient"         "chrom_flow_rate"            
     ## [39] "chrom_rt"                    "chrom_solvent"              
-    ## [41] "compound_class"              "link_chebi"                 
-    ## [43] "link_chemspider"             "link_comptox"               
-    ## [45] "link_kegg"                   "link_pubchem"               
-    ## [47] "focus_base_peak"             "data_processing_reanalyze"  
-    ## [49] "data_processing_recalibrate" "data_processing_whole"      
-    ## [51] "date"                        "authors"                    
-    ## [53] "license"                     "copyright"                  
-    ## [55] "publication"                 "pknum"                      
-    ## [57] "comment"
+    ## [41] "focus_base_peak"             "data_processing_reanalyze"  
+    ## [43] "data_processing_recalibrate" "data_processing_whole"
 
-Besides default spectra variables, such as `msLevel`, `rtime`,
-`precursorMz`, we also have additional spectra variables such as the
-`title` of each spectrum in the mgf file.
-
-``` r
-
-sps$rtime
-```
-
-    ##  [1] 142.14 142.14 142.14     NA 142.14 142.14 142.14 142.14 143.94 143.94
-    ## [11] 143.94
-
-``` r
-
-sps$title
-```
-
-    ##  [1] "L-Tryptophan; LC-ESI-QTOF; MS2; CE: 10; R=; [M+H]+"
-    ##  [2] "L-Tryptophan; LC-ESI-QTOF; MS2; CE: 20; R=; [M+H]+"
-    ##  [3] "L-Tryptophan; LC-ESI-QTOF; MS2; CE: 40; R=; [M+H]+"
-    ##  [4] "Carbazole; ESI-ITFT; MS2; CE: 35%; R=30000; [M+H]+"
-    ##  [5] "L-Tryptophan; LC-ESI-QTOF; MS2; CE: 10; R=; [M+H]+"
-    ##  [6] "L-Tryptophan; LC-ESI-QTOF; MS2; CE: 10; R=; [M+H]+"
-    ##  [7] "L-Tryptophan; LC-ESI-QTOF; MS2; CE: 20; R=; [M+H]+"
-    ##  [8] "L-Tryptophan; LC-ESI-QTOF; MS2; CE: 40; R=; [M+H]+"
-    ##  [9] "L-Tryptophan; LC-ESI-QTOF; MS2; CE: 10; R=; [M-H]-"
-    ## [10] "L-Tryptophan; LC-ESI-QTOF; MS2; CE: 20; R=; [M-H]-"
-    ## [11] "L-Tryptophan; LC-ESI-QTOF; MS2; CE: 40; R=; [M-H]-"
-
-In addition we can also access the m/z and intensity values of each
-spectrum.
-
-``` r
-
-mz(sps)
-```
-
-    ## NumericList of length 11
-    ## [[1]] 74.0233 132.0807 144.0805 146.0598 ... 170.0597 188.0699 205.0965
-    ## [[2]] 74.0232 77.0381 86.0027 91.0539 ... 160.0947 170.0596 171.0625 188.07
-    ## [[3]] 53.0019 53.0383 63.0225 65.0381 ... 158.0817 159.0921 160.0755 170.06
-    ## [[4]] 115.0167 168.0809
-    ## [[5]] 74.0233 132.0807 144.0805 146.0598 ... 170.0597 188.0699 205.0965
-    ## [[6]] 74.0233 132.0807 144.0805 146.0598 ... 170.0597 188.0699 205.0965
-    ## [[7]] 74.0232 77.0381 86.0027 91.0539 ... 160.0947 170.0596 171.0625 188.07
-    ## [[8]] 53.0019 53.0383 63.0225 65.0381 ... 158.0817 159.0921 160.0755 170.06
-    ## [[9]] 72.0095 116.0517 117.0554 159.0935 186.0558 203.0826
-    ## [[10]] 72.0094 74.0253 116.0511 117.0539 ... 162.0307 186.0548 203.0818
-    ## ...
-    ## <1 more element>
-
-``` r
-
-intensity(sps)
-```
-
-    ## NumericList of length 11
-    ## [[1]] 646 980 2114 20052 1248 7628 2036 494048 75708
-    ## [[2]] 10186 142 142 750 138 490 126 ... 11254 14266 1478 1600 16504 1446 109762
-    ## [[3]] 324 184 138 3770 500 800 7214 3238 ... 2802 206 898 162 166 814 250 1840
-    ## [[4]] 650.7 14157.3
-    ## [[5]] 646 980 2114 20052 1248 7628 2036 494048 75708
-    ## [[6]] 646 980 2114 20052 1248 7628 2036 494048 75708
-    ## [[7]] 10186 142 142 750 138 490 126 ... 11254 14266 1478 1600 16504 1446 109762
-    ## [[8]] 324 184 138 3770 500 800 7214 3238 ... 2802 206 898 162 166 814 250 1840
-    ## [[9]] 150 200 32 232 80 12162
-    ## [[10]] 460 3630 658 74 28 190 44 142 50 52 634
-    ## ...
-    ## <1 more element>
-
-When importing a large number of mgf files, setting `nonStop = TRUE`
-prevents the call to stop whenever problematic mgf files are
-encountered.
-
-``` r
-
-sps <- Spectra(fls, source = MsBackendMassbank(), nonStop = TRUE)
-```
+When importing a large number of MassBank files, setting
+`nonStop = TRUE` prevents the call to stop whenever problematic MassBank
+files are encountered.
 
 ## Accessing the MassBank MySQL database
 
@@ -341,9 +280,9 @@ stored as a SQLite database within this package.
 At present it is not possible to directly connect to the main MassBank
 *production* MySQL server, thus, to use the `MsBackendMassbankSql`
 backend it is required to install the database locally. The MySQL
-database dump for each MassBank release can be downloaded from
-[here](https://rformassspectrometry.github.io/MsBackendMassbank/articles/).
-This dump could be imported to a local MySQL server.
+database dump for each MassBank release can be downloaded the MassBank
+GitHub repository (for most releases). This dump could be imported to a
+local MySQL server.
 
 ### Direct access to the MassBank database
 
@@ -403,7 +342,8 @@ any data from MassBank. Any data will be fetched on demand from the
 database backend.
 
 To get a listing of all available annotations for each spectrum (the
-so-called *spectra variables*) we can use the `spectraVariables`
+so-called *spectra variables*) we can use the
+[`spectraVariables()`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)
 function.
 
 ``` r
@@ -437,7 +377,8 @@ Through the `MsBackendMassbankSql` we can thus access spectra
 information as well as its annotation.
 
 We can access *core* spectra variables, such as the MS level with the
-corresponding function `msLevel`.
+corresponding function
+[`msLevel()`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html).
 
 ``` r
 
@@ -457,7 +398,10 @@ head(mb$msLevel)
     ## [1]  2 NA NA NA NA  2
 
 In addition to spectra variables, we can also get the actual peaks
-(i.e. m/z and intensity values) with the `mz` and `intensity` functions:
+(i.e. m/z and intensity values) with the
+[`mz()`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html) and
+[`intensity()`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)
+functions:
 
 ``` r
 
@@ -504,7 +448,8 @@ length(mb)
 
 As a simple example to illustrate the `Spectra` functionality we next
 calculate spectra similarity between one spectrum against all other
-spectra in the database. To this end we use the `compareSpectra`
+spectra in the database. To this end we use the
+[`compareSpectra()`](https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html)
 function with the normalized dot product as similarity function and
 allowing 20 ppm difference in m/z between matching peaks
 
@@ -524,12 +469,14 @@ We plot next a mirror plot for the two best matching spectra.
 plotSpectraMirror(mb[11], mb[(which.max(sims) + 1)], ppm = 40)
 ```
 
-![](MsBackendMassbank_files/figure-html/unnamed-chunk-10-1.png)
+![](MsBackendMassbank_files/figure-html/unnamed-chunk-13-1.png)
 
 We can also retrieve the *compound* information for these two best
-matching spectra. Note that this `compounds` function works only with
-the `MsBackendMassbankSql` backend as it retrieves the corresponding
-information from the database’s compound annotation table.
+matching spectra. Note that this
+[`compounds()`](https://rformassspectrometry.github.io/MsBackendMassbank/reference/MsBackendMassbankSql.md)
+function works only with the `MsBackendMassbankSql` backend as it
+retrieves the corresponding information from the database’s compound
+annotation table.
 
 ``` r
 
@@ -556,7 +503,8 @@ processing because the database connection within the backend can not be
 shared across parallel processes. Any function on a `Spectra` object
 that uses a `MsBackendMassbankSql` will thus (silently) disable any
 parallel processing, even if the user might have passed one along to the
-function using the `BPPARAM` parameter. In general, the `backendBpparam`
+function using the `BPPARAM` parameter. In general, the
+[`backendBpparam()`](https://rdrr.io/pkg/ProtGenerics/man/backendInitialize.html)
 function can be used on any `Spectra` object to test whether its backend
 supports the provided parallel processing setup (which might be helpful
 for developers).
@@ -592,7 +540,7 @@ sessionInfo()
     ## [8] base     
     ## 
     ## other attached packages:
-    ## [1] MsCoreUtils_1.23.2       RSQLite_2.4.5            MsBackendMassbank_1.19.1
+    ## [1] MsCoreUtils_1.23.2       RSQLite_2.4.5            MsBackendMassbank_1.19.2
     ## [4] Spectra_1.21.1           BiocParallel_1.45.0      S4Vectors_0.49.0        
     ## [7] BiocGenerics_0.57.0      generics_0.1.4           BiocStyle_2.39.0        
     ## 

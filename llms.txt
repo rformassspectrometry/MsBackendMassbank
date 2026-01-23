@@ -80,5 +80,5 @@ vignette](https://rformassspectrometry.github.io/RforMassSpectrometry/articles/R
 
 ### All vignettes
 
-- [Description and usage of
+- [Description and Usage of
   MsBackendMassbank](https://rformassspectrometry.github.io/MsBackendMassbank/articles/MsBackendMassbank.md):
