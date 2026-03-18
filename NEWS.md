@@ -1,5 +1,9 @@
 # MsBackendMassbank 1.19
 
+## Changes in 1.19.3
+
+- Use `rbindlistWithRownames()` for faster concatenation of results.
+
 ## Changes in 1.19.2
 
 - Refactor `metaDataBlocks()` adding parameters for the individual metadata
