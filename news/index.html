@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">MsBackendMassbank</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.19.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.19.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,15 +35,19 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.19" id="msbackendmassbank-119">MsBackendMassbank 1.19<a class="anchor" aria-label="anchor" href="#msbackendmassbank-119"></a></h2>
 <div class="section level3">
-<h3 id="changes-in-1-19">Changes in 1.19.2<a class="anchor" aria-label="anchor" href="#changes-in-1-19"></a></h3>
+<h3 id="changes-in-1-19">Changes in 1.19.3<a class="anchor" aria-label="anchor" href="#changes-in-1-19"></a></h3>
+<ul><li>Use <code><a href="https://rdrr.io/pkg/Spectra/man/rbindlistWithRownames.html" class="external-link">rbindlistWithRownames()</a></code> for faster concatenation of results.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="changes-in-1-19-1">Changes in 1.19.2<a class="anchor" aria-label="anchor" href="#changes-in-1-19-1"></a></h3>
 <ul><li>Refactor <code><a href="../reference/metaDataBlocks.html">metaDataBlocks()</a></code> adding parameters for the individual metadata blocks simplifying configuration of data import.</li>
 <li>Fix importing issues of individual optional blocks. Import was validated using MassBank releases <em>2025.05.1</em> and <em>2025.10</em>. Several fields/spectra variables now return a <code>list</code> to support records with multiple values per field. These are: <code>"name"</code>, <code>"chrom_solvent"</code>, <code>"comment"</code>, <code>"data_processing_comment"</code>, <code>"sample"</code>, <code>"data_processing_reanalyze"</code>, <code>"data_processing_whole"</code>.</li>
 <li>Map field <code>MS$DATA_PROCESSING: FIND_PEAK</code> to a spectra variable with name <code>"data_processing_find_peak"</code> (was <code>"data_processing_find"</code>).</li>
 </ul></div>
 <div class="section level3">
-<h3 id="changes-in-1-19-1">Changes in 1.19.1<a class="anchor" aria-label="anchor" href="#changes-in-1-19-1"></a></h3>
+<h3 id="changes-in-1-19-2">Changes in 1.19.1<a class="anchor" aria-label="anchor" href="#changes-in-1-19-2"></a></h3>
 <ul><li>Avoid error when <code>"N/A"</code> is reported as retention time.</li>
-<li>Performance improvement: use <code><a href="https://rdatatable.gitlab.io/data.table/reference/rbindlist.html" class="external-link">data.table::rbindlist()</a></code> for merging and importing records from files in MassBank format.</li>
+<li>Performance improvement: use <code><a href="https://rdrr.io/pkg/data.table/man/rbindlist.html" class="external-link">data.table::rbindlist()</a></code> for merging and importing records from files in MassBank format.</li>
 </ul></div>
 </div>
     <div class="section level2">

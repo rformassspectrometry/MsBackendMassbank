@@ -1,12 +1,12 @@
 # Description and Usage of MsBackendMassbank
 
 **Package**:
-*[MsBackendMassbank](https://bioconductor.org/packages/3.23/MsBackendMassbank)*  
+*[MsBackendMassbank](https://bioconductor.org/packages/3.23/MsBackendMassbank)*\
 **Authors**: RforMassSpectrometry Package Maintainer \[cre\], Michael
 Witting \[aut\] (ORCID: <https://orcid.org/0000-0002-1462-4426>),
 Johannes Rainer \[aut\] (ORCID:
-<https://orcid.org/0000-0002-6977-7147>), Michael Stravs \[ctb\]  
-**Compiled**: Fri Jan 23 12:37:01 2026
+<https://orcid.org/0000-0002-6977-7147>), Michael Stravs \[ctb\]\
+**Compiled**: Wed Mar 18 15:05:56 2026
 
 ## Introduction
 
@@ -516,9 +516,9 @@ for developers).
 sessionInfo()
 ```
 
-    ## R Under development (unstable) (2026-01-18 r89306)
+    ## R Under development (unstable) (2026-03-15 r89629)
     ## Platform: x86_64-pc-linux-gnu
-    ## Running under: Ubuntu 24.04.3 LTS
+    ## Running under: Ubuntu 24.04.4 LTS
     ## 
     ## Matrix products: default
     ## BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -540,23 +540,23 @@ sessionInfo()
     ## [8] base     
     ## 
     ## other attached packages:
-    ## [1] MsCoreUtils_1.23.2       RSQLite_2.4.5            MsBackendMassbank_1.19.2
-    ## [4] Spectra_1.21.1           BiocParallel_1.45.0      S4Vectors_0.49.0        
+    ## [1] MsCoreUtils_1.23.6       RSQLite_2.4.6            MsBackendMassbank_1.19.3
+    ## [4] Spectra_1.21.5           BiocParallel_1.45.0      S4Vectors_0.49.0        
     ## [7] BiocGenerics_0.57.0      generics_0.1.4           BiocStyle_2.39.0        
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] bit_4.6.0              jsonlite_2.0.0         compiler_4.6.0        
     ##  [4] BiocManager_1.30.27    blob_1.3.0             parallel_4.6.0        
-    ##  [7] cluster_2.1.8.1        jquerylib_0.1.4        systemfonts_1.3.1     
-    ## [10] IRanges_2.45.0         textshaping_1.0.4      yaml_2.3.12           
+    ##  [7] cluster_2.1.8.2        jquerylib_0.1.4        systemfonts_1.3.2     
+    ## [10] IRanges_2.45.0         textshaping_1.0.5      yaml_2.3.12           
     ## [13] fastmap_1.2.0          R6_2.6.1               ProtGenerics_1.39.2   
     ## [16] knitr_1.51             htmlwidgets_1.6.4      MASS_7.3-65           
-    ## [19] bookdown_0.46          desc_1.4.3             DBI_1.2.3             
-    ## [22] bslib_0.9.0            rlang_1.1.7            cachem_1.1.0          
-    ## [25] xfun_0.56              fs_1.6.6               sass_0.4.10           
+    ## [19] bookdown_0.46          desc_1.4.3             DBI_1.3.0             
+    ## [22] bslib_0.10.0           rlang_1.1.7            cachem_1.1.0          
+    ## [25] xfun_0.56              fs_1.6.7               sass_0.4.10           
     ## [28] bit64_4.6.0-1          otel_0.2.0             memoise_2.0.1         
     ## [31] cli_3.6.5              pkgdown_2.2.0.9000     digest_0.6.39         
-    ## [34] MetaboCoreUtils_1.19.1 lifecycle_1.0.5        clue_0.3-66           
-    ## [37] vctrs_0.7.0            data.table_1.18.0      evaluate_1.0.5        
-    ## [40] codetools_0.2-20       ragg_1.5.0             rmarkdown_2.30        
+    ## [34] MetaboCoreUtils_1.19.2 lifecycle_1.0.5        clue_0.3-67           
+    ## [37] vctrs_0.7.1            data.table_1.18.2.1    evaluate_1.0.5        
+    ## [40] codetools_0.2-20       ragg_1.5.1             rmarkdown_2.30        
     ## [43] pkgconfig_2.0.3        tools_4.6.0            htmltools_0.5.9

@@ -350,6 +350,9 @@ Johannes Rainer
 ## vignette for more information on how to install MassBank locally and
 ## enable MySQL database connections
 library(RSQLite)
+#> Registered S3 method overwritten by 'bit64':
+#>   method          from 
+#>   print.bitstring tools
 con <- dbConnect(SQLite(), system.file("sql", "minimassbank.sqlite",
     package = "MsBackendMassbank"))
 

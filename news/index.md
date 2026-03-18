@@ -2,6 +2,12 @@
 
 ## MsBackendMassbank 1.19
 
+### Changes in 1.19.3
+
+- Use
+  [`rbindlistWithRownames()`](https://rdrr.io/pkg/Spectra/man/rbindlistWithRownames.html)
+  for faster concatenation of results.
+
 ### Changes in 1.19.2
 
 - Refactor
@@ -21,7 +27,7 @@
 
 - Avoid error when `"N/A"` is reported as retention time.
 - Performance improvement: use
-  [`data.table::rbindlist()`](https://rdatatable.gitlab.io/data.table/reference/rbindlist.html)
+  [`data.table::rbindlist()`](https://rdrr.io/pkg/data.table/man/rbindlist.html)
   for merging and importing records from files in MassBank format.
 
 ## MsBackendMassbank 1.17
