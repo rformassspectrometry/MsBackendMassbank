@@ -143,7 +143,7 @@ setClass("MsBackendMassbank",
 #'
 #' @importMethodsFrom BiocParallel bplapply
 #'
-#' @importFrom data.table rbindlist
+#' @importFrom Spectra rbindlistWithRownames
 #'
 #' @importFrom methods validObject
 #'
@@ -178,7 +178,8 @@ setMethod("backendInitialize", signature = "MsBackendMassbank",
               ##                 ignore.mcols = TRUE, check = FALSE)
               ## spectraData(object) <- res
               message("Merging results ...", appendLF = FALSE)
-              res <- as(rbindlist(res, use.names = FALSE), "DataFrame")
+              res <- as(rbindlistWithRownames(res, use.names = FALSE),
+                        "DataFrame")
               res$mz <- NumericList(res$mz, compress = FALSE)
               res$intensity <- NumericList(res$intensity, compress = FALSE)
               object@spectraData <- res
